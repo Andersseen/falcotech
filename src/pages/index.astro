@@ -1,11 +1,27 @@
 ---
-import Welcome from '../components/Welcome.astro';
+import { Navbar } from '@/components/navigation/navbar';
+import { SmoothScroll } from '@/components/providers/smooth-scroll';
+import About from '@/components/react/About';
+import Features from '@/components/react/Features';
+import Footer from '@/components/react/Footer';
+import Hero from '@/components/react/Hero';
+import { ScrollToTop } from '@/components/react/ScrollToTop';
+import '@/styles/globals.css';
 import Layout from '../layouts/Layout.astro';
-
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+const title = "FalcoTech";
+const description = "Implementamos soluciones innovadoras para abordar los desafíos contemporáneos que afectan tanto a la sociedad como a la fauna. Nuestra misión es utilizar tecnología de vanguardia para encontrar respuestas efectivas y sostenibles a los conflictos que surgen en estos ámbitos, combinando experiencia, compromiso y un profundo respeto por el entorno natural.";
 ---
 
-<Layout>
-	<Welcome />
+<Layout   title={title}
+description={description}>
+  <SmoothScroll client:load>
+    <Navbar client:only />
+    <main>
+      <Hero client:load />
+      <Features client:load/>
+      <About client:load/>
+      <Footer client:load/>
+      <ScrollToTop client:load/>
+    </main>
+  </SmoothScroll>
 </Layout>
