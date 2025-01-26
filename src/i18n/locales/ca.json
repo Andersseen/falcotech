@@ -1,0 +1,50 @@
+{
+  "nav": {
+    "home": "Inici",
+    "about": "Qui som",
+    "features": "Especialitats",
+    "contact": "Contacte"
+  },
+  "home": {
+    "title": "FALCOTECH",
+    "description": "Implementem solucions innovadores per abordar els desafiaments contemporanis que afecten tant la societat com la fauna. La nostra missió és utilitzar tecnologia d'avantguarda per trobar respostes efectives i sostenibles als conflictes que sorgeixen en aquests àmbits, combinant experiència, compromís i un profund respecte per l'entorn natural."
+  },
+  "features": {
+    "title1": "El nostre equip està organitzat en tres grups de treball especialitzats",
+    "card1": {
+      "title": "Control de Fauna",
+      "description": "Ens dediquem a la gestió responsable i ètica de la fauna, implementant estratègies per minimitzar els conflictes entre els éssers humans i la vida salvatge. Utilitzem tecnologies avançades, inclosos drons, per monitorar i gestionar poblacions d'animals, assegurant la coexistència harmònica i la conservació de les espècies."
+    },
+    "card2": {
+      "title": "Consultoria Ambiental",
+      "description": "Oferim assessorament integral en qüestions ambientals, ajudant empreses i governs a desenvolupar projectes sostenibles i respectuosos amb el medi ambient. El nostre enfocament es basa en l'anàlisi detallada i l'ús de tecnologia innovadora per oferir solucions que promoguin el desenvolupament econòmic sense comprometre la salut del planeta."
+    },
+    "card3": {
+      "title": "Tecnologia amb Drons",
+      "description": "La nostra divisió de tecnologia es especialitza en l'ús de drons per a una àmplia gamma d'aplicacions, des de la monitorització ambiental fins a la recopilació de dades precises i en temps real. Els drons ens permeten obtenir una visió única i detallada de l'entorn, facilitant la presa de decisions informades i efectives en els nostres projectes."
+    },
+    "title2": "A FALCOTECH, creiem que la integració de la tecnologia amb el coneixement ambiental és clau per resoldre els desafiaments més urgents del nostre temps. Estem compromesos amb la innovació, l'excel·lència i la sostenibilitat. Treballem per crear un futur on la humanitat i la natura puguin prosperar juntes.",
+    "title3": "Els convidem a explorar més sobre els nostres serveis."
+  },
+  "about": {
+    "section1": {
+      "title": "Control de fauna",
+      "description": {
+        "p1": "A FALCOTECH, comptem amb un equip altament professional format per tècnics i experts en control i gestió de fauna, incloent especialistes en falconeria. El nostre equip combina coneixements profunds en tècniques tradicionals i modernes, cosa que ens permet abordar diverses situacions amb una perspectiva integral i adaptada a cada cas.",
+        "p2": "El nostre compromís és oferir serveis de la més alta qualitat, garantint resultats òptims i sostenibles per a la convivència entre l'activitat humana i la conservació de la biodiversitat.",
+        "p3": "Per desenvolupar el nostre servei de control de fauna, utilitzem falconeria, aprofitant l'habilitat d'aus rapinyaires entrenades per gestionar poblacions de fauna de manera natural. Complementem aquesta tècnica amb l'ús de drons adaptats, que ens permeten monitorar i controlar zones extenses amb precisió i eficàcia. A més, implementem sistemes de captura dissenyats per ser respectuosos amb les espècies, assegurant el seu benestar i minimitzant l'impacte en el seu entorn natural."
+      }
+    },
+    "section2": {
+      "title": "Consultoria ambiental",
+      "description": {
+        "p1": "El nostre equip està format per tècnics i biòlegs amb àmplia experiència en el seguiment i estudi de fauna, estudis de biodiversitat, avaluació d'impacte ambiental i anàlisi estadístic i geoespacial, cosa que els permet abordar diverses situacions amb solvència i un enfocament especialitzat.",
+        "p2": "Els esforços diaris per prestar un servei d'alt nivell fan que el nostre equip tècnic domini els programes informàtics més avançats per a la planificació i disseny de les metodologies d'estudi i el processament de dades que permeti treure el màxim partit als treballs realitzats al camp, com prospeccions botàniques, estudis d'aus, quiròpters i herpetofauna, entre d'altres."
+      }
+    },
+    "section3": {
+      "title": "Drons",
+      "description": "La nostra empresa integra tecnologia UAV (Unmanned Aerial Vehicle) per optimitzar els nostres serveis, proporcionant solucions avançades i precises. Oferim una gamma de serveis amb drons, incloent gravacions d'alta qualitat i detallades inspeccions d'infraestructures i terrenys. A més, desenvolupem drons especialitzats, personalitzats per realitzar treballs específics segons les necessitats del projecte."
+    }
+  }
+}

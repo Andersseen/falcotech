@@ -1,0 +1,51 @@
+{
+  "nav": {
+    "home": "Inicio",
+    "about": "Quiénes somos",
+    "features": "Especialidades",
+    "contact": "Contacto"
+  },
+
+  "home": {
+    "title": "FALCOTECH",
+    "description": "Implementamos soluciones innovadoras para abordar los desafíos contemporáneos que afectan tanto a la sociedad como a la fauna. Nuestra misión es utilizar tecnología de vanguardia para encontrar respuestas efectivas y sostenibles a los conflictos que surgen en estos ámbitos, combinando experiencia, compromiso y un profundo respeto por el entorno natural."
+  },
+  "features": {
+    "title1": "Nuestro equipo está organizado en tres grupos de trabajo especializados",
+    "card1": {
+      "title": "Control de Fauna",
+      "description": "Nos dedicamos a la gestión responsable y ética de la fauna, implementando estrategias para minimizar los conflictos entre los seres humanos y la vida silvestre. Utilizamos tecnologías avanzadas, incluidos drones, para monitorear y gestionar poblaciones de animales, asegurando la coexistencia armónica y la conservación de las especies."
+    },
+    "card2": {
+      "title": "Consultora Ambiental",
+      "description": "Ofrecemos asesoramiento integral en cuestiones ambientales, ayudando a empresas y gobiernos a desarrollar proyectos sostenibles y respetuosos con el medio ambiente. Nuestro enfoque se basa en el análisis detallado y el uso de tecnología innovadora para ofrecer soluciones que promuevan el desarrollo económico sin comprometer la salud del planeta."
+    },
+    "card3": {
+      "title": "Tecnología con Drones",
+      "description": "Nuestra división de tecnología se especializa en el uso de drones para una amplia gama de aplicaciones, desde la monitorización ambiental hasta la recopilación de datos precisos y en tiempo real. Los drones nos permiten obtener una visión única y detallada del entorno, facilitando la toma de decisiones informadas y efectivas en nuestros proyectos."
+    },
+    "title2": "En FALCOTECH, creemos que la integración de la tecnología con el conocimiento ambiental es clave para resolver los desafíos más urgentes de nuestro tiempo. Estamos comprometidos con la innovación, la excelencia y la sostenibilidad. Trabajamos para crear un futuro en el que la humanidad y la naturaleza puedan prosperar juntas.",
+    "title3": "Les invitamos a explorar más sobre nuestros servicios."
+  },
+  "about": {
+    "section1": {
+      "title": "Control fauna",
+      "description": {
+        "p1": "En FALCOTECH, contamos con un equipo altamente profesional compuesto por técnicos y expertos en control y manejo de fauna, incluyendo especialistas en cetrería. Nuestro equipo combina conocimientos profundos en técnicas tradicionales y modernas, lo que nos permite abordar diversas situaciones con una perspectiva integral y adaptada a cada caso.",
+        "p2": "Nuestro compromiso es ofrecer servicios de la más alta calidad, garantizando resultados óptimos y sostenibles para la convivencia entre la actividad humana y la conservación de la biodiversidad.",
+        "p3": "Para desarrollar nuestro servicio de control de fauna, utilizamos cetrería, aprovechando la habilidad de aves rapaces entrenadas para gestionar poblaciones de fauna de manera natural. Complementamos esta técnica con el uso de drones adaptados, que nos permiten monitorizar y controlar áreas extensas con precisión y eficacia. Además, implementamos sistemas de captura diseñados para ser respetuosos con las especies, asegurando su bienestar y minimizando el impacto en su entorno natural."
+      }
+    },
+    "section2": {
+      "title": "Consultora ambiental",
+      "description": {
+        "p1": "Nuestro equipo está compuesto por técnicos y biólogos con amplia experiencia en el seguimiento y estudio de fauna, estudios de Biodiversidad, Evaluación de Impacto Ambiental y análisis estadístico y geoespacial lo que les permite abordar diversas situaciones con solvencia y un enfoque especializado.",
+        "p2": "Los esfuerzos diarios para prestar un servicio de alto nivel, hace que nuestro equipo técnico domine los programas informáticos más avanzados para la planificación y diseño de las metodologías de estudio y el procesamiento de datos que permita sacar el máximo partido a los trabajos realizados en campo como prospecciones botánicas, estudios de avifauna, quirópteros y herpetofauna, entre otros."
+      }
+    },
+    "section3": {
+      "title": "Drones",
+      "description": "Nuestra empresa integra tecnología UAV (Unmanned Aerial Vehicle) para optimizar nuestros servicios, proporcionando soluciones avanzadas y precisas. Ofrecemos una gama de servicios con drones, incluyendo grabaciones de alta calidad y detalladas inspecciones de infraestructuras y terrenos. Además, desarrollamos drones especializados, personalizados para realizar trabajos específicos según las necesidades del proyecto."
+    }
+  }
+}

@@ -10,6 +10,7 @@ import image2 from "@/assets/2.png";
 import image3 from "@/assets/3.png";
 import { motion } from "motion/react";
 import { useInView } from "react-intersection-observer";
+import { useTranslation } from "react-i18next";
 
 const MotionCard = motion(BaseCard);
 
@@ -21,25 +22,25 @@ interface FeatureProps {
 
 const features: FeatureProps[] = [
   {
-    title: "Control de Fauna:",
-    description: `Nos dedicamos a la gestión responsable y ética de la fauna, implementando estrategias para minimizar los conflictos entre los seres humanos y la vida silvestre. Utilizamos tecnologías avanzadas, incluidos drones, para monitorear y gestionar poblaciones de animales, asegurando la coexistencia armónica y la conservación de las especies.`,
+    title: "features.card1.title",
+    description: "features.card1.description",
     image: image3.src,
   },
   {
-    title: "Consultora Ambiental:",
-    description: `Ofrecemos asesoramiento integral en cuestiones ambientales, ayudando a empresas y gobiernos a desarrollar proyectos sostenibles y respetuosos con el medio ambiente. Nuestro enfoque se basa en el análisis detallado y el uso de tecnología innovadora para ofrecer soluciones que promuevan el desarrollo económico sin comprometer la salud del planeta.`,
+    title: "features.card1.title",
+    description: "features.card1.description",
     image: image2.src,
   },
   {
-    title: "Tecnología con Drones:",
-    description: `Nuestra división de tecnología se especializa en el uso de drones para una amplia gama de aplicaciones, desde la monitorización ambiental hasta la recopilación de datos precisos y en tiempo real. Los drones nos permiten obtener una visión única y detallada del entorno, facilitando la toma de decisiones informadas y efectivas en nuestros proyectos.`,
+    title: "features.card3.title",
+    description: "features.card3.description",
     image: image1.src,
   },
 ];
 
 const cardVariants = {
   hidden: { opacity: 0, x: -50 },
-  visible: (i) => ({
+  visible: (i: number) => ({
     opacity: 1,
     x: 0,
     transition: {
@@ -57,26 +58,27 @@ export default function Features() {
     triggerOnce: true, // La animación solo se dispara una vez
     threshold: 0.1, // Ajusta este valor según sea necesario
   });
+  const { t } = useTranslation();
   return (
     <section id="about" className="container py-24 sm:py-32 space-y-8">
       <h4 className="text-xl lg:text-2xl font-bold md:text-center">
-        Nuestro equipo está organizado en tres grupos de trabajo especializados:
+        {t(`features.title1`)}
       </h4>
 
       <div ref={ref} className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
         {features.map(({ title, description, image }: FeatureProps, index) => (
           <MotionCard
-            key={title}
+            key={`features-card${index}`}
             custom={index}
             initial="hidden"
             animate={inView ? "visible" : "hidden"}
             variants={cardVariants}
           >
             <CardHeader>
-              <CardTitle>{title}</CardTitle>
+              <CardTitle>{t(title)}</CardTitle>
             </CardHeader>
 
-            <CardContent>{description}</CardContent>
+            <CardContent>{t(description)}</CardContent>
 
             <CardFooter>
               <img
@@ -89,14 +91,10 @@ export default function Features() {
         ))}
       </div>
       <h5 className="text-lg lg:text-xl font-bold md:text-center">
-        En FALCOTECH, creemos que la integración de la tecnología con el
-        conocimiento ambiental es clave para resolver los desafíos más urgentes
-        de nuestro tiempo. Estamos comprometidos con la innovación, la
-        excelencia y la sostenibilidad. Trabajamos para crear un futuro en el
-        que la humanidad y la naturaleza puedan prosperar juntas.
+        {t(`features.title2`)}
       </h5>
       <h6 className="text-lg lg:text-xl font-bold md:text-center">
-        Les invitamos a explorar más sobre nuestros servicios.
+        {t(`features.title3`)}
       </h6>
     </section>
   );
