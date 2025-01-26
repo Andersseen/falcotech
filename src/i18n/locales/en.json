@@ -1,0 +1,50 @@
+{
+  "nav": {
+    "home": "Home",
+    "about": "About Us",
+    "features": "Features",
+    "contact": "Contact"
+  },
+  "home": {
+    "title": "FALCOTECH",
+    "description": "We implement innovative solutions to address contemporary challenges affecting both society and wildlife. Our mission is to use cutting-edge technology to find effective and sustainable responses to conflicts arising in these areas, combining expertise, commitment, and a deep respect for the natural environment."
+  },
+  "features": {
+    "title1": "Our team is organized into three specialized workgroups",
+    "card1": {
+      "title": "Wildlife Control",
+      "description": "We are dedicated to the responsible and ethical management of wildlife, implementing strategies to minimize conflicts between humans and wildlife. We use advanced technologies, including drones, to monitor and manage animal populations, ensuring harmonious coexistence and species conservation."
+    },
+    "card2": {
+      "title": "Environmental Consultancy",
+      "description": "We provide comprehensive advice on environmental issues, helping businesses and governments develop sustainable and eco-friendly projects. Our approach is based on detailed analysis and the use of innovative technology to offer solutions that promote economic development without compromising the planet's health."
+    },
+    "card3": {
+      "title": "Drone Technology",
+      "description": "Our technology division specializes in the use of drones for a wide range of applications, from environmental monitoring to the collection of accurate real-time data. Drones provide us with a unique and detailed view of the environment, facilitating informed and effective decision-making in our projects."
+    },
+    "title2": "At FALCOTECH, we believe that integrating technology with environmental knowledge is key to solving the most pressing challenges of our time. We are committed to innovation, excellence, and sustainability. We work to create a future where humanity and nature can thrive together.",
+    "title3": "We invite you to learn more about our services."
+  },
+  "about": {
+    "section1": {
+      "title": "Wildlife Control",
+      "description": {
+        "p1": "At FALCOTECH, we have a highly professional team of technicians and experts in wildlife control and management, including specialists in falconry. Our team combines deep knowledge of traditional and modern techniques, allowing us to address diverse situations with a comprehensive and tailored perspective.",
+        "p2": "Our commitment is to provide services of the highest quality, ensuring optimal and sustainable results for coexistence between human activity and biodiversity conservation.",
+        "p3": "To develop our wildlife control service, we use falconry, leveraging the skills of trained birds of prey to naturally manage wildlife populations. We complement this technique with the use of adapted drones, enabling us to monitor and control extensive areas with precision and efficiency. Additionally, we implement capture systems designed to be respectful of the species, ensuring their well-being and minimizing the impact on their natural environment."
+      }
+    },
+    "section2": {
+      "title": "Environmental Consultancy",
+      "description": {
+        "p1": "Our team consists of technicians and biologists with extensive experience in wildlife monitoring and studies, biodiversity studies, environmental impact assessments, and statistical and geospatial analysis, enabling them to address various situations with expertise and a specialized approach.",
+        "p2": "The daily efforts to deliver high-level service ensure our technical team masters the most advanced software for the planning and design of study methodologies and data processing, maximizing the work carried out in the field, such as botanical surveys, bird studies, bats, and herpetofauna research, among others."
+      }
+    },
+    "section3": {
+      "title": "Drones",
+      "description": "Our company integrates UAV (Unmanned Aerial Vehicle) technology to optimize our services, providing advanced and precise solutions. We offer a range of drone services, including high-quality recordings and detailed inspections of infrastructures and lands. Additionally, we develop specialized drones tailored to specific tasks based on project needs."
+    }
+  }
+}

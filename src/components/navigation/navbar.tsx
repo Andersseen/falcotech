@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Menu } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { LanguageSelector } from "../LanguageSelector";
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -17,17 +19,19 @@ export function Navbar() {
 
   const NavItems = () => (
     <>
-      <Button variant="ghost" onClick={() => scrollToSection("about")}>
-        Quiénes somos
-      </Button>
-      <Button variant="ghost" onClick={() => scrollToSection("features")}>
-        Especialidades
-      </Button>
-      <Button variant="ghost" onClick={() => scrollToSection("contact")}>
-        Contacto
-      </Button>
+      {["about", "features", "contact"].map((item, index) => (
+        <Button
+          key={`${item}${index}`}
+          variant="ghost"
+          onClick={() => scrollToSection(item)}
+        >
+          {t(`nav.${item}`)}
+        </Button>
+      ))}
     </>
   );
+
+  const { t } = useTranslation();
 
   return (
     <nav className="fixed top-0 w-full bg-background/80 backdrop-blur-sm z-50 border-b">
@@ -51,6 +55,7 @@ export function Navbar() {
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center gap-6">
           <NavItems />
+          <LanguageSelector />
           <ThemeToggle />
         </div>
 
