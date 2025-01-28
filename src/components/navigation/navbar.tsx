@@ -62,6 +62,7 @@ export function Navbar() {
         {/* Mobile Navigation */}
         <div className="md:hidden flex items-center gap-4">
           <ThemeToggle />
+          <LanguageSelector />
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" aria-label="Open menu">
