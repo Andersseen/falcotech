@@ -8,7 +8,7 @@ import { LayoutGrid } from "./ui/layout-grid";
 
 export default function PortfolioGrid() {
   return (
-    <div className="h-screen py-20 w-full shadow-lg">
+    <div className="h-screen py-20 w-full shadow-sm">
       <LayoutGrid cards={cards} />
     </div>
   );
