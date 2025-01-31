@@ -1,6 +1,12 @@
 ---
 import { actions } from "astro:actions";
+
+const result = Astro.getActionResult(actions.send);
+if (result?.data) {
+  return Astro.redirect("/");
+}
+
 ---
-<form action={actions.send} method="post">
+<form action="api/send" >
     <button type="submit">Send email</button>
-  </form>
+</form>
