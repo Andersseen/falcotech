@@ -9,9 +9,10 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@astrojs/node": "^9.0.2",
     "@astrojs/react": "^4.1.6",
     "@astrojs/tailwind": "^5.1.5",
-    "@astrojs/vercel": "^8.0.4",
+    "@astrojs/vercel": "^8.0.5",
     "@emailjs/browser": "^4.4.1",
     "@radix-ui/react-accordion": "^1.1.2",
     "@radix-ui/react-avatar": "^1.0.4",
@@ -36,6 +37,7 @@
     "react-dom": "^19.0.0",
     "react-i18next": "^15.4.0",
     "react-intersection-observer": "^9.13.0",
+    "resend": "^4.1.1",
     "tailwind-merge": "^2.1.0",
     "tailwindcss": "^3.4.16",
     "tailwindcss-animate": "^1.0.7",
