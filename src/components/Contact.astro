@@ -1,4 +1,5 @@
 ---
+import { isInputError } from "astro:actions";
 import { actions } from "astro:actions";
 
 const result = Astro.getActionResult(actions.send);
@@ -6,7 +7,35 @@ if (result?.data) {
   return Astro.redirect("/");
 }
 
+const inputErrors = isInputError(result?.error) ? result.error.fields : {};
+
+
 ---
-<form action="api/send" >
-    <button type="submit">Send email</button>
+<h1>Send me an email</h1>
+<form action={actions.send} method="POST">
+  <label
+    >Username<input
+      type="text"
+      name="username"
+      placeholder="Username"
+      required
+      aria-describedby={inputErrors.username ? "username-error" : undefined}
+    />
+  </label>
+  {
+    inputErrors.username && (
+      <p id="username-error">{inputErrors.username[0]}</p>
+    )
+  }
+  <label
+    >Email<input
+      type="email"
+      name="email"
+      placeholder="Email"
+      required
+     
+    />
+  </label>
+  
+  <button>Send</button>
 </form>

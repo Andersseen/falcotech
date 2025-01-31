@@ -1,15 +1,15 @@
 import "../i18n/i18n.config";
+import Footer from "./Footer";
 import { Navbar } from "./navigation/navbar";
+import PortfolioGrid from "./PortfolioGrid";
 import { SmoothScroll } from "./providers/smooth-scroll";
 import About from "./react/About";
+import ContactForm from "./react/ContactForm";
 import Features from "./react/Features";
-import Footer from "./Footer";
 import Hero from "./react/Hero";
 import { ScrollToTop } from "./react/ScrollToTop";
-import PortfolioGrid from "./PortfolioGrid";
-import Contact from "./Contact.astro";
 
-export default function App({ children }: { children: React.ReactNode }) {
+export default function App() {
   return (
     <>
       <Navbar />
@@ -19,7 +19,7 @@ export default function App({ children }: { children: React.ReactNode }) {
           <Features />
           <About />
           <PortfolioGrid />
-          {children}
+          <ContactForm />
         </main>
       </SmoothScroll>
       <Footer />

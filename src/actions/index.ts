@@ -1,27 +1,37 @@
-import { ActionError, defineAction } from "astro:actions";
+import { defineAction } from "astro:actions";
 import { Resend } from "resend";
+import { render } from "@react-email/render";
+import { z } from "astro:schema";
+import { SampleEmail } from "@/emails/sampleEmail";
 
 const resend = new Resend(import.meta.env.RESEND_API_KEY);
 
 export const server = {
   send: defineAction({
     accept: "form",
-    handler: async () => {
-      const { data, error } = await resend.emails.send({
-        from: "Acme <onboarding@resend.dev>",
+    input: z.object({
+      username: z.string(),
+      email: z.string().email(),
+      message: z.string(),
+    }),
+    handler: async ({ username, email, message }) => {
+      // create the email
+      const emailContent = SampleEmail({ username, email, message });
+      const html = await render(emailContent);
+
+      // send an email
+      const { error } = await resend.emails.send({
+        from: "hello@andersseen.dev",
         to: ["andrii.pap@icloud.com"],
-        subject: "Hello world",
-        html: "<strong>It works!</strong>",
+        subject: "Correo electrónico desde la web",
+        html,
       });
 
       if (error) {
-        throw new ActionError({
-          code: "BAD_REQUEST",
-          message: error.message,
-        });
+        return { success: false };
       }
 
-      return data;
+      return { success: true };
     },
   }),
 };
