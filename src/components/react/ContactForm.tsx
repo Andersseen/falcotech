@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import emailjs from "@emailjs/browser";
+import { actions } from "astro:actions";
 
 export default function ContactForm() {
   const form = React.useRef();
@@ -11,22 +11,8 @@ export default function ContactForm() {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    emailjs
-      .sendForm("service_in3qixn", "template_pk82xif", form.current, {
-        publicKey: "eZy8swFvRZujRvAdv",
-      })
-      .then(
-        () => {
-          setIsSuccess(true);
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          if (form.current) (form.current as any).reset();
-
-          setTimeout(() => setIsSuccess(false), 5000);
-        },
-        (error) => {
-          console.log("FAILED...", error.text);
-        }
-      );
+    console.log("here");
+    actions.send;
   };
 
   return (
@@ -35,7 +21,7 @@ export default function ContactForm() {
         Contacte con FalcoTech
       </h2>
 
-      <form className="my-8" ref={form} onSubmit={handleSubmit}>
+      <form className="my-8" action={actions.send} method="POST">
         <LabelInputContainer>
           <Label htmlFor="user_name">Nombre y apellido</Label>
           <Input

@@ -1,19 +1,14 @@
 // @ts-check
-import { defineConfig } from 'astro/config';
+import { defineConfig } from "astro/config";
 import vercel from "@astrojs/vercel/serverless";
-import react from '@astrojs/react';
-import tailwind from '@astrojs/tailwind';
+import react from "@astrojs/react";
+import tailwind from "@astrojs/tailwind";
 
+import node from "@astrojs/node";
 // https://astro.build/config
 export default defineConfig({
   integrations: [react(), tailwind()],
-  i18n: {
-    defaultLocale: 'es',
-    locales: ['es', 'en', 'ca'],
-    routing: {
-      prefixDefaultLocale: false
-    }
-  },
+
   output: "server",
-  adapter: vercel()
+  adapter: vercel(),
 });

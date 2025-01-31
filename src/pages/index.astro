@@ -3,11 +3,14 @@
 import '@/styles/globals.css';
 import Layout from '../layouts/Layout.astro';
 import App from '@/components/App';
+import Contact from '@/components/Contact.astro';
 const title = "FalcoTech";
 const description = "Implementamos soluciones innovadoras para abordar los desafíos contemporáneos que afectan tanto a la sociedad como a la fauna. Nuestra misión es utilizar tecnología de vanguardia para encontrar respuestas efectivas y sostenibles a los conflictos que surgen en estos ámbitos, combinando experiencia, compromiso y un profundo respeto por el entorno natural.";
 ---
 
 <Layout   title={title}
 description={description}>
-  <App client:only/>
+  <App client:only>
+    <Contact/>
+  </App>
 </Layout>
