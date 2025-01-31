@@ -47,5 +47,27 @@
       "title": "Drones",
       "description": "Nuestra empresa integra tecnología UAV (Unmanned Aerial Vehicle) para optimizar nuestros servicios, proporcionando soluciones avanzadas y precisas. Ofrecemos una gama de servicios con drones, incluyendo grabaciones de alta calidad y detalladas inspecciones de infraestructuras y terrenos. Además, desarrollamos drones especializados, personalizados para realizar trabajos específicos según las necesidades del proyecto."
     }
+  },
+  "contact": {
+    "title": "Contacte con FalcoTech",
+    "form": {
+      "username": {
+        "label": "Nombre y apellido",
+        "placeholder": "Escriba aquí su nombre",
+        "error": "Por favor, escriba su nombre"
+      },
+      "email": {
+        "label": "Correo electrónico",
+        "placeholder": "Correo electrónico",
+        "error": "Por favor, escriba su correo electrónico"
+      },
+      "message": {
+        "label": "Mensaje",
+        "placeholder": "Escriba aquí su mensaje",
+        "error": "Por favor, escriba su mensaje"
+      },
+      "submit": "Enviar →",
+      "success": "¡Mensaje enviado con éxito!"
+    }
   }
 }

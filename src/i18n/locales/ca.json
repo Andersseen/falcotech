@@ -46,5 +46,27 @@
       "title": "Drons",
       "description": "La nostra empresa integra tecnologia UAV (Unmanned Aerial Vehicle) per optimitzar els nostres serveis, proporcionant solucions avançades i precises. Oferim una gamma de serveis amb drons, incloent gravacions d'alta qualitat i detallades inspeccions d'infraestructures i terrenys. A més, desenvolupem drons especialitzats, personalitzats per realitzar treballs específics segons les necessitats del projecte."
     }
+  },
+  "contact": {
+    "title": "Contacta amb FalcoTech",
+    "form": {
+      "username": {
+        "label": "Nom i cognoms",
+        "placeholder": "Escriu el teu nom aquí",
+        "error": "Si us plau, introdueix el teu nom"
+      },
+      "email": {
+        "label": "Correu electrònic",
+        "placeholder": "Introdueix el teu correu electrònic",
+        "error": "Si us plau, introdueix el teu correu electrònic"
+      },
+      "message": {
+        "label": "Missatge",
+        "placeholder": "Escriu el teu missatge aquí",
+        "error": "Si us plau, introdueix el teu missatge"
+      },
+      "submit": "Enviar →",
+      "success": "Missatge enviat amb èxit!"
+    }
   }
 }

@@ -22,7 +22,7 @@ export const server = {
       // send an email
       const { error } = await resend.emails.send({
         from: "hello@andersseen.dev",
-        to: ["andrii.pap@icloud.com"],
+        to: ["info@falcotech.es"],
         subject: "Correo electrónico desde la web",
         html,
       });

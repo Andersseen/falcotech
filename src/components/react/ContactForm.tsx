@@ -4,6 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { actions } from "astro:actions";
+import { useTranslation } from "react-i18next";
 
 export default function ContactForm() {
   const formRef = useRef<HTMLFormElement>(null);
@@ -42,12 +43,12 @@ export default function ContactForm() {
     let newErrors = { username: "", email: "", message: "" };
 
     if (!formData.username.trim()) {
-      newErrors.username = "El nombre es obligatorio.";
+      newErrors.username = t("contact.form.username.error");
       valid = false;
     }
 
     if (!formData.email.trim()) {
-      newErrors.email = "El correo es obligatorio.";
+      newErrors.email = t("contact.form.email.error");
       valid = false;
     } else if (!/^\S+@\S+\.\S+$/.test(formData.email)) {
       newErrors.email = "El correo no es válido.";
@@ -55,7 +56,7 @@ export default function ContactForm() {
     }
 
     if (!formData.message.trim()) {
-      newErrors.message = "El mensaje no puede estar vacío.";
+      newErrors.message = t("contact.form.message.error");
       valid = false;
     }
 
@@ -87,19 +88,21 @@ export default function ContactForm() {
     }
   };
 
+  const { t } = useTranslation();
   return (
     <section className="w-full h-fit rounded-none md:rounded-2xl p-4 md:p-8 shadow-input bg-transparent/5 dark:bg-transparent/40">
       <h2 className="font-bold text-xl text-neutral-800 dark:text-neutral-200">
-        Contacte con FalcoTech
+        {t("contact.title")}
       </h2>
 
       <form className="my-8" ref={formRef} onSubmit={handleSubmit}>
         <LabelInputContainer>
-          <Label htmlFor="username">Nombre y apellido</Label>
+          <Label htmlFor="username"> {t("contact.form.username.label")}</Label>
+
           <Input
             id="username"
             name="username"
-            placeholder="Escriba aquí su nombre"
+            placeholder={t("contact.form.username.placeholder")}
             type="text"
             value={formData.username}
             onChange={handleChange}
@@ -110,11 +113,11 @@ export default function ContactForm() {
         </LabelInputContainer>
 
         <LabelInputContainer className="mb-4">
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="email">{t("contact.form.email.label")}</Label>
           <Input
             id="email"
             name="email"
-            placeholder="su.correo.electronico@mail.com"
+            placeholder={t("contact.form.email.placeholder")}
             type="email"
             value={formData.email}
             onChange={handleChange}
@@ -125,11 +128,11 @@ export default function ContactForm() {
         </LabelInputContainer>
 
         <LabelInputContainer className="mb-4">
-          <Label htmlFor="message">Mensaje</Label>
+          <Label htmlFor="message">{t("contact.form.message.label")}</Label>
           <Textarea
             id="message"
             name="message"
-            placeholder="Escriba su mensaje"
+            placeholder={t("contact.form.message.placeholder")}
             value={formData.message}
             onChange={handleChange}
           />
@@ -145,13 +148,13 @@ export default function ContactForm() {
           type="submit"
           disabled={isSubmitting}
         >
-          {isSubmitting ? "Enviando..." : "Enviar →"}
+          {isSubmitting ? "..." : t("contact.form.submit")}
           <BottomGradient />
         </button>
 
         {isSuccess && (
           <div className="mt-4 p-2 bg-green-500 text-white rounded">
-            ¡Mensaje enviado con éxito!
+            t("contact.form.success")
           </div>
         )}
       </form>
