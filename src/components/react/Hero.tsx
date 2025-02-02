@@ -1,19 +1,32 @@
-import { motion } from "motion/react";
-import { ImagesSlider } from "@/components/ui/images-slider";
-import { BlurInTitle, BlurInParagraph } from "@/components/magicui/blur-in";
 import image1 from "@/assets/p-1.webp";
 import image2 from "@/assets/p-10.webp";
+import image5 from "@/assets/p-11.webp";
 import image3 from "@/assets/p-6.webp";
 import image4 from "@/assets/p-8.webp";
-import image5 from "@/assets/p-11.webp";
-import { useTranslation } from "react-i18next";
+import { BlurInParagraph, BlurInTitle } from "@/components/magicui/blur-in";
+import { ImagesSlider } from "@/components/ui/images-slider";
+import type { TFunction } from "i18next";
+import { motion } from "motion/react";
 
-export default function Hero() {
+interface HeroProps {
+  title: string;
+  description: string;
+}
+
+const heroObj: HeroProps = {
+  title: "home.title",
+  description: "home.description",
+};
+
+export default function Hero({
+  translation,
+}: {
+  translation: TFunction<"translation", undefined>;
+}) {
   const images = [image1.src, image2.src, image3.src, image4.src, image5.src];
-  const { t } = useTranslation();
   return (
     <section id="hero">
-      <ImagesSlider className="h-[95vh]" images={images}>
+      <ImagesSlider className="h-screen" images={images}>
         <motion.div
           initial={{
             opacity: 0,
@@ -31,14 +44,17 @@ export default function Hero() {
           <div className="mt-5 max-w-2xl">
             <BlurInTitle
               duration={0.2}
-              word={t(`home.title`)}
+              word={translation(heroObj.title)}
               className="text-4xl font-bold "
             />
           </div>
           {/* End Title */}
 
           <div className="mt-5 max-w-3xl">
-            <BlurInParagraph duration={0.4} word={t(`home.description`)} />
+            <BlurInParagraph
+              duration={0.4}
+              word={translation(heroObj.description)}
+            />
           </div>
         </motion.div>
       </ImagesSlider>

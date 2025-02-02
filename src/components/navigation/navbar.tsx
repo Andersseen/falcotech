@@ -3,12 +3,12 @@ import logoWhite from "@/assets/logo-white.svg";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import type { TFunction } from "i18next";
 import { Menu } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { LanguageSelector } from "../LanguageSelector";
 
-export function Navbar() {
+export function Navbar({ children }: { children: React.ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
 
   const scrollToSection = (sectionId: string) => {
@@ -17,7 +17,11 @@ export function Navbar() {
     setIsOpen(false);
   };
 
-  const NavItems = () => (
+  const NavItems = ({
+    translation,
+  }: {
+    translation: TFunction<"translation", undefined>;
+  }) => (
     <>
       {["about", "features", "contact"].map((item, index) => (
         <Button
@@ -25,7 +29,7 @@ export function Navbar() {
           variant="ghost"
           onClick={() => scrollToSection(item)}
         >
-          {t(`nav.${item}`)}
+          {translation(`nav.${item}`)}
         </Button>
       ))}
     </>
@@ -54,15 +58,15 @@ export function Navbar() {
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center gap-6">
-          <NavItems />
-          <LanguageSelector />
+          <NavItems translation={t} />
+          {children}
           <ThemeToggle />
         </div>
 
         {/* Mobile Navigation */}
         <div className="md:hidden flex items-center gap-4">
           <ThemeToggle />
-          <LanguageSelector />
+          {children}
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" aria-label="Open menu">
@@ -71,7 +75,7 @@ export function Navbar() {
             </SheetTrigger>
             <SheetContent>
               <div className="flex flex-col gap-4 mt-8">
-                <NavItems />
+                <NavItems translation={t} />
               </div>
             </SheetContent>
           </Sheet>

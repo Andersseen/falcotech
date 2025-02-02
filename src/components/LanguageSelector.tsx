@@ -1,10 +1,13 @@
 import i18n from "@/i18n/i18n.config";
 import { LANGUAGES } from "@/i18n/utils";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { LanguageFlag, type FlagSVG } from "./flags";
-
+const savedLang = localStorage.getItem("preferred-lang");
 export const LanguageSelector = () => {
-  const [currectLang, setCurrentLang] = useState(LANGUAGES[0]);
+  const [currectLang, setCurrentLang] = useState(
+    LANGUAGES.find((lang) => lang.code === savedLang) || LANGUAGES[0]
+  );
+
   useEffect(() => {
     const savedLang = localStorage.getItem("preferred-lang");
     if (savedLang && LANGUAGES.some((lang) => lang.code === savedLang)) {
@@ -25,7 +28,7 @@ export const LanguageSelector = () => {
     (lang) => lang.code !== currectLang.code
   );
   return (
-    <div className="relative inline-block text-left">
+    <div className="relative inline-block text-left w-[95px]">
       <div className="group text-white rounded-md text-xs font-semibold bg-black/30 hover:bg-black/70 transition-all">
         <button
           type="button"

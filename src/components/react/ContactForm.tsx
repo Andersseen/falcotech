@@ -1,12 +1,16 @@
-import React, { useRef, useState } from "react";
-import { cn } from "@/lib/utils";
-import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { cn } from "@/lib/utils";
 import { actions } from "astro:actions";
-import { useTranslation } from "react-i18next";
+import type { TFunction } from "i18next";
+import React, { useRef, useState } from "react";
 
-export default function ContactForm() {
+export default function ContactForm({
+  translation,
+}: {
+  translation: TFunction<"translation", undefined>;
+}) {
   const formRef = useRef<HTMLFormElement>(null);
 
   // Estado de los inputs
@@ -43,12 +47,12 @@ export default function ContactForm() {
     let newErrors = { username: "", email: "", message: "" };
 
     if (!formData.username.trim()) {
-      newErrors.username = t("contact.form.username.error");
+      newErrors.username = translation("contact.form.username.error");
       valid = false;
     }
 
     if (!formData.email.trim()) {
-      newErrors.email = t("contact.form.email.error");
+      newErrors.email = translation("contact.form.email.error");
       valid = false;
     } else if (!/^\S+@\S+\.\S+$/.test(formData.email)) {
       newErrors.email = "El correo no es válido.";
@@ -56,7 +60,7 @@ export default function ContactForm() {
     }
 
     if (!formData.message.trim()) {
-      newErrors.message = t("contact.form.message.error");
+      newErrors.message = translation("contact.form.message.error");
       valid = false;
     }
 
@@ -88,24 +92,25 @@ export default function ContactForm() {
     }
   };
 
-  const { t } = useTranslation();
   return (
     <section
       id="contact"
       className="w-full h-fit rounded-none md:rounded-2xl p-4 md:p-8 py-12 md:py-24 lg:py-32 shadow-input shadow-lg"
     >
       <h2 className="font-bold text-xl text-neutral-800 dark:text-neutral-200">
-        {t("contact.title")}
+        {translation("contact.title")}
       </h2>
 
       <form className="my-8" ref={formRef} onSubmit={handleSubmit}>
         <LabelInputContainer>
-          <Label htmlFor="username"> {t("contact.form.username.label")}</Label>
+          <Label htmlFor="username">
+            {translation("contact.form.username.label")}
+          </Label>
 
           <Input
             id="username"
             name="username"
-            placeholder={t("contact.form.username.placeholder")}
+            placeholder={translation("contact.form.username.placeholder")}
             type="text"
             value={formData.username}
             onChange={handleChange}
@@ -116,11 +121,13 @@ export default function ContactForm() {
         </LabelInputContainer>
 
         <LabelInputContainer className="mb-4">
-          <Label htmlFor="email">{t("contact.form.email.label")}</Label>
+          <Label htmlFor="email">
+            {translation("contact.form.email.label")}
+          </Label>
           <Input
             id="email"
             name="email"
-            placeholder={t("contact.form.email.placeholder")}
+            placeholder={translation("contact.form.email.placeholder")}
             type="email"
             value={formData.email}
             onChange={handleChange}
@@ -131,11 +138,13 @@ export default function ContactForm() {
         </LabelInputContainer>
 
         <LabelInputContainer className="mb-4">
-          <Label htmlFor="message">{t("contact.form.message.label")}</Label>
+          <Label htmlFor="message">
+            {translation("contact.form.message.label")}
+          </Label>
           <Textarea
             id="message"
             name="message"
-            placeholder={t("contact.form.message.placeholder")}
+            placeholder={translation("contact.form.message.placeholder")}
             value={formData.message}
             onChange={handleChange}
           />
@@ -151,13 +160,13 @@ export default function ContactForm() {
           type="submit"
           disabled={isSubmitting}
         >
-          {isSubmitting ? "..." : t("contact.form.submit")}
+          {isSubmitting ? "..." : translation("contact.form.submit")}
           <BottomGradient />
         </button>
 
         {isSuccess && (
           <div className="mt-4 p-2 bg-green-500 text-neutral rounded">
-            {t("contact.form.success")}
+            {translation("contact.form.success")}
           </div>
         )}
       </form>
