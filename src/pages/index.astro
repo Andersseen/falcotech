@@ -3,11 +3,18 @@
 import App from '@/components/App';
 import '@/styles/globals.css';
 import Layout from '../layouts/Layout.astro';
+import { Navbar } from '@/components/navigation/navbar';
+import { LanguageSelector } from '@/components/LanguageSelector';
+
 const title = "FalcoTech";
 const description = "Implementamos soluciones innovadoras para abordar los desafíos contemporáneos que afectan tanto a la sociedad como a la fauna. Nuestra misión es utilizar tecnología de vanguardia para encontrar respuestas efectivas y sostenibles a los conflictos que surgen en estos ámbitos, combinando experiencia, compromiso y un profundo respeto por el entorno natural.";
+
 ---
 
 <Layout   title={title}
 description={description}>
+<Navbar client:load>
+  <LanguageSelector client:only/>
+</Navbar >
   <App client:only />
 </Layout>

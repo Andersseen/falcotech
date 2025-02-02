@@ -57,13 +57,16 @@ const FLAGS = {
     <svg
       className="w-4 h-auto"
       xmlns="http://www.w3.org/2000/svg"
-      width="1000"
-      height="700"
-      viewBox="0 0 1000 700"
+      width="750"
+      height="500"
+      viewBox="0 0 750 500"
     >
-      <path fill="#d0103a" d="M0 0h1000v700H0z" />
-      <path fill="#fedf00" d="M0 0h680v700H0z" />
-      <path fill="#0018a8" d="M0 0h320v700H0z" />
+      <rect width="810" height="540" fill="#FCDD09" />
+      <path
+        stroke="#DA121A"
+        strokeWidth="60"
+        d="M0,90H810m0,120H0m0,120H810m0,120H0"
+      />
     </svg>
   ),
 };

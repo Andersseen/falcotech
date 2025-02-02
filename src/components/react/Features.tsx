@@ -1,3 +1,6 @@
+import image1 from "@/assets/1.png";
+import image2 from "@/assets/2.png";
+import image3 from "@/assets/3.png";
 import {
   Card as BaseCard,
   CardContent,
@@ -5,14 +8,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import image1 from "@/assets/1.png";
-import image2 from "@/assets/2.png";
-import image3 from "@/assets/3.png";
+import type { TFunction } from "i18next";
 import { motion } from "motion/react";
 import { useInView } from "react-intersection-observer";
-import { useTranslation } from "react-i18next";
 
-const MotionCard = motion(BaseCard);
+const MotionCard = motion.create(BaseCard);
 
 interface FeatureProps {
   title: string;
@@ -53,16 +53,20 @@ const cardVariants = {
   }),
 };
 
-export default function Features() {
+export default function Features({
+  translation,
+}: {
+  translation: TFunction<"translation", undefined>;
+}) {
   const [ref, inView] = useInView({
     triggerOnce: true, // La animación solo se dispara una vez
     threshold: 0.1, // Ajusta este valor según sea necesario
   });
-  const { t } = useTranslation();
+
   return (
     <section id="about" className="container py-24 sm:py-32 space-y-8">
       <h4 className="text-xl lg:text-2xl font-bold md:text-center">
-        {t(`features.title1`)}
+        {translation(`features.title1`)}
       </h4>
 
       <div ref={ref} className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -75,10 +79,10 @@ export default function Features() {
             variants={cardVariants}
           >
             <CardHeader>
-              <CardTitle>{t(title)}</CardTitle>
+              <CardTitle>{translation(title)}</CardTitle>
             </CardHeader>
 
-            <CardContent>{t(description)}</CardContent>
+            <CardContent>{translation(description)}</CardContent>
 
             <CardFooter>
               <img
@@ -91,10 +95,10 @@ export default function Features() {
         ))}
       </div>
       <h5 className="text-lg lg:text-xl font-bold md:text-center">
-        {t(`features.title2`)}
+        {translation(`features.title2`)}
       </h5>
       <h6 className="text-lg lg:text-xl font-bold md:text-center">
-        {t(`features.title3`)}
+        {translation(`features.title3`)}
       </h6>
     </section>
   );

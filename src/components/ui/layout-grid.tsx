@@ -40,7 +40,7 @@ export const LayoutGrid = ({ cards }: { cards: Card[] }) => {
   };
 
   return (
-    <div className="w-full h-full flex items-center justify-between relative px-8">
+    <div className="w-full h-full flex items-center justify-between relative md:px-8">
       <motion.button
         onClick={handlePrev}
         whileHover={{ scale: 1.1 }}
@@ -51,7 +51,7 @@ export const LayoutGrid = ({ cards }: { cards: Card[] }) => {
         </div>
       </motion.button>
 
-      <div className="w-full h-full p-10 grid grid-cols-1 md:grid-cols-3 mx-auto gap-4">
+      <div className="w-full h-full md:p-5 lg:p-10 grid grid-cols-1 md:grid-cols-3 mx-auto gap-4">
         {cards
           .slice(startIndex, startIndex + itemsPerRow * rows)
           .map((card, i) => (

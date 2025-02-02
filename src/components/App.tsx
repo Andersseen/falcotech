@@ -1,6 +1,6 @@
+import { useTranslation } from "react-i18next";
 import "../i18n/i18n.config";
 import Footer from "./Footer";
-import { Navbar } from "./navigation/navbar";
 import PortfolioGrid from "./PortfolioGrid";
 import { SmoothScroll } from "./providers/smooth-scroll";
 import About from "./react/About";
@@ -10,16 +10,16 @@ import Hero from "./react/Hero";
 import { ScrollToTop } from "./react/ScrollToTop";
 
 export default function App() {
+  const { t } = useTranslation();
   return (
     <>
-      <Navbar />
       <SmoothScroll>
         <main className="bg-background overflow-y-hidden">
-          <Hero />
-          <Features />
+          <Hero translation={t} />
+          <Features translation={t} />
           <About />
           <PortfolioGrid />
-          <ContactForm />
+          <ContactForm translation={t} />
         </main>
       </SmoothScroll>
       <Footer />
