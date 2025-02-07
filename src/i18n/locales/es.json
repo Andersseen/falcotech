@@ -46,6 +46,30 @@
     "section3": {
       "title": "Drones",
       "description": "Nuestra empresa integra tecnología UAV (Unmanned Aerial Vehicle) para optimizar nuestros servicios, proporcionando soluciones avanzadas y precisas. Ofrecemos una gama de servicios con drones, incluyendo grabaciones de alta calidad y detalladas inspecciones de infraestructuras y terrenos. Además, desarrollamos drones especializados, personalizados para realizar trabajos específicos según las necesidades del proyecto."
+    },
+    "accordion": {
+      "items": {
+        "item1": {
+          "trigger": "Aeropuertos:",
+          "content": "Gestionamos la fauna para minimizar los riesgos de colisiones con aeronaves, garantizando la seguridad en las operaciones aeroportuarias."
+        },
+        "item2": {
+          "trigger": "Zonas Urbanas:",
+          "content": "Desarrollamos soluciones que facilitan la convivencia entre la fauna y la población en áreas urbanas, manteniendo el bienestar de ambos."
+        },
+        "item3": {
+          "trigger": "Cultivo:",
+          "content": "Implementamos estrategias de control de fauna que preservan la integridad y productividad de las áreas agrícolas, evitando daños a los cultivos."
+        },
+        "item4": {
+          "trigger": "Vertederos:",
+          "content": "Controlamos la fauna en vertederos para evitar problemas de salud pública y daños ambientales, asegurando una gestión eficiente de los residuos."
+        },
+        "item5": {
+          "trigger": "Acuicultura:",
+          "content": "Protegemos las instalaciones acuícolas de depredadores y otras amenazas, asegurando un entorno seguro y productivo."
+        }
+      }
     }
   },
   "contact": {
@@ -69,5 +93,12 @@
       "submit": "Enviar →",
       "success": "¡Mensaje enviado con éxito!"
     }
+  },
+  "portfolio": {
+    "title": "No disponible en estos momentos",
+    "description": "Estamos en proceso de desarrollo"
+  },
+  "footer": {
+    "copyright": "Todos los derechos reservados."
   }
 }

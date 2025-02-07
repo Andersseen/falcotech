@@ -17,12 +17,12 @@ export default function App() {
         <main className="bg-background overflow-y-hidden">
           <Hero translation={t} />
           <Features translation={t} />
-          <About />
+          <About translation={t} />
           <PortfolioGrid />
           <ContactForm translation={t} />
         </main>
       </SmoothScroll>
-      <Footer />
+      <Footer translation={t} />
       <ScrollToTop />
     </>
   );
