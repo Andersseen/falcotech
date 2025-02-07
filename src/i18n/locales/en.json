@@ -45,6 +45,30 @@
     "section3": {
       "title": "Drones",
       "description": "Our company integrates UAV (Unmanned Aerial Vehicle) technology to optimize our services, providing advanced and precise solutions. We offer a range of drone services, including high-quality recordings and detailed inspections of infrastructures and lands. Additionally, we develop specialized drones tailored to specific tasks based on project needs."
+    },
+    "accordion": {
+      "items": {
+        "item1": {
+          "trigger": "Airports:",
+          "content": "We manage wildlife to minimize the risks of collisions with aircraft, ensuring safety in airport operations."
+        },
+        "item2": {
+          "trigger": "Urban Areas:",
+          "content": "We develop solutions that facilitate coexistence between wildlife and urban populations, maintaining the well-being of both."
+        },
+        "item3": {
+          "trigger": "Agriculture:",
+          "content": "We implement wildlife control strategies that preserve the integrity and productivity of agricultural areas, preventing damage to crops."
+        },
+        "item4": {
+          "trigger": "Landfills:",
+          "content": "We manage wildlife in landfills to prevent public health issues and environmental damage, ensuring efficient waste management."
+        },
+        "item5": {
+          "trigger": "Aquaculture:",
+          "content": "We protect aquaculture facilities from predators and other threats, ensuring a safe and productive environment."
+        }
+      }
     }
   },
   "contact": {
@@ -68,5 +92,12 @@
       "submit": "Send →",
       "success": "Message sent successfully!"
     }
+  },
+  "portfolio": {
+    "title": "Not available at this time",
+    "description": "We are in the process of development"
+  },
+  "footer": {
+    "copyright": "All rights reserved."
   }
 }

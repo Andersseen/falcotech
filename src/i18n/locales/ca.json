@@ -45,6 +45,30 @@
     "section3": {
       "title": "Drons",
       "description": "La nostra empresa integra tecnologia UAV (Unmanned Aerial Vehicle) per optimitzar els nostres serveis, proporcionant solucions avançades i precises. Oferim una gamma de serveis amb drons, incloent gravacions d'alta qualitat i detallades inspeccions d'infraestructures i terrenys. A més, desenvolupem drons especialitzats, personalitzats per realitzar treballs específics segons les necessitats del projecte."
+    },
+    "accordion": {
+      "items": {
+        "item1": {
+          "trigger": "Aeroports:",
+          "content": "Gestionem la fauna per minimitzar els riscos de col·lisions amb aeronaus, garantint la seguretat en les operacions aeroportuàries."
+        },
+        "item2": {
+          "trigger": "Zones Urbanes:",
+          "content": "Desenvolupem solucions que faciliten la convivència entre la fauna i la població en zones urbanes, mantenint el benestar d'ambdós."
+        },
+        "item3": {
+          "trigger": "Cultiu:",
+          "content": "Implementem estratègies de control de la fauna que preserven la integritat i la productivitat de les àrees agrícoles, evitant danys als cultius."
+        },
+        "item4": {
+          "trigger": "Abocadors:",
+          "content": "Control·lem la fauna en els abocadors per evitar problemes de salut pública i danys ambientals, assegurant una gestió eficient dels residus."
+        },
+        "item5": {
+          "trigger": "Acuicultura:",
+          "content": "Protegim les instal·lacions acuícoles de depredadors i altres amenaces, assegurant un entorn segur i productiu."
+        }
+      }
     }
   },
   "contact": {
@@ -68,5 +92,12 @@
       "submit": "Enviar →",
       "success": "Missatge enviat amb èxit!"
     }
+  },
+  "portfolio": {
+    "title": "No disponible en aquests moments",
+    "description": "Estem en procés de desenvolupament"
+  },
+  "footer": {
+    "copyright": "Tots els drets reservats."
   }
 }
