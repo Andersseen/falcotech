@@ -1,8 +1,7 @@
-import { DOCUMENT } from '@angular/common';
-import { afterNextRender, ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { injectI18n } from '@etyma/angular';
 import {
-  applyVoltTheme, VoltButton, VoltDialogRoot, VoltDrawerClose, VoltDrawerContent, VoltDrawerDescription,
+  VoltButton, VoltDialogRoot, VoltDrawerClose, VoltDrawerContent, VoltDrawerDescription,
   VoltDrawerOverlay, VoltDrawerTitle, VoltNativeButton, VoltSelect, VoltSelectContent, VoltSelectItem, VoltToggle,
 } from '@voltui/components';
 import { LmnBars3Icon } from 'lumen-icons/bars-3';
@@ -15,6 +14,7 @@ import flagEs from '../../assets/flag-es.svg';
 import logoLight from '../../assets/logo-black.svg';
 import logoDark from '../../assets/logo-white.svg';
 import { i18n } from '../../i18n/i18n';
+import { ThemePreference } from '../theme/theme-preference';
 
 const languages = {
   es: { code: 'es', name: 'Español', flag: flagEs },
@@ -30,6 +30,8 @@ const languages = {
     VoltSelect, VoltSelectContent, VoltSelectItem, VoltToggle,
   ],
   template: `
+    <a voltButton [href]="homePath() + '#main'"
+      class="sr-only focus-visible:not-sr-only focus-visible:fixed focus-visible:top-2 focus-visible:left-2 focus-visible:z-60">{{ t('ui.skipToContent') }}</a>
     <header class="fixed inset-x-0 top-0 z-50 border-b border-border bg-background/80 backdrop-blur-sm">
       <nav class="container flex h-16 items-center justify-between px-4" [attr.aria-label]="t('ui.navigation')">
         <a [href]="homePath() + '#hero'" class="shrink-0 rounded-sm">
@@ -43,8 +45,8 @@ const languages = {
             }
           </div>
           <volt-toggle variant="ghost" size="icon" class="md:order-1"
-            [aria-label]="t('ui.theme')" [pressed]="dark()" (pressedChange)="changeTheme($event)">
-            @if (dark()) { <lmn-moon size="20" /> } @else { <lmn-sun size="20" /> }
+            [aria-label]="t('ui.theme')" [pressed]="theme.dark()" (pressedChange)="theme.set($event)">
+            @if (theme.dark()) { <lmn-moon size="20" /> } @else { <lmn-sun size="20" /> }
           </volt-toggle>
           <div class="relative w-[7.25rem] shrink-0 sm:w-36">
             <volt-select [aria-label]="t('ui.language')" [value]="locale()" [displayWith]="languageName"
@@ -92,7 +94,7 @@ const languages = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SiteHeader {
-  private readonly document = inject(DOCUMENT);
+  protected readonly theme = inject(ThemePreference);
   private readonly i18n = injectI18n(i18n);
   protected readonly t = this.i18n.t;
   protected readonly locale = this.i18n.locale;
@@ -101,7 +103,6 @@ export class SiteHeader {
   protected readonly currentLanguage = computed(() =>
     this.languageOptions.find(language => language.code === this.locale()) ?? languages.es,
   );
-  protected readonly dark = signal(false);
   protected readonly menuOpen = signal(false);
   protected readonly languageName = (value: unknown): string =>
     this.languageOptions.find(language => language.code === value)?.name ?? '';
@@ -113,23 +114,9 @@ export class SiteHeader {
     { id: 'contact', label: 'nav.contact' },
   ] as const;
 
-  constructor() {
-    afterNextRender(() => {
-      const dark = this.document.defaultView?.localStorage.getItem('theme') === 'dark';
-      this.dark.set(dark);
-      applyVoltTheme({ dark }, this.document);
-    });
-  }
-
   protected async changeLocale(value: unknown): Promise<void> {
     if (value === 'es' || value === 'en' || value === 'ca') {
       await this.i18n.setLocale(value);
     }
-  }
-
-  protected changeTheme(dark: boolean): void {
-    this.dark.set(dark);
-    applyVoltTheme({ dark }, this.document);
-    this.document.defaultView?.localStorage.setItem('theme', dark ? 'dark' : 'light');
   }
 }

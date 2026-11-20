@@ -106,8 +106,19 @@
     }
   },
   "portfolio": {
-    "title": "No disponible en estos momentos",
-    "description": "Estamos en proceso de desarrollo"
+    "photos": {
+      "p1": "Halcón encapuchado en un aeropuerto mientras despega un avión",
+      "p2": "Ave rapaz en vuelo sobre un cielo despejado",
+      "p3": "Motor y ala de un avión de pasajeros",
+      "p4": "Aerogeneradores en un paisaje agrícola",
+      "p5": "Cetrero observando a un halcón en vuelo",
+      "p6": "Aguilucho en vuelo con una antena de radar al fondo",
+      "p7": "Ánade real en vuelo",
+      "p8": "Cetrero con un halcón posado en el guante",
+      "p10": "Grupo de moritos levantando el vuelo",
+      "p11": "Vencejo en vuelo",
+      "p12": "Avión en aproximación con una bandada de aves cerca"
+    }
   },
   "footer": {
     "copyright": "Todos los derechos reservados."
@@ -115,7 +126,7 @@
   "ui": {
     "navigation": "Navegación principal",
     "language": "Idioma",
-    "theme": "Cambiar tema",
+    "theme": "Modo oscuro",
     "previous": "Anterior",
     "next": "Siguiente",
     "pause": "Pausar carrusel",
@@ -124,7 +135,12 @@
     "openPhoto": "Abrir foto",
     "close": "Cerrar",
     "top": "Volver arriba",
-    "notFound": "Página no encontrada"
+    "notFound": "Página no encontrada",
+    "skipToContent": "Saltar al contenido",
+    "carousel": "Fotografías de FalcoTech",
+    "slideStatus": "Imagen {$current} de {$total}",
+    "galleryPage": "Fotos {$from} a {$to} de {$total}",
+    "newTab": "se abre en una pestaña nueva"
   },
   "meta": {
     "title": "FalcoTech · Control de fauna, consultoría ambiental y drones",

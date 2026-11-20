@@ -106,8 +106,19 @@
     }
   },
   "portfolio": {
-    "title": "No disponible en aquests moments",
-    "description": "Estem en procés de desenvolupament"
+    "photos": {
+      "p1": "Falcó encaputxat en un aeroport mentre s’enlaira un avió",
+      "p2": "Au rapinyaire en vol sobre un cel clar",
+      "p3": "Motor i ala d’un avió de passatgers",
+      "p4": "Aerogeneradors en un paisatge agrícola",
+      "p5": "Falconer observant un falcó en vol",
+      "p6": "Arpella en vol amb una antena de radar al fons",
+      "p7": "Ànec collverd en vol",
+      "p8": "Falconer amb un falcó posat al guant",
+      "p10": "Grup de capons reials alçant el vol",
+      "p11": "Falciot en vol",
+      "p12": "Avió en aproximació amb un estol d’ocells a prop"
+    }
   },
   "footer": {
     "copyright": "Tots els drets reservats."
@@ -115,7 +126,7 @@
   "ui": {
     "navigation": "Navegació principal",
     "language": "Idioma",
-    "theme": "Canvia el tema",
+    "theme": "Mode fosc",
     "previous": "Anterior",
     "next": "Següent",
     "pause": "Posa en pausa el carrusel",
@@ -124,7 +135,12 @@
     "openPhoto": "Obre la foto",
     "close": "Tanca",
     "top": "Torna a dalt",
-    "notFound": "Pàgina no trobada"
+    "notFound": "Pàgina no trobada",
+    "skipToContent": "Salta al contingut",
+    "carousel": "Fotografies de FalcoTech",
+    "slideStatus": "Imatge {$current} de {$total}",
+    "galleryPage": "Fotos {$from} a {$to} de {$total}",
+    "newTab": "s’obre en una pestanya nova"
   },
   "meta": {
     "title": "FalcoTech · Control de fauna, consultoria ambiental i drons",

@@ -18,13 +18,19 @@ import { i18n } from '../../i18n/i18n';
   imports: [LmnChevronLeftIcon, LmnChevronRightIcon, LmnPauseIcon, LmnPlayIcon, MoveEnterDirective, VoltButton],
   template: `
     <section id="hero" class="group relative flex h-svh items-end justify-end overflow-hidden bg-neutral-900 text-white"
-      (keydown.arrowleft)="step(-1)" (keydown.arrowright)="step(1)">
+      aria-roledescription="carousel" [attr.aria-label]="t('ui.carousel')"
+      (keydown.arrowleft)="step(-1)" (keydown.arrowright)="step(1)"
+      (pointerenter)="suspended.set(true)" (pointerleave)="suspended.set(false)"
+      (focusin)="suspended.set(true)" (focusout)="suspended.set(false)">
       @for (image of images; track image) {
         @if (image === images[slide()]) {
           <img [src]="image" alt="" class="absolute inset-0 size-full object-cover">
         }
       }
       <div class="absolute inset-0 bg-black/60"></div>
+      <p class="sr-only" [attr.aria-live]="playing() ? 'off' : 'polite'">
+        {{ t('ui.slideStatus', { current: slide() + 1, total: images.length }) }}
+      </p>
       <div moveEnter="fade-up" class="relative flex max-w-[min(100%,54rem)] flex-col items-end gap-5 p-2 md:p-12">
         <h1 class="text-2xl leading-8 font-bold tracking-[-0.02em] drop-shadow-sm md:text-5xl md:leading-12">{{ t('home.title') }}</h1>
         <p class="max-w-3xl text-left text-base tracking-[-0.02em] drop-shadow-sm md:text-xl">{{ t('home.description') }}</p>
@@ -50,6 +56,8 @@ export class Hero {
   protected readonly images = [image1, image2, image3, image4, image5];
   protected readonly slide = signal(0);
   protected readonly playing = signal(false);
+  /** Autoplay waits while the pointer or keyboard focus is on the carousel. */
+  protected readonly suspended = signal(false);
   private timer: ReturnType<typeof setInterval> | undefined;
 
   constructor() {
@@ -67,7 +75,9 @@ export class Hero {
     if (this.playing()) {
       clearInterval(this.timer);
     } else {
-      this.timer = setInterval(() => this.step(1), 10_000);
+      this.timer = setInterval(() => {
+        if (!this.suspended()) this.step(1);
+      }, 10_000);
     }
     this.playing.update(playing => !playing);
   }

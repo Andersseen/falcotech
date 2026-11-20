@@ -1,5 +1,5 @@
 <app-site-header />
-<main class="relative z-10 overflow-clip bg-background">
+<main id="main" tabindex="-1" class="relative z-10 overflow-clip bg-background outline-none">
   <app-hero />
   <section id="about" class="container py-20 sm:py-28" aria-labelledby="service-overview-title">
     <header moveInView="fade-up" moveDuration="360" class="mx-auto mb-10 max-w-4xl text-center md:mb-12">
@@ -107,11 +107,11 @@
     <a voltButton variant="ghost" [href]="homePath() + '#hero'" class="text-2xl font-bold">FalcoTech</a>
     <div class="flex gap-6">
       <a voltButton variant="ghost" size="icon" href="https://www.instagram.com/falcotechsl" target="_blank"
-        rel="noopener noreferrer" aria-label="Instagram" class="text-muted-foreground hover:text-primary">
+        rel="noopener noreferrer" [attr.aria-label]="'Instagram (' + t('ui.newTab') + ')'" class="text-muted-foreground hover:text-primary">
         <lmn-camera />
       </a>
-      <a voltButton variant="ghost" size="icon" href="https://wa.me/+34694236492" target="_blank"
-        rel="noopener noreferrer" aria-label="WhatsApp" class="text-muted-foreground hover:text-primary">
+      <a voltButton variant="ghost" size="icon" href="https://wa.me/34694236492" target="_blank"
+        rel="noopener noreferrer" [attr.aria-label]="'WhatsApp (' + t('ui.newTab') + ')'" class="text-muted-foreground hover:text-primary">
         <lmn-phone />
       </a>
     </div>

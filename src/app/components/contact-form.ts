@@ -22,8 +22,9 @@ type Status = 'idle' | 'submitting' | 'success' | 'error' | 'limited' | 'verific
     VoltFormField, VoltInput, VoltLabel, VoltSpinner, VoltTextarea,
   ],
   template: `
-    <section id="contact" class="w-full rounded-none p-4 py-12 shadow-lg md:rounded-2xl md:p-8 md:py-24 lg:py-32">
-      <h2 class="text-xl font-bold">{{ t('contact.title') }}</h2>
+    <section id="contact" class="w-full rounded-none p-4 py-12 shadow-lg md:rounded-2xl md:p-8 md:py-24 lg:py-32"
+      aria-labelledby="contact-title">
+      <h2 id="contact-title" class="text-xl font-bold">{{ t('contact.title') }}</h2>
       <form #formElement method="post" action="/api/contact" class="my-8 grid gap-4" [formGroup]="form"
         [attr.aria-busy]="status() === 'submitting'" (ngSubmit)="submit()">
         <volt-form-field>

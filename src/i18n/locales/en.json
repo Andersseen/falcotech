@@ -106,8 +106,19 @@
     }
   },
   "portfolio": {
-    "title": "Not available at this time",
-    "description": "We are in the process of development"
+    "photos": {
+      "p1": "Hooded falcon at an airport as a plane takes off",
+      "p2": "Bird of prey flying against a clear sky",
+      "p3": "Engine and wing of an airliner",
+      "p4": "Wind turbines over farmland",
+      "p5": "Falconer watching a falcon in flight",
+      "p6": "Harrier in flight with a radar antenna behind it",
+      "p7": "Mallard in flight",
+      "p8": "Falconer with a falcon perched on his glove",
+      "p10": "Glossy ibises taking off",
+      "p11": "Swift in flight",
+      "p12": "Airliner on approach with a flock of birds nearby"
+    }
   },
   "footer": {
     "copyright": "All rights reserved."
@@ -115,7 +126,7 @@
   "ui": {
     "navigation": "Main navigation",
     "language": "Language",
-    "theme": "Toggle theme",
+    "theme": "Dark mode",
     "previous": "Previous",
     "next": "Next",
     "pause": "Pause slideshow",
@@ -124,7 +135,12 @@
     "openPhoto": "Open photo",
     "close": "Close",
     "top": "Back to top",
-    "notFound": "Page not found"
+    "notFound": "Page not found",
+    "skipToContent": "Skip to content",
+    "carousel": "FalcoTech photographs",
+    "slideStatus": "Image {$current} of {$total}",
+    "galleryPage": "Photos {$from} to {$to} of {$total}",
+    "newTab": "opens in a new tab"
   },
   "meta": {
     "title": "FalcoTech · Wildlife control, environmental consulting and drones",
