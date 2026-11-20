@@ -36,7 +36,7 @@ const languages = {
           <img [src]="logoLight" alt="FalcoTech" width="80" class="block dark:hidden">
           <img [src]="logoDark" alt="FalcoTech" width="80" class="hidden dark:block">
         </a>
-        <div class="flex items-center gap-4 md:gap-6">
+        <div class="flex items-center gap-2 sm:gap-4 md:gap-6">
           <div class="hidden items-center gap-6 md:flex">
             @for (item of sections; track item.id) {
               <a voltButton variant="ghost" [href]="homePath() + '#' + item.id" class="h-10 px-4">{{ t(item.label) }}</a>
@@ -46,21 +46,24 @@ const languages = {
             [aria-label]="t('ui.theme')" [pressed]="dark()" (pressedChange)="changeTheme($event)">
             @if (dark()) { <lmn-moon size="20" /> } @else { <lmn-sun size="20" /> }
           </volt-toggle>
-          <div class="relative w-28 shrink-0 sm:w-32">
+          <div class="relative w-[7.25rem] shrink-0 sm:w-36">
             <volt-select [aria-label]="t('ui.language')" [value]="locale()" [displayWith]="languageName"
               (valueChange)="changeLocale($event)"
-              class="h-8 rounded-md border-0 bg-foreground/45 pr-2 pl-8 text-xs text-background">
-              <volt-select-content>
+              class="h-9 rounded-md border border-border bg-background/90 pr-2 pl-9 text-xs font-medium text-foreground">
+              <volt-select-content class="rounded-lg bg-surface text-foreground">
                 @for (language of languageOptions; track language.code) {
-                  <volt-select-item [value]="language.code" [attr.lang]="language.code">
-                    <img [src]="language.flag" alt="" width="16">
-                    {{ language.name }}
+                  <volt-select-item [value]="language.code" [attr.lang]="language.code"
+                    class="min-h-9 pr-1.5 pl-7 text-xs focus:text-foreground">
+                    <span class="inline-flex items-center gap-1.5 sm:gap-2">
+                      <img [src]="language.flag" alt="" width="16" height="12" class="block h-3 w-4 shrink-0 object-contain">
+                      <span>{{ language.name }}</span>
+                    </span>
                   </volt-select-item>
                 }
               </volt-select-content>
             </volt-select>
-            <img [src]="currentLanguage().flag" alt="" width="16"
-              class="pointer-events-none absolute start-3 top-1/2 -translate-y-1/2">
+            <img [src]="currentLanguage().flag" alt="" width="16" height="12"
+              class="pointer-events-none absolute start-3 top-1/2 h-3 w-4 -translate-y-1/2 object-contain">
           </div>
           <div class="md:hidden">
             <volt-button variant="ghost" size="icon" [aria-label]="t('ui.navigation')"

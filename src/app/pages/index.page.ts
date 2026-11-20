@@ -1,6 +1,7 @@
 import { DOCUMENT, NgComponentOutlet } from '@angular/common';
 import { afterNextRender, ChangeDetectionStrategy, Component, computed, DestroyRef, ElementRef, inject, signal, viewChild, viewChildren } from '@angular/core';
 import { injectI18n } from '@etyma/angular';
+import { MoveInViewDirective, moveSpringValue } from 'angular-movement';
 import {
   VoltAccordion, VoltAccordionContent, VoltAccordionItem, VoltAccordionTrigger,
   VoltButton, VoltCard, VoltCardContent, VoltCardTitle, VoltNativeButton, VoltSeparator,
@@ -29,7 +30,7 @@ import dronesPhoto from '../../assets/4.webp';
     VoltAccordion, VoltAccordionContent, VoltAccordionItem, VoltAccordionTrigger,
     VoltButton, VoltCard, VoltCardContent, VoltCardTitle, VoltNativeButton, VoltSeparator,
     ContactForm, Hero, LmnArrowDownRightIcon, LmnArrowUpIcon, LmnCameraIcon,
-    LmnPhoneIcon, NgComponentOutlet, Portfolio, SiteHeader,
+    LmnPhoneIcon, MoveInViewDirective, NgComponentOutlet, Portfolio, SiteHeader,
   ],
   templateUrl: './index.page.html',
   styleUrl: './index.page.css',
@@ -79,7 +80,21 @@ export default class HomePage {
   }));
 
   private readonly photoStage = viewChild<ElementRef<HTMLElement>>('photoStage');
-  private readonly chapters = viewChildren<ElementRef<HTMLElement>>('chapter');
+  private readonly chapters = viewChildren<ElementRef<HTMLElement>>('chapterCopy');
+  private readonly initialPhotoStep = signal(0);
+  private readonly targetPhotoStep = signal(0);
+  private readonly animatedPhotoOffset = moveSpringValue(
+    computed(() => this.targetPhotoStep() - this.initialPhotoStep()),
+    { stiffness: 360, damping: 38, precision: 0.0005 },
+  );
+  protected readonly photoMotionReady = signal(false);
+  protected readonly photoStep = computed(() =>
+    Math.min(this.services.length - 1, Math.max(0, this.initialPhotoStep() + this.animatedPhotoOffset())),
+  );
+  protected readonly photoSide = computed(() => 1 - Math.abs(this.photoStep() % 2 - 1));
+  protected readonly photoCrossing = computed(() =>
+    Math.min(1, 1.5 * Math.sin(Math.PI * (this.photoStep() % 1))),
+  );
   private scrollChanged?: () => void;
 
   constructor() {
@@ -97,20 +112,18 @@ export default class HomePage {
         frame = undefined;
         if (!motion.matches || !photosReady) return;
 
-        // The next chapter moves the frame and fades in its photo as it enters the viewport.
+        // Time the swap from the incoming text so it does not start while both chapters are far apart.
         const viewport = window.innerHeight;
         let step = 0;
         for (const chapter of this.chapters().slice(1)) {
           const top = chapter.nativeElement.getBoundingClientRect().top;
-          const progress = Math.min(1, Math.max(0, (viewport * 0.84 - top) / (viewport * 0.42)));
+          const progress = Math.min(1, Math.max(0, (viewport * 0.92 - top) / (viewport * 0.54)));
           step += progress * progress * (3 - 2 * progress);
         }
 
-        const side = 1 - Math.abs(step - 1);
-        stage.style.setProperty('--photo-step', String(step));
-        stage.style.setProperty('--photo-side', String(side));
-        stage.style.setProperty('--photo-swap', String(Math.sin(Math.PI * (step % 1))));
-        stage.setAttribute('data-ready', '');
+        if (!this.photoMotionReady()) this.initialPhotoStep.set(step);
+        this.targetPhotoStep.set(step);
+        this.photoMotionReady.set(true);
       };
       const schedule = () => {
         if (motion.matches && photosReady && frame === undefined) frame = window.requestAnimationFrame(render);

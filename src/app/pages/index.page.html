@@ -2,7 +2,7 @@
 <main class="relative z-10 overflow-clip bg-background">
   <app-hero />
   <section id="about" class="container py-20 sm:py-28" aria-labelledby="service-overview-title">
-    <header class="mx-auto mb-10 max-w-4xl text-center md:mb-12">
+    <header moveInView="fade-up" moveDuration="360" class="mx-auto mb-10 max-w-4xl text-center md:mb-12">
       <h2 id="service-overview-title" class="text-3xl font-bold tracking-tight sm:text-5xl">{{ t('features.heading') }}</h2>
       <p class="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">{{ t('features.title1') }}</p>
     </header>
@@ -47,11 +47,13 @@
   </section>
   <section id="features" class="border-t border-border" aria-labelledby="specialties-title">
     <div class="container py-16 sm:py-24">
-      <header class="mx-auto max-w-6xl">
+      <header moveInView="fade-up" moveDuration="360" class="mx-auto max-w-6xl">
         <h2 id="specialties-title" class="text-3xl font-bold tracking-tight sm:text-5xl">{{ t('nav.features') }}</h2>
       </header>
-      <div class="specialty-story mx-auto mt-10 max-w-6xl lg:mt-14">
-        <div #photoStage class="specialty-stage" aria-hidden="true">
+      <div class="specialty-story mx-auto mt-10 max-w-6xl lg:mt-14" [style.--photo-crossing]="photoCrossing()">
+        <div #photoStage class="specialty-stage" aria-hidden="true"
+          [attr.data-ready]="photoMotionReady() ? '' : null"
+          [style.--photo-step]="photoStep()" [style.--photo-side]="photoSide()">
           <div class="specialty-frame">
             @for (service of services; track service.key) {
               <img [src]="service.photo" alt="" [style.--photo-index]="$index" decoding="async"
@@ -61,7 +63,7 @@
         </div>
         <div class="specialty-chapters">
           @for (service of services; track service.key) {
-            <article #chapter class="specialty-row" [class.specialty-row-reverse]="$odd" [id]="service.fragment" tabindex="-1"
+            <article class="specialty-row" [class.specialty-row-reverse]="$odd" [id]="service.fragment" tabindex="-1"
               [attr.aria-labelledby]="'specialty-title-' + service.fragment">
               <div class="specialty-photo">
                 <div class="overflow-hidden rounded-3xl bg-muted">
@@ -69,7 +71,7 @@
                     loading="lazy" decoding="async" class="aspect-[4/3] w-full object-cover">
                 </div>
               </div>
-              <div class="specialty-copy">
+              <div #chapterCopy class="specialty-copy">
                 <h3 [id]="'specialty-title-' + service.fragment" class="text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
                   {{ t(service.detailTitle) }}
                 </h3>
