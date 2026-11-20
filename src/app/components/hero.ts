@@ -24,7 +24,9 @@ import { i18n } from '../../i18n/i18n';
       (focusin)="suspended.set(true)" (focusout)="suspended.set(false)">
       @for (image of images; track image) {
         @if (image === images[slide()]) {
-          <img [src]="image" alt="" class="absolute inset-0 size-full object-cover">
+          <!-- The first slide is the largest contentful paint; the rest load when they are shown. -->
+          <img [src]="image" alt="" class="absolute inset-0 size-full object-cover"
+            [attr.fetchpriority]="$first ? 'high' : null" [attr.decoding]="$first ? null : 'async'">
         }
       }
       <div class="absolute inset-0 bg-black/60"></div>

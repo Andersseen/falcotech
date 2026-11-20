@@ -19,9 +19,9 @@ import { Portfolio } from '../components/portfolio';
 import { SiteHeader } from '../components/site-header';
 import { i18n } from '../../i18n/i18n';
 import { injectPageMeta } from '../seo/page-seo';
-import wildlifeIcon from '../../assets/3.png';
-import consultingIcon from '../../assets/2.png';
-import dronesIcon from '../../assets/1.png';
+import wildlifeIcon from '../../assets/3.webp';
+import consultingIcon from '../../assets/2.webp';
+import dronesIcon from '../../assets/1.webp';
 import wildlifePhoto from '../../assets/p-3.webp';
 import consultingPhoto from '../../assets/p-4.webp';
 import dronesPhoto from '../../assets/4.webp';
@@ -35,7 +35,6 @@ import dronesPhoto from '../../assets/4.webp';
   ],
   templateUrl: './index.page.html',
   styleUrl: './index.page.css',
-  host: { '(window:scroll)': 'updateScroll()' },
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class HomePage {
@@ -48,7 +47,7 @@ export default class HomePage {
   protected readonly services = ([
     {
       key: 'card1', section: 'section1', fragment: 'fauna', icon: LmnEyeIcon,
-      illustration: wildlifeIcon, photo: wildlifePhoto, photoWidth: 3372, photoHeight: 2251,
+      illustration: wildlifeIcon, photo: wildlifePhoto, photoWidth: 1920, photoHeight: 1282,
       paragraphs: ['about.section1.description.p1', 'about.section1.description.p2', 'about.section1.description.p3'],
     },
     {
@@ -58,7 +57,7 @@ export default class HomePage {
     },
     {
       key: 'card3', section: 'section3', fragment: 'drones', icon: LmnPaperAirplaneIcon,
-      illustration: dronesIcon, photo: dronesPhoto, photoWidth: 5915, photoHeight: 3949,
+      illustration: dronesIcon, photo: dronesPhoto, photoWidth: 1920, photoHeight: 1282,
       paragraphs: ['about.section3.description'],
     },
   ] as const).map(service => ({
@@ -96,7 +95,6 @@ export default class HomePage {
   protected readonly photoCrossing = computed(() =>
     Math.min(1, 1.5 * Math.sin(Math.PI * (this.photoStep() % 1))),
   );
-  private scrollChanged?: () => void;
 
   constructor() {
     injectPageMeta(() => ({
@@ -138,7 +136,13 @@ export default class HomePage {
       const layout = new ResizeObserver(schedule);
       for (const chapter of this.chapters()) layout.observe(chapter.nativeElement);
 
-      this.scrollChanged = schedule;
+      // Passive and outside the template: a template listener would schedule change detection on every scroll event.
+      const scrolled = () => {
+        this.showBackToTop.set(window.scrollY > 400);
+        schedule();
+      };
+      scrolled();
+      window.addEventListener('scroll', scrolled, { passive: true });
       window.addEventListener('resize', schedule);
       motion.addEventListener('change', schedule);
       void Promise.allSettled(Array.from(stage.querySelectorAll('img'), image => image.decode())).then(results => {
@@ -151,6 +155,7 @@ export default class HomePage {
         if (frame !== undefined) window.cancelAnimationFrame(frame);
         layout.disconnect();
         motion.removeEventListener('change', schedule);
+        window.removeEventListener('scroll', scrolled);
         window.removeEventListener('resize', schedule);
       });
     });
@@ -168,10 +173,5 @@ export default class HomePage {
 
     event.preventDefault();
     triggers[(focused + direction + triggers.length) % triggers.length]?.focus();
-  }
-
-  protected updateScroll(): void {
-    this.showBackToTop.set((this.document.defaultView?.scrollY ?? 0) > 400);
-    this.scrollChanged?.();
   }
 }
