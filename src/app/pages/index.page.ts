@@ -18,6 +18,7 @@ import { Hero } from '../components/hero';
 import { Portfolio } from '../components/portfolio';
 import { SiteHeader } from '../components/site-header';
 import { i18n } from '../../i18n/i18n';
+import { injectPageMeta } from '../seo/page-seo';
 import wildlifeIcon from '../../assets/3.png';
 import consultingIcon from '../../assets/2.png';
 import dronesIcon from '../../assets/1.png';
@@ -98,6 +99,12 @@ export default class HomePage {
   private scrollChanged?: () => void;
 
   constructor() {
+    injectPageMeta(() => ({
+      title: this.t('meta.title'),
+      description: this.t('meta.description'),
+      path: this.homePath(),
+    }));
+
     const destroyRef = inject(DestroyRef);
 
     afterNextRender(() => {

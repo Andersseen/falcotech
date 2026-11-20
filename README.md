@@ -36,6 +36,14 @@ pnpm test
 
 Para generar el artefacto de Vercel en local, ejecuta `BUILD_PRESET=vercel pnpm build`. Nitro lo deja en `.vercel/output`.
 
+## SEO y metadatos
+
+- Etyma gestiona `<html lang>`, la URL canónica y los `hreflang` de cada idioma.
+- `src/app/seo/page-seo.ts` escribe en el servidor el título, la descripción, Open Graph, la Twitter card, `robots` y los datos estructurados `Organization` (JSON-LD). Cada página lo declara con `injectPageMeta()`. La 404 lleva `noindex`.
+- Los textos están en `meta.*` de cada catálogo, y los datos de la empresa en `src/app/seo/site.ts`.
+- `/robots.txt` y `/sitemap.xml` se generan en el servidor con el origen de la petición. Las páginas publicadas se listan en `src/server/site.ts`. En los previews de Vercel, `robots.txt` bloquea la indexación.
+- La imagen para redes sociales es `public/og-image.jpg` (1200×630).
+
 ## Librerías de Andersseen
 
 | Librería | Uso en la web |

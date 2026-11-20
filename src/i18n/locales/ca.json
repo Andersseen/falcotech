@@ -125,5 +125,12 @@
     "close": "Tanca",
     "top": "Torna a dalt",
     "notFound": "Pàgina no trobada"
+  },
+  "meta": {
+    "title": "FalcoTech · Control de fauna, consultoria ambiental i drons",
+    "description": "Control de fauna amb falconeria i drons, consultoria ambiental i serveis UAV. Solucions sostenibles per a aeroports, ciutats, conreus i abocadors.",
+    "ogImageAlt": "Falcó encaputxat en un aeroport mentre s’enlaira un avió",
+    "notFoundTitle": "Pàgina no trobada · FalcoTech",
+    "notFoundDescription": "La pàgina que busqueu no existeix o ha canviat d’adreça."
   }
 }

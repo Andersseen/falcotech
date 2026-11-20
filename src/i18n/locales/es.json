@@ -125,5 +125,12 @@
     "close": "Cerrar",
     "top": "Volver arriba",
     "notFound": "Página no encontrada"
+  },
+  "meta": {
+    "title": "FalcoTech · Control de fauna, consultoría ambiental y drones",
+    "description": "Control de fauna con cetrería y drones, consultoría ambiental y servicios UAV. Soluciones sostenibles para aeropuertos, ciudades, cultivos y vertederos.",
+    "ogImageAlt": "Halcón encapuchado en un aeropuerto mientras despega un avión",
+    "notFoundTitle": "Página no encontrada · FalcoTech",
+    "notFoundDescription": "La página que busca no existe o ha cambiado de dirección."
   }
 }

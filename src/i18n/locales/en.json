@@ -125,5 +125,12 @@
     "close": "Close",
     "top": "Back to top",
     "notFound": "Page not found"
+  },
+  "meta": {
+    "title": "FalcoTech · Wildlife control, environmental consulting and drones",
+    "description": "Wildlife control with falconry and drones, environmental consulting and UAV services. Sustainable solutions for airports, cities, farms and landfills.",
+    "ogImageAlt": "Hooded falcon at an airport as a plane takes off",
+    "notFoundTitle": "Page not found · FalcoTech",
+    "notFoundDescription": "The page you are looking for does not exist or has moved."
   }
 }
