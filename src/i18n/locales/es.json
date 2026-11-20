@@ -11,6 +11,8 @@
     "description": "Implementamos soluciones innovadoras para abordar los desafíos contemporáneos que afectan tanto a la sociedad como a la fauna. Nuestra misión es utilizar tecnología de vanguardia para encontrar respuestas efectivas y sostenibles a los conflictos que surgen en estos ámbitos, combinando experiencia, compromiso y un profundo respeto por el entorno natural."
   },
   "features": {
+    "heading": "Tres especialidades, un mismo equipo",
+    "explore": "Ver especialidad",
     "title1": "Nuestro equipo está organizado en tres grupos de trabajo especializados",
     "card1": {
       "title": "Control de Fauna",
@@ -29,6 +31,7 @@
   },
   "about": {
     "section1": {
+      "photoAlt": "Motor y ala de un avión en un aeropuerto",
       "title": "Control fauna",
       "description": {
         "p1": "En FALCOTECH, contamos con un equipo altamente profesional compuesto por técnicos y expertos en control y manejo de fauna, incluyendo especialistas en cetrería. Nuestro equipo combina conocimientos profundos en técnicas tradicionales y modernas, lo que nos permite abordar diversas situaciones con una perspectiva integral y adaptada a cada caso.",
@@ -37,6 +40,7 @@
       }
     },
     "section2": {
+      "photoAlt": "Aerogeneradores en un paisaje agrícola",
       "title": "Consultora ambiental",
       "description": {
         "p1": "Nuestro equipo está compuesto por técnicos y biólogos con amplia experiencia en el seguimiento y estudio de fauna, estudios de Biodiversidad, Evaluación de Impacto Ambiental y análisis estadístico y geoespacial lo que les permite abordar diversas situaciones con solvencia y un enfoque especializado.",
@@ -44,6 +48,7 @@
       }
     },
     "section3": {
+      "photoAlt": "Dron en vuelo sobre un paisaje montañoso",
       "title": "Drones",
       "description": "Nuestra empresa integra tecnología UAV (Unmanned Aerial Vehicle) para optimizar nuestros servicios, proporcionando soluciones avanzadas y precisas. Ofrecemos una gama de servicios con drones, incluyendo grabaciones de alta calidad y detalladas inspecciones de infraestructuras y terrenos. Además, desarrollamos drones especializados, personalizados para realizar trabajos específicos según las necesidades del proyecto."
     },

@@ -10,6 +10,8 @@
     "description": "We implement innovative solutions to address contemporary challenges affecting both society and wildlife. Our mission is to use cutting-edge technology to find effective and sustainable responses to conflicts arising in these areas, combining expertise, commitment, and a deep respect for the natural environment."
   },
   "features": {
+    "heading": "Three specialties, one team",
+    "explore": "Explore this specialty",
     "title1": "Our team is organized into three specialized workgroups",
     "card1": {
       "title": "Wildlife Control",
@@ -28,6 +30,7 @@
   },
   "about": {
     "section1": {
+      "photoAlt": "Jet engine and wing at an airport",
       "title": "Wildlife Control",
       "description": {
         "p1": "At FALCOTECH, we have a highly professional team of technicians and experts in wildlife control and management, including specialists in falconry. Our team combines deep knowledge of traditional and modern techniques, allowing us to address diverse situations with a comprehensive and tailored perspective.",
@@ -36,6 +39,7 @@
       }
     },
     "section2": {
+      "photoAlt": "Wind turbines in a rural landscape",
       "title": "Environmental Consultancy",
       "description": {
         "p1": "Our team consists of technicians and biologists with extensive experience in wildlife monitoring and studies, biodiversity studies, environmental impact assessments, and statistical and geospatial analysis, enabling them to address various situations with expertise and a specialized approach.",
@@ -43,6 +47,7 @@
       }
     },
     "section3": {
+      "photoAlt": "Drone flying over a mountain landscape",
       "title": "Drones",
       "description": "Our company integrates UAV (Unmanned Aerial Vehicle) technology to optimize our services, providing advanced and precise solutions. We offer a range of drone services, including high-quality recordings and detailed inspections of infrastructures and lands. Additionally, we develop specialized drones tailored to specific tasks based on project needs."
     },

@@ -1,52 +1,100 @@
 <app-site-header />
-<main class="relative z-10 overflow-hidden bg-background">
+<main class="relative z-10 overflow-clip bg-background">
   <app-hero />
-  <section id="about" class="container space-y-8 py-24 sm:py-32">
-    <h2 class="text-xl font-bold md:text-center lg:text-2xl">{{ t('features.title1') }}</h2>
-    <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+  <section id="about" class="container py-20 sm:py-28" aria-labelledby="service-overview-title">
+    <header class="mx-auto mb-10 max-w-4xl text-center md:mb-12">
+      <h2 id="service-overview-title" class="text-3xl font-bold tracking-tight sm:text-5xl">{{ t('features.heading') }}</h2>
+      <p class="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">{{ t('features.title1') }}</p>
+    </header>
+    <div class="service-panels mx-auto max-w-6xl" [style.--service-columns]="serviceColumns()">
       @for (service of services; track service.key) {
-        <volt-card moveInView="fade-up" class="rounded-lg shadow-sm">
-          <volt-card-header class="p-6">
-            <volt-card-title class="text-2xl leading-none font-semibold tracking-tight">{{ t(service.title) }}</volt-card-title>
-          </volt-card-header>
-          <volt-card-content class="px-6 pb-6">{{ t(service.description) }}</volt-card-content>
-          <volt-card-footer class="px-6 pb-6">
-            <img [src]="service.image" alt="" width="200" height="200" loading="lazy"
-              class="mx-auto h-auto w-[200px] lg:w-[300px]">
-          </volt-card-footer>
+        @let expanded = activeService() === $index;
+        <volt-card class="service-card rounded-3xl p-0 shadow-none" [attr.data-expanded]="expanded">
+          <div class="service-trigger">
+            <volt-button variant="ghost"
+              class="absolute inset-0 z-10 size-full rounded-3xl p-0 data-[hover]:bg-transparent focus-visible:ring-inset"
+              [aria-label]="t(service.title)" [aria-expanded]="expanded"
+              [aria-controls]="'service-summary-' + service.fragment" (click)="selectService($index)" />
+          </div>
+          <img [src]="service.illustration" alt="" width="200" height="200" loading="lazy" class="service-illustration">
+          <div class="service-card-top" aria-hidden="true">
+            <span class="service-icon"><ng-container *ngComponentOutlet="service.icon" /></span>
+            <span class="service-indicator">
+              <lmn-arrow-down-right size="16" />
+            </span>
+          </div>
+          <volt-card-content class="service-copy p-0">
+            <volt-card-title class="text-xl leading-tight font-bold tracking-tight sm:text-2xl">
+              <h3>{{ t(service.title) }}</h3>
+            </volt-card-title>
+            <div class="service-detail" [id]="'service-summary-' + service.fragment">
+              <p class="mt-3 max-w-md text-sm leading-relaxed text-muted-foreground sm:text-base">{{ t(service.description) }}</p>
+              <a voltButton variant="link" [href]="homePath() + '#' + service.fragment"
+                class="service-link mt-3 h-auto justify-start gap-2 p-0 text-sm">
+                {{ t('features.explore') }} <lmn-arrow-down-right size="16" />
+              </a>
+            </div>
+          </volt-card-content>
+          <div class="service-compact-title text-xl leading-tight font-bold tracking-tight sm:text-2xl" aria-hidden="true">
+            {{ t(service.title) }}
+          </div>
         </volt-card>
       }
     </div>
-    <p class="text-lg font-bold md:text-center lg:text-xl">{{ t('features.title2') }}</p>
-    <p class="text-lg font-bold md:text-center lg:text-xl">{{ t('features.title3') }}</p>
+    <p class="mx-auto mt-10 max-w-3xl text-center text-sm leading-relaxed text-muted-foreground sm:text-base">
+      {{ t('features.title2') }}
+    </p>
   </section>
-  <section id="features">
-    @for (specialty of specialties; track specialty.key) {
-      <article moveInView="fade-up" class="w-full py-12 md:py-24 lg:py-32">
-        <div class="container flex flex-col items-center gap-8 px-4 md:px-6 lg:gap-16"
-          [class]="$odd ? 'lg:flex-row-reverse' : 'lg:flex-row'">
-          <img [src]="specialty.image" alt="" width="650" height="450" loading="lazy"
-            class="mx-auto aspect-[4/3] w-full rounded-xl object-cover lg:w-1/2">
-          <div class="w-full lg:w-1/2">
-            <h2 class="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">{{ t(specialty.title) }}</h2>
-            @for (paragraph of specialty.paragraphs; track paragraph) {
-              <p class="text-muted-foreground lg:text-base/relaxed">{{ t(paragraph) }}</p>
-            }
-            @if (specialty.key === 'section1') {
-              <volt-accordion type="multiple" (keydown.arrowdown)="focusAccordionTrigger($event, 1)"
-                (keydown.arrowup)="focusAccordionTrigger($event, -1)">
-                @for (item of accordionItems; track item.key) {
-                  <volt-accordion-item [value]="item.key">
-                    <h3><volt-accordion-trigger>{{ t(item.trigger) }}</volt-accordion-trigger></h3>
-                    <volt-accordion-content>{{ t(item.content) }}</volt-accordion-content>
-                  </volt-accordion-item>
-                }
-              </volt-accordion>
+  <section id="features" class="border-t border-border" aria-labelledby="specialties-title">
+    <div class="container py-16 sm:py-24">
+      <header class="mx-auto max-w-6xl">
+        <h2 id="specialties-title" class="text-3xl font-bold tracking-tight sm:text-5xl">{{ t('nav.features') }}</h2>
+      </header>
+      <div class="specialty-story mx-auto mt-10 max-w-6xl lg:mt-14">
+        <div #photoStage class="specialty-stage" aria-hidden="true">
+          <div class="specialty-frame">
+            @for (service of services; track service.key) {
+              <img [src]="service.photo" alt="" [style.--photo-index]="$index" decoding="async"
+                [width]="service.photoWidth" [height]="service.photoHeight">
             }
           </div>
         </div>
-      </article>
-    }
+        <div class="specialty-chapters">
+          @for (service of services; track service.key) {
+            <article #chapter class="specialty-row" [class.specialty-row-reverse]="$odd" [id]="service.fragment" tabindex="-1"
+              [attr.aria-labelledby]="'specialty-title-' + service.fragment">
+              <div class="specialty-photo">
+                <div class="overflow-hidden rounded-3xl bg-muted">
+                  <img [src]="service.photo" [alt]="t(service.photoAlt)" [width]="service.photoWidth" [height]="service.photoHeight"
+                    loading="lazy" decoding="async" class="aspect-[4/3] w-full object-cover">
+                </div>
+              </div>
+              <div class="specialty-copy">
+                <h3 [id]="'specialty-title-' + service.fragment" class="text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
+                  {{ t(service.detailTitle) }}
+                </h3>
+                <div class="mt-5 max-w-prose space-y-4 text-base leading-relaxed text-muted-foreground">
+                  @for (paragraph of service.paragraphs; track paragraph) {
+                    <p>{{ t(paragraph) }}</p>
+                  }
+                </div>
+                @if (service.section === 'section1') {
+                  <volt-accordion class="mt-6" type="multiple" (keydown.arrowdown)="focusAccordionTrigger($event, 1)"
+                    (keydown.arrowup)="focusAccordionTrigger($event, -1)">
+                    @for (item of accordionItems; track item.key) {
+                      <volt-accordion-item [value]="item.key">
+                        <h4><volt-accordion-trigger>{{ t(item.trigger) }}</volt-accordion-trigger></h4>
+                        <volt-accordion-content>{{ t(item.content) }}</volt-accordion-content>
+                      </volt-accordion-item>
+                    }
+                  </volt-accordion>
+                }
+              </div>
+            </article>
+          }
+        </div>
+      </div>
+    </div>
   </section>
   <app-portfolio />
   <app-contact-form />

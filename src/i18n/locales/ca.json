@@ -10,6 +10,8 @@
     "description": "Implementem solucions innovadores per abordar els desafiaments contemporanis que afecten tant la societat com la fauna. La nostra missió és utilitzar tecnologia d'avantguarda per trobar respostes efectives i sostenibles als conflictes que sorgeixen en aquests àmbits, combinant experiència, compromís i un profund respecte per l'entorn natural."
   },
   "features": {
+    "heading": "Tres especialitats, un mateix equip",
+    "explore": "Veure l’especialitat",
     "title1": "El nostre equip està organitzat en tres grups de treball especialitzats",
     "card1": {
       "title": "Control de Fauna",
@@ -28,6 +30,7 @@
   },
   "about": {
     "section1": {
+      "photoAlt": "Motor i ala d’un avió en un aeroport",
       "title": "Control de fauna",
       "description": {
         "p1": "A FALCOTECH, comptem amb un equip altament professional format per tècnics i experts en control i gestió de fauna, incloent especialistes en falconeria. El nostre equip combina coneixements profunds en tècniques tradicionals i modernes, cosa que ens permet abordar diverses situacions amb una perspectiva integral i adaptada a cada cas.",
@@ -36,6 +39,7 @@
       }
     },
     "section2": {
+      "photoAlt": "Aerogeneradors en un paisatge agrícola",
       "title": "Consultoria ambiental",
       "description": {
         "p1": "El nostre equip està format per tècnics i biòlegs amb àmplia experiència en el seguiment i estudi de fauna, estudis de biodiversitat, avaluació d'impacte ambiental i anàlisi estadístic i geoespacial, cosa que els permet abordar diverses situacions amb solvència i un enfocament especialitzat.",
@@ -43,6 +47,7 @@
       }
     },
     "section3": {
+      "photoAlt": "Dron volant sobre un paisatge muntanyós",
       "title": "Drons",
       "description": "La nostra empresa integra tecnologia UAV (Unmanned Aerial Vehicle) per optimitzar els nostres serveis, proporcionant solucions avançades i precises. Oferim una gamma de serveis amb drons, incloent gravacions d'alta qualitat i detallades inspeccions d'infraestructures i terrenys. A més, desenvolupem drons especialitzats, personalitzats per realitzar treballs específics segons les necessitats del projecte."
     },
