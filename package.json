@@ -14,7 +14,8 @@
     "preview": "node --env-file-if-exists=.env dist/analog/server/index.mjs",
     "check": "ngc --noEmit -p tsconfig.app.json",
     "agents:sync": "agentyx sync",
-    "agents:check": "agentyx doctor --locked --check"
+    "agents:check": "agentyx doctor --locked --check",
+    "test": "vitest run"
   },
   "dependencies": {
     "@analogjs/router": "2.9.7",
@@ -50,6 +51,7 @@
     "postcss": "^8.5.0",
     "tailwindcss": "^4.3.5",
     "typescript": "~5.9.0",
-    "vite": "^7.3.0"
+    "vite": "^7.3.0",
+    "vitest": "^5.1.1"
   }
 }

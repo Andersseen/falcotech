@@ -99,7 +99,10 @@
       "submit": "Send",
       "sending": "Sending…",
       "success": "Message sent successfully!",
-      "failure": "The message could not be sent. Please try again."
+      "failure": "The message could not be sent. Please try again.",
+      "limited": "You have sent too many messages in a row. Please try again in a few minutes.",
+      "verification": "Complete the verification before sending your message.",
+      "honeypot": "Leave this field empty"
     }
   },
   "portfolio": {

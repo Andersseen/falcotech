@@ -99,7 +99,10 @@
       "submit": "Enviar",
       "sending": "S’està enviant…",
       "success": "Missatge enviat amb èxit!",
-      "failure": "No s’ha pogut enviar el missatge. Torneu-ho a provar."
+      "failure": "No s’ha pogut enviar el missatge. Torneu-ho a provar.",
+      "limited": "Heu enviat massa missatges seguits. Torneu-ho a provar d’aquí a uns minuts.",
+      "verification": "Completeu la verificació abans d’enviar el missatge.",
+      "honeypot": "Deixeu aquest camp buit"
     }
   },
   "portfolio": {

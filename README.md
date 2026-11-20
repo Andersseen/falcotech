@@ -19,7 +19,20 @@ pnpm build
 pnpm preview
 ```
 
-Copia `.env.example` a `.env` y configura `RESEND_API_KEY` para habilitar el envío local. En Vercel, configura esa variable en el entorno del proyecto. El formulario envía un `POST /api/contact`. El servidor valida los campos y usa Resend para enviar el mensaje a `info@falcotech.es`.
+Copia `.env.example` a `.env` y configura `RESEND_API_KEY` para habilitar el envío local. En Vercel, configura esa variable en el entorno del proyecto. El formulario envía un `POST /api/contact`. El servidor valida los campos y usa Resend para enviar el mensaje a `info@falcotech.es` (`CONTACT_TO`). El remitente se cambia con `CONTACT_FROM`; su dominio tiene que estar verificado en Resend.
+
+### Protección del formulario
+
+- Las reglas de validación están en `src/shared/contact.ts` y las usan el cliente y el servidor.
+- El servidor rechaza peticiones de otro origen (403) y cuerpos de más de 16 KB (413). También limita a 5 envíos cada 15 minutos por IP (429). El límite vive en memoria y por eso es orientativo en serverless.
+- Un campo trampa (`website`) descarta bots simples: el servidor responde éxito sin enviar nada.
+- [Cloudflare Turnstile](https://developers.cloudflare.com/turnstile/) es opcional. Crea un widget con la acción `contact`, define `VITE_TURNSTILE_SITE_KEY` en la build y `TURNSTILE_SECRET` y `TURNSTILE_HOSTNAMES` en el servidor. Sin esas variables, el formulario funciona sin el reto.
+- Sin JavaScript, el formulario se envía igualmente. El servidor redirige de vuelta con `?contact=sent|error|limited` y la página muestra el resultado.
+- Todas las respuestas llevan cabeceras de seguridad (`nosniff`, `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy`, `COOP`).
+
+```sh
+pnpm test
+```
 
 Para generar el artefacto de Vercel en local, ejecuta `BUILD_PRESET=vercel pnpm build`. Nitro lo deja en `.vercel/output`.
 

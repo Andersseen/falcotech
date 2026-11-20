@@ -5,7 +5,6 @@
     "features": "Especialidades",
     "contact": "Contacto"
   },
-
   "home": {
     "title": "FALCOTECH",
     "description": "Implementamos soluciones innovadoras para abordar los desafíos contemporáneos que afectan tanto a la sociedad como a la fauna. Nuestra misión es utilizar tecnología de vanguardia para encontrar respuestas efectivas y sostenibles a los conflictos que surgen en estos ámbitos, combinando experiencia, compromiso y un profundo respeto por el entorno natural."
@@ -100,7 +99,10 @@
       "submit": "Enviar",
       "sending": "Enviando…",
       "success": "¡Mensaje enviado con éxito!",
-      "failure": "No se pudo enviar el mensaje. Inténtelo de nuevo."
+      "failure": "No se pudo enviar el mensaje. Inténtelo de nuevo.",
+      "limited": "Ha enviado demasiados mensajes seguidos. Inténtelo de nuevo en unos minutos.",
+      "verification": "Complete la verificación antes de enviar el mensaje.",
+      "honeypot": "Deje este campo vacío"
     }
   },
   "portfolio": {
