@@ -57,6 +57,8 @@ Criterio de animación: Movement se encarga de entradas, salidas, presencia, ges
 
 ## Codex y Claude Code
 
+Las convenciones del proyecto para agentes están en `AGENTS.md`; `CLAUDE.md` lo importa. La CI (`.github/workflows/ci.yml`) ejecuta `check`, `test`, `build` y `agents:check`.
+
 [Agentyx](https://github.com/Andersseen/agentyx) está fijado a la versión del proyecto. La configuración activa los packs `technical`, `typescript` y `angular` para ambos agentes, con sus skills locales y el MCP de documentación Context7.
 
 ```sh
