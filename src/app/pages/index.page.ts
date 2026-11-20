@@ -1,10 +1,13 @@
 import { DOCUMENT, NgComponentOutlet } from '@angular/common';
 import { afterNextRender, ChangeDetectionStrategy, Component, computed, DestroyRef, ElementRef, inject, signal, viewChild, viewChildren } from '@angular/core';
 import { injectI18n } from '@etyma/angular';
-import { MoveInViewDirective, moveSpringValue } from 'angular-movement';
+import {
+  MoveEnterDirective, MoveInViewDirective, MoveLeaveDirective, MovePresenceDirective, moveSpringValue, MoveStaggerDirective,
+  MoveTapDirective,
+} from 'angular-movement';
 import {
   VoltAccordion, VoltAccordionContent, VoltAccordionItem, VoltAccordionTrigger,
-  VoltButton, VoltCard, VoltCardContent, VoltCardTitle, VoltNativeButton, VoltSeparator,
+  VoltButton, VoltCard, VoltCardContent, VoltCardTitle, VoltNativeButton, VoltSeparator, VoltTooltip, VoltTooltipContent,
 } from '@voltui/components';
 import { LmnArrowDownRightIcon } from 'lumen-icons/arrow-down-right';
 import { LmnEyeIcon } from 'lumen-icons/eye';
@@ -12,6 +15,8 @@ import { LmnGlobeAltIcon } from 'lumen-icons/globe-alt';
 import { LmnPaperAirplaneIcon } from 'lumen-icons/paper-airplane';
 import { LmnArrowUpIcon } from 'lumen-icons/arrow-up';
 import { LmnCameraIcon } from 'lumen-icons/camera';
+import { LmnChatBubbleOvalLeftEllipsisIcon } from 'lumen-icons/chat-bubble-oval-left-ellipsis';
+import { LmnEnvelopeIcon } from 'lumen-icons/envelope';
 import { LmnPhoneIcon } from 'lumen-icons/phone';
 import { ContactForm } from '../components/contact-form';
 import { Hero } from '../components/hero';
@@ -19,6 +24,7 @@ import { Portfolio } from '../components/portfolio';
 import { SiteHeader } from '../components/site-header';
 import { i18n } from '../../i18n/i18n';
 import { injectPageMeta } from '../seo/page-seo';
+import { SITE } from '../seo/site';
 import wildlifeIcon from '../../assets/3.webp';
 import consultingIcon from '../../assets/2.webp';
 import dronesIcon from '../../assets/1.webp';
@@ -29,9 +35,9 @@ import dronesPhoto from '../../assets/4.webp';
 @Component({
   imports: [
     VoltAccordion, VoltAccordionContent, VoltAccordionItem, VoltAccordionTrigger,
-    VoltButton, VoltCard, VoltCardContent, VoltCardTitle, VoltNativeButton, VoltSeparator,
-    ContactForm, Hero, LmnArrowDownRightIcon, LmnArrowUpIcon, LmnCameraIcon,
-    LmnPhoneIcon, MoveInViewDirective, NgComponentOutlet, Portfolio, SiteHeader,
+    VoltButton, VoltCard, VoltCardContent, VoltCardTitle, VoltNativeButton, VoltSeparator, VoltTooltip, VoltTooltipContent,
+    ContactForm, Hero, LmnArrowDownRightIcon, LmnArrowUpIcon, MoveEnterDirective, MoveInViewDirective, MoveLeaveDirective,
+    MovePresenceDirective, MoveStaggerDirective, MoveTapDirective, NgComponentOutlet, Portfolio, SiteHeader,
   ],
   templateUrl: './index.page.html',
   styleUrl: './index.page.css',
@@ -44,6 +50,13 @@ export default class HomePage {
   protected readonly homePath = computed(() => this.i18n.path('/'));
   protected readonly showBackToTop = signal(false);
   protected readonly year = new Date().getFullYear();
+  protected readonly site = SITE;
+  protected readonly contactLinks = [
+    { label: 'Instagram', href: SITE.instagram, icon: LmnCameraIcon, external: true },
+    { label: 'WhatsApp', href: SITE.whatsapp, icon: LmnChatBubbleOvalLeftEllipsisIcon, external: true },
+    { label: SITE.email, href: `mailto:${SITE.email}`, icon: LmnEnvelopeIcon, external: false },
+    { label: SITE.telephone.replace(/^(\+34)(\d{3})(\d{3})(\d{3})$/, '$1 $2 $3 $4'), href: `tel:${SITE.telephone}`, icon: LmnPhoneIcon, external: false },
+  ] as const;
   protected readonly services = ([
     {
       key: 'card1', section: 'section1', fragment: 'fauna', icon: LmnEyeIcon,
@@ -67,6 +80,8 @@ export default class HomePage {
     detailTitle: `about.${service.section}.title` as const,
     photoAlt: `about.${service.section}.photoAlt` as const,
   }));
+  /** Lumen draws the round badge behind each service icon itself. */
+  protected readonly serviceIconStyle = { size: 20, background: 'soft', tone: 'foreground', padding: 12, radius: '50%' } as const;
   protected readonly activeService = signal(0);
   protected readonly serviceColumns = computed(() =>
     this.services.map((_, index) => index === this.activeService() ? 'minmax(0, 2.65fr)' : 'minmax(0, 1fr)').join(' '),

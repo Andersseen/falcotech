@@ -3,8 +3,10 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { ActivatedRoute } from '@angular/router';
 import { injectT } from '@etyma/angular';
 import {
-  VoltAlert, VoltAlertDescription, VoltButton, VoltError, VoltFormField, VoltInput, VoltLabel, VoltSpinner, VoltTextarea,
+  VoltAlert, VoltAlertDescription, VoltButton, VoltCard, VoltCardContent, VoltCardHeader, VoltCardTitle, VoltError,
+  VoltFormField, VoltInput, VoltLabel, VoltSpinner, VoltTextarea,
 } from '@voltui/components';
+import { MoveEnterDirective, MoveInViewDirective, MoveTapDirective } from 'angular-movement';
 import { LmnArrowRightIcon } from 'lumen-icons/arrow-right';
 import {
   CONTACT_EMAIL_PATTERN, CONTACT_HONEYPOT_FIELD, CONTACT_LIMITS, CONTACT_RESULT_PARAM, isContactResult,
@@ -18,13 +20,17 @@ type Status = 'idle' | 'submitting' | 'success' | 'error' | 'limited' | 'verific
 @Component({
   selector: 'app-contact-form',
   imports: [
-    LmnArrowRightIcon, ReactiveFormsModule, Turnstile, VoltAlert, VoltAlertDescription, VoltButton, VoltError,
+    LmnArrowRightIcon, MoveEnterDirective, MoveInViewDirective, MoveTapDirective, ReactiveFormsModule, Turnstile,
+    VoltAlert, VoltAlertDescription, VoltButton, VoltCard, VoltCardContent, VoltCardHeader, VoltCardTitle, VoltError,
     VoltFormField, VoltInput, VoltLabel, VoltSpinner, VoltTextarea,
   ],
   template: `
-    <section id="contact" class="w-full rounded-none p-4 py-12 shadow-lg md:rounded-2xl md:p-8 md:py-24 lg:py-32"
-      aria-labelledby="contact-title">
-      <h2 id="contact-title" class="text-xl font-bold">{{ t('contact.title') }}</h2>
+    <section id="contact" class="w-full md:p-8" aria-labelledby="contact-title">
+      <volt-card moveInView="fade-up" class="rounded-none border-x-0 px-4 py-12 shadow-lg md:rounded-2xl md:border-x md:px-8 md:py-24 lg:py-32">
+      <volt-card-header class="p-0">
+        <volt-card-title><h2 id="contact-title" class="text-xl font-bold">{{ t('contact.title') }}</h2></volt-card-title>
+      </volt-card-header>
+      <volt-card-content class="p-0">
       <form #formElement method="post" action="/api/contact" class="my-8 grid gap-4" [formGroup]="form"
         [attr.aria-busy]="status() === 'submitting'" (ngSubmit)="submit()">
         <volt-form-field>
@@ -60,7 +66,7 @@ type Status = 'idle' | 'submitting' | 'success' | 'error' | 'limited' | 'verific
         @if (turnstileSiteKey) {
           <app-turnstile [siteKey]="turnstileSiteKey" (tokenChange)="turnstileToken.set($event)" />
         }
-        <volt-button type="submit" class="h-10 w-full bg-linear-to-br from-primary to-primary/65"
+        <volt-button type="submit" moveWhileTap="press" class="h-10 w-full bg-linear-to-br from-primary to-primary/65"
           [disabled]="status() === 'submitting'">
           @if (status() === 'submitting') {
             <volt-spinner size="sm" slot="leading" />
@@ -72,27 +78,29 @@ type Status = 'idle' | 'submitting' | 'success' | 'error' | 'limited' | 'verific
         </volt-button>
         @switch (status()) {
           @case ('success') {
-            <volt-alert variant="success" role="status">
+            <volt-alert variant="success" role="status" moveEnter="fade-up">
               <volt-alert-description>{{ t('contact.form.success') }}</volt-alert-description>
             </volt-alert>
           }
           @case ('error') {
-            <volt-alert variant="destructive" role="alert">
+            <volt-alert variant="destructive" role="alert" moveEnter="fade-up">
               <volt-alert-description>{{ t('contact.form.failure') }}</volt-alert-description>
             </volt-alert>
           }
           @case ('limited') {
-            <volt-alert variant="warning" role="alert">
+            <volt-alert variant="warning" role="alert" moveEnter="fade-up">
               <volt-alert-description>{{ t('contact.form.limited') }}</volt-alert-description>
             </volt-alert>
           }
           @case ('verification') {
-            <volt-alert variant="warning" role="alert">
+            <volt-alert variant="warning" role="alert" moveEnter="fade-up">
               <volt-alert-description>{{ t('contact.form.verification') }}</volt-alert-description>
             </volt-alert>
           }
         }
       </form>
+      </volt-card-content>
+      </volt-card>
     </section>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,

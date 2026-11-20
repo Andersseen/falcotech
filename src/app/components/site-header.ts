@@ -1,9 +1,11 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { ChangeDetectionStrategy, Component, computed, ElementRef, inject, signal, viewChild } from '@angular/core';
 import { injectI18n } from '@etyma/angular';
 import {
-  VoltButton, VoltDialogRoot, VoltDrawerClose, VoltDrawerContent, VoltDrawerDescription,
-  VoltDrawerOverlay, VoltDrawerTitle, VoltNativeButton, VoltSelect, VoltSelectContent, VoltSelectItem, VoltToggle,
+  VoltButton, VoltDialogRoot, VoltDrawerClose, VoltDrawerContent, VoltDrawerOverlay, VoltDrawerTitle,
+  VoltNativeButton, VoltSelect, VoltSelectContent, VoltSelectItem, VoltToggle, VoltTooltip, VoltTooltipContent,
 } from '@voltui/components';
+import { MoveAnimator, MoveEnterDirective, MoveStaggerDirective } from 'angular-movement';
 import { LmnBars3Icon } from 'lumen-icons/bars-3';
 import { LmnMoonIcon } from 'lumen-icons/moon';
 import { LmnSunIcon } from 'lumen-icons/sun';
@@ -25,9 +27,9 @@ const languages = {
 @Component({
   selector: 'app-site-header',
   imports: [
-    LmnBars3Icon, LmnMoonIcon, LmnSunIcon, LmnXIcon, VoltButton, VoltDialogRoot, VoltDrawerClose,
-    VoltDrawerContent, VoltDrawerDescription, VoltDrawerOverlay, VoltDrawerTitle, VoltNativeButton,
-    VoltSelect, VoltSelectContent, VoltSelectItem, VoltToggle,
+    LmnBars3Icon, LmnMoonIcon, LmnSunIcon, LmnXIcon, MoveEnterDirective, MoveStaggerDirective, VoltButton,
+    VoltDialogRoot, VoltDrawerClose, VoltDrawerContent, VoltDrawerOverlay, VoltDrawerTitle, VoltNativeButton,
+    VoltSelect, VoltSelectContent, VoltSelectItem, VoltToggle, VoltTooltip, VoltTooltipContent,
   ],
   template: `
     <a voltButton [href]="homePath() + '#main'"
@@ -44,8 +46,9 @@ const languages = {
               <a voltButton variant="ghost" [href]="homePath() + '#' + item.id" class="h-10 px-4">{{ t(item.label) }}</a>
             }
           </div>
-          <volt-toggle variant="ghost" size="icon" class="md:order-1"
-            [aria-label]="t('ui.theme')" [pressed]="theme.dark()" (pressedChange)="theme.set($event)">
+          <volt-toggle #themeToggle variant="ghost" size="icon" class="md:order-1"
+            [voltTooltip]="tooltip" [context]="t('ui.theme')" placement="bottom"
+            [aria-label]="t('ui.theme')" [pressed]="theme.dark()" (pressedChange)="changeTheme($event)">
             @if (theme.dark()) { <lmn-moon size="20" /> } @else { <lmn-sun size="20" /> }
           </volt-toggle>
           <div class="relative w-[7.25rem] shrink-0 sm:w-36">
@@ -81,20 +84,26 @@ const languages = {
       <div voltDrawerOverlay></div>
       <div voltDrawerContent side="right" class="w-3/4 max-w-sm p-6">
         <h2 voltDrawerTitle class="sr-only">{{ t('ui.navigation') }}</h2>
-        <p voltDrawerDescription class="sr-only">{{ t('nav.home') }} FalcoTech</p>
         <volt-drawer-close [label]="t('ui.close')" class="absolute top-4 right-4"><lmn-x size="20" /></volt-drawer-close>
-        <div class="mt-10 grid gap-4">
+        <div class="mt-10 grid gap-4" moveStagger="60ms">
           @for (item of sections; track item.id) {
-            <a voltButton variant="ghost" [href]="homePath() + '#' + item.id" (click)="close()">{{ t(item.label) }}</a>
+            <a voltButton variant="ghost" moveEnter="fade-left" [href]="homePath() + '#' + item.id" (click)="close()">{{ t(item.label) }}</a>
           }
         </div>
       </div>
+    </ng-template>
+
+    <ng-template #tooltip let-label>
+      <volt-tooltip-content>{{ label() }}</volt-tooltip-content>
     </ng-template>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SiteHeader {
   protected readonly theme = inject(ThemePreference);
+  private readonly document = inject(DOCUMENT);
+  private readonly animator = inject(MoveAnimator);
+  private readonly themeToggle = viewChild.required('themeToggle', { read: ElementRef<HTMLElement> });
   private readonly i18n = injectI18n(i18n);
   protected readonly t = this.i18n.t;
   protected readonly locale = this.i18n.locale;
@@ -113,6 +122,36 @@ export class SiteHeader {
     { id: 'features', label: 'nav.features' },
     { id: 'contact', label: 'nav.contact' },
   ] as const;
+
+  /**
+   * Switches the theme inside a View Transition and reveals the new one as a circle growing from the
+   * toggle. Without View Transitions, or with reduced motion, the theme simply changes.
+   */
+  protected async changeTheme(dark: boolean): Promise<void> {
+    const document = this.document;
+    const window = document.defaultView;
+    if (!window || typeof document.startViewTransition !== 'function') {
+      this.theme.set(dark);
+      return;
+    }
+
+    const toggle = this.themeToggle().nativeElement.getBoundingClientRect();
+    const x = toggle.left + toggle.width / 2;
+    const y = toggle.top + toggle.height / 2;
+    const radius = Math.hypot(Math.max(x, window.innerWidth - x), Math.max(y, window.innerHeight - y));
+
+    const transition = document.startViewTransition(() => this.theme.set(dark));
+    try {
+      await transition.ready;
+    } catch {
+      return; // The browser skipped the transition (for example, a second click); the theme is already set.
+    }
+    this.animator.animate(
+      document.documentElement,
+      { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${radius}px at ${x}px ${y}px)`] },
+      { duration: '520ms', pseudoElement: '::view-transition-new(root)' },
+    );
+  }
 
   protected async changeLocale(value: unknown): Promise<void> {
     if (value === 'es' || value === 'en' || value === 'ca') {

@@ -1,8 +1,10 @@
 import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
 import { injectT } from '@etyma/angular';
 import {
-  VoltButton, VoltDialogContent, VoltDialogOverlay, VoltDialogRoot, VoltDialogTitle,
+  VoltButton, VoltDialogContent, VoltDialogOverlay, VoltDialogRoot, VoltDialogTitle, VoltNativeButton, VoltTooltip,
+  VoltTooltipContent,
 } from '@voltui/components';
+import { MoveEnterDirective, MoveHoverDirective, MoveStaggerDirective, MoveTapDirective } from 'angular-movement';
 import { LmnChevronLeftIcon } from 'lumen-icons/chevron-left';
 import { LmnChevronRightIcon } from 'lumen-icons/chevron-right';
 import { LmnXIcon } from 'lumen-icons/x';
@@ -42,31 +44,36 @@ const pageSize = rowSize * 2;
 @Component({
   selector: 'app-portfolio',
   imports: [
-    LmnChevronLeftIcon, LmnChevronRightIcon, LmnXIcon,
-    VoltButton, VoltDialogContent, VoltDialogOverlay, VoltDialogRoot, VoltDialogTitle,
+    LmnChevronLeftIcon, LmnChevronRightIcon, LmnXIcon, MoveEnterDirective, MoveHoverDirective, MoveStaggerDirective,
+    MoveTapDirective, VoltButton, VoltDialogContent, VoltDialogOverlay, VoltDialogRoot, VoltDialogTitle, VoltNativeButton,
+    VoltTooltip, VoltTooltipContent,
   ],
   template: `
     <section class="grid h-svh grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 py-20 shadow-sm md:px-8"
       [attr.aria-label]="t('ui.gallery')">
-      <volt-button size="icon" [class]="pageControlClass"
-        [disabled]="start() === 0" [aria-label]="t('ui.previous')" (click)="step(-1)">
+      <button voltButton type="button" size="icon" [class]="pageControlClass" moveWhileTap="press"
+        [voltTooltip]="tooltip" [context]="t('ui.previous')"
+        [disabled]="start() === 0" [attr.aria-label]="t('ui.previous')" (click)="step(-1)">
         <lmn-chevron-left size="20" />
-      </volt-button>
-      <ul class="grid h-full min-h-0 grid-cols-2 grid-rows-3 gap-3 md:grid-cols-3 md:grid-rows-2 md:gap-4 md:p-5 lg:p-10">
+      </button>
+      <!-- Each page change re-creates the items, so they enter in a short stagger. -->
+      <ul class="grid h-full min-h-0 grid-cols-2 grid-rows-3 gap-3 md:grid-cols-3 md:grid-rows-2 md:gap-4 md:p-5 lg:p-10"
+        moveStagger="45ms">
         @for (photo of visiblePhotos(); track photo.src) {
-          <li class="min-h-0">
-            <volt-button variant="ghost" class="group relative size-full min-h-0 overflow-hidden rounded-xl p-0"
-              [aria-label]="t(photo.alt)" aria-haspopup="dialog" (click)="selectedPhoto.set(photo)">
-              <img [src]="photo.src" alt="" loading="lazy" decoding="async"
-                class="size-full object-cover object-top transition-transform group-hover:scale-105 motion-reduce:transition-none">
-            </volt-button>
+          <li class="min-h-0" moveEnter="fade-up" moveDuration="280ms">
+            <button voltButton type="button" variant="ghost" class="relative size-full min-h-0 overflow-hidden rounded-xl p-0"
+              [attr.aria-label]="t(photo.alt)" aria-haspopup="dialog" (click)="selectedPhoto.set(photo)">
+              <img [src]="photo.src" alt="" loading="lazy" decoding="async" class="size-full object-cover object-top"
+                [moveWhileHover]="{ scale: [1, 1.05] }">
+            </button>
           </li>
         }
       </ul>
-      <volt-button size="icon" [class]="pageControlClass"
-        [disabled]="start() === lastStart" [aria-label]="t('ui.next')" (click)="step(1)">
+      <button voltButton type="button" size="icon" [class]="pageControlClass" moveWhileTap="press"
+        [voltTooltip]="tooltip" [context]="t('ui.next')"
+        [disabled]="start() === lastStart" [attr.aria-label]="t('ui.next')" (click)="step(1)">
         <lmn-chevron-right size="20" />
-      </volt-button>
+      </button>
       <p class="sr-only" aria-live="polite">
         {{ t('ui.galleryPage', { from: start() + 1, to: start() + visiblePhotos().length, total: photos.length }) }}
       </p>
@@ -88,6 +95,10 @@ const pageSize = rowSize * 2;
           <lmn-x size="20" />
         </volt-button>
       </div>
+    </ng-template>
+
+    <ng-template #tooltip let-label>
+      <volt-tooltip-content>{{ label() }}</volt-tooltip-content>
     </ng-template>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,

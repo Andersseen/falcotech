@@ -48,10 +48,12 @@ Para generar el artefacto de Vercel en local, ejecuta `BUILD_PRESET=vercel pnpm 
 
 | Librería | Uso en la web |
 | --- | --- |
-| Etyma Core, Angular y Analog | Catálogos tipados, traducción en SSR y metadatos por idioma. Español en `/`, inglés en `/en` y catalán en `/ca`. |
-| Angular Movement | Entrada de la portada y animación al entrar en pantalla de las tarjetas y especialidades. |
-| Volt UI | `VoltButton` para acciones, `VoltToggle` para el tema, `VoltSelect` para el idioma y `VoltDialogRoot` para la galería y el menú móvil. Tarjetas, acordeón y formulario usan los componentes Volt. Los enlaces conservan su semántica con la directiva `voltButton`. |
-| Lumen Icons | Iconos de la aplicación importados individualmente desde `lumen-icons/<icono>` para que el bundle incluya solo los usados. |
+| Etyma Core, Angular y Analog | Catálogos tipados, traducción en SSR, `lang`, canonical y `hreflang` por idioma. Español en `/`, inglés en `/en` y catalán en `/ca`. |
+| Volt UI | Todos los átomos de interfaz: `voltButton` en botones y enlaces nativos, `VoltToggle` (tema), `VoltSelect` (idioma), `VoltCard` (servicios y contacto), `VoltAccordion`, formulario (`VoltFormField`, `VoltInput`, `VoltTextarea`, `VoltError`, `VoltAlert`, `VoltSpinner`), `VoltDialogRoot` (galería), cajón móvil, `VoltTooltip` en los botones de solo icono, `VoltEmptyState` (404) y `VoltSeparator`. El tema claro/oscuro se aplica con `applyVoltTheme`. |
+| Lumen Icons | Todos los iconos, importados uno a uno desde `lumen-icons/<icono>`. Los fondos redondos de los iconos de servicio y de la 404 los dibuja Lumen (`background`, `tone`, `padding`, `radius`). |
+| Angular Movement | Entradas al hacer scroll (`moveInView` + `moveStagger`), fundido cruzado del carrusel (`*movePresenceFor`), aparición y salida del botón "volver arriba" (`*movePresence`), galería (`moveEnter` escalonado y `moveWhileHover`), respuesta táctil (`moveWhileTap="press"`), revelado circular del tema (`MoveAnimator` sobre una View Transition) y la foto de las especialidades (`moveSpringValue`). Los valores por defecto están en `provideMovement()`. |
+
+Criterio de animación: Movement se encarga de entradas, salidas, presencia, gestos y secuencias imperativas. CSS se queda con lo que ya se ve en el primer pintado (la entrada del texto del hero, como recomienda Movement), con los estados de hover/foco de los átomos y con la transición de columnas de las tarjetas de servicio, que interpola `grid-template-columns`.
 
 ## Codex y Claude Code
 
