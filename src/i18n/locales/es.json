@@ -83,14 +83,17 @@
       "email": {
         "label": "Correo electrónico",
         "placeholder": "Correo electrónico",
-        "error": "Por favor, escriba su correo electrónico"
+        "error": "Por favor, escriba su correo electrónico",
+        "invalid": "Introduce un correo electrónico válido."
       },
       "message": {
         "label": "Mensaje",
         "placeholder": "Escriba aquí su mensaje",
         "error": "Por favor, escriba su mensaje"
       },
-      "submit": "Enviar →",
+      "tooLong": "El texto supera la longitud permitida.",
+      "submit": "Enviar",
+      "sending": "Enviando…",
       "success": "¡Mensaje enviado con éxito!",
       "failure": "No se pudo enviar el mensaje. Inténtelo de nuevo."
     }

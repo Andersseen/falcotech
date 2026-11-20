@@ -29,7 +29,8 @@ Para generar el artefacto de Vercel en local, ejecuta `BUILD_PRESET=vercel pnpm 
 | --- | --- |
 | Etyma Core, Angular y Analog | Catálogos tipados, traducción en SSR y metadatos por idioma. Español en `/`, inglés en `/en` y catalán en `/ca`. |
 | Angular Movement | Entrada de la portada y animación al entrar en pantalla de las tarjetas y especialidades. |
-| Quartz Headless Primitives | Comportamiento y accesibilidad del acordeón de control de fauna. |
+| Volt UI | `VoltButton` para acciones, `VoltToggle` para el tema, `VoltSelect` para el idioma y `VoltDialogRoot` para la galería y el menú móvil. Tarjetas, acordeón y formulario usan los componentes Volt. Los enlaces conservan su semántica con la directiva `voltButton`. |
+| Lumen Icons | Iconos de la aplicación importados individualmente desde `lumen-icons/<icono>` para que el bundle incluya solo los usados. |
 
 ## Codex y Claude Code
 
@@ -40,3 +41,13 @@ pnpm agents:check
 ```
 
 Si cambias `.agentyx.json`, revisa el plan con `pnpm exec agentyx sync --dry-run`, aplica el cambio con `pnpm agents:sync` y guarda también el lock y los archivos generados en el repositorio.
+
+[Volt UI] también está instalado para Codex y Claude Code, con siete skills por agente y el servidor MCP para consultar el catálogo de componentes.
+
+```sh
+pnpm exec volt-ui-agent doctor codex claude
+```
+
+El instalador del proyecto es `pnpm exec volt-ui-agent codex claude --yes`. Tras actualizarlo, ejecuta `pnpm agents:sync` para normalizar la configuración compartida con Agentyx.
+
+[Volt UI]: https://voltui.dev/docs/mcp

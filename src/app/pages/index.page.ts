@@ -1,12 +1,14 @@
-import { ChangeDetectionStrategy, Component, computed } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { injectI18n } from '@etyma/angular';
 import { MoveInViewDirective } from 'angular-movement';
 import {
-  AccordionDirective,
-  AccordionItemDirective,
-  AccordionPanelDirective,
-  AccordionTriggerDirective,
-} from '@quartz-headless/primitives';
+  VoltAccordion, VoltAccordionContent, VoltAccordionItem, VoltAccordionTrigger,
+  VoltCard, VoltCardContent, VoltCardFooter, VoltCardHeader, VoltCardTitle, VoltNativeButton, VoltSeparator,
+} from '@voltui/components';
+import { LmnArrowUpIcon } from 'lumen-icons/arrow-up';
+import { LmnCameraIcon } from 'lumen-icons/camera';
+import { LmnPhoneIcon } from 'lumen-icons/phone';
 import { ContactForm } from '../components/contact-form';
 import { Hero } from '../components/hero';
 import { Portfolio } from '../components/portfolio';
@@ -21,16 +23,20 @@ import dronesPhoto from '../../assets/4.webp';
 
 @Component({
   imports: [
-    AccordionDirective, AccordionItemDirective, AccordionPanelDirective, AccordionTriggerDirective,
-    ContactForm, Hero, MoveInViewDirective, Portfolio, SiteHeader,
+    VoltAccordion, VoltAccordionContent, VoltAccordionItem, VoltAccordionTrigger,
+    VoltCard, VoltCardContent, VoltCardFooter, VoltCardHeader, VoltCardTitle, VoltNativeButton, VoltSeparator,
+    ContactForm, Hero, LmnArrowUpIcon, LmnCameraIcon, LmnPhoneIcon, MoveInViewDirective, Portfolio, SiteHeader,
   ],
   templateUrl: './index.page.html',
+  host: { '(window:scroll)': 'updateScroll()' },
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class HomePage {
+  private readonly document = inject(DOCUMENT);
   private readonly i18n = injectI18n(i18n);
   protected readonly t = this.i18n.t;
   protected readonly homePath = computed(() => this.i18n.path('/'));
+  protected readonly showBackToTop = signal(false);
   protected readonly year = new Date().getFullYear();
   protected readonly services = ([
     { key: 'card1', image: wildlifeIcon },
@@ -69,4 +75,18 @@ export default class HomePage {
     trigger: `about.accordion.items.${key}.trigger` as const,
     content: `about.accordion.items.${key}.content` as const,
   }));
+
+  protected focusAccordionTrigger(event: Event, direction: number): void {
+    const accordion = event.currentTarget as HTMLElement;
+    const triggers = Array.from(accordion.querySelectorAll<HTMLButtonElement>('volt-accordion-trigger button:not(:disabled)'));
+    const focused = triggers.findIndex(trigger => trigger === event.target);
+    if (focused < 0) return;
+
+    event.preventDefault();
+    triggers[(focused + direction + triggers.length) % triggers.length]?.focus();
+  }
+
+  protected updateScroll(): void {
+    this.showBackToTop.set((this.document.defaultView?.scrollY ?? 0) > 400);
+  }
 }

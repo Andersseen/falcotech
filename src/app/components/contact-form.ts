@@ -1,71 +1,101 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { injectT } from '@etyma/angular';
+import {
+  VoltAlert, VoltAlertDescription, VoltButton, VoltError, VoltFormField, VoltInput, VoltLabel, VoltSpinner, VoltTextarea,
+} from '@voltui/components';
+import { LmnArrowRightIcon } from 'lumen-icons/arrow-right';
 import { i18n } from '../../i18n/i18n';
 
 @Component({
   selector: 'app-contact-form',
+  imports: [LmnArrowRightIcon, ReactiveFormsModule, VoltAlert, VoltAlertDescription, VoltButton, VoltError, VoltFormField, VoltInput, VoltLabel, VoltSpinner, VoltTextarea],
   template: `
-    <section id="contact" class="border-t py-12 md:py-24">
-      <div class="container">
-        <h2 class="text-2xl font-bold">{{ t('contact.title') }}</h2>
-        <form #form method="post" action="/api/contact" class="mt-8 grid gap-4" (submit)="submit($event, form)">
-          <label>
-            {{ t('contact.form.username.label') }}
-            <input name="username" [readOnly]="status() === 'submitting'" autocomplete="name" required maxlength="120"
-              [placeholder]="t('contact.form.username.placeholder')">
-          </label>
-          <label>
-            {{ t('contact.form.email.label') }}
-            <input type="email" name="email" [readOnly]="status() === 'submitting'" autocomplete="email" required maxlength="254"
-              [placeholder]="t('contact.form.email.placeholder')">
-          </label>
-          <label>
-            {{ t('contact.form.message.label') }}
-            <textarea name="message" [readOnly]="status() === 'submitting'" rows="5" required maxlength="5000"
-              [placeholder]="t('contact.form.message.placeholder')"></textarea>
-          </label>
-          <button type="submit" class="rounded-md bg-primary px-4 py-2 font-medium text-primary-foreground disabled:opacity-50"
-            [disabled]="status() === 'submitting'">
-            {{ status() === 'submitting' ? '…' : t('contact.form.submit') }}
-          </button>
-          @if (status() === 'success') {
-            <p role="status" class="rounded-md bg-green-100 p-3 text-green-900">{{ t('contact.form.success') }}</p>
+    <section id="contact" class="w-full rounded-none p-4 py-12 shadow-lg md:rounded-2xl md:p-8 md:py-24 lg:py-32">
+      <h2 class="text-xl font-bold">{{ t('contact.title') }}</h2>
+      <form method="post" action="/api/contact" class="my-8 grid gap-4" [formGroup]="form"
+        [attr.aria-busy]="status() === 'submitting'" (ngSubmit)="submit()">
+        <volt-form-field>
+          <volt-label>{{ t('contact.form.username.label') }}</volt-label>
+          <volt-input formControlName="username" name="username" autocomplete="name" required
+            [readonly]="status() === 'submitting'" [placeholder]="t('contact.form.username.placeholder')" class="h-10 px-3 py-2" />
+          @if (form.controls.username.touched && form.controls.username.invalid) {
+            <volt-error>{{ t(form.controls.username.hasError('maxlength') ? 'contact.form.tooLong' : 'contact.form.username.error') }}</volt-error>
           }
-          @if (status() === 'error') {
-            <p role="alert" class="rounded-md bg-red-100 p-3 text-red-900">{{ t('contact.form.failure') }}</p>
+        </volt-form-field>
+        <volt-form-field>
+          <volt-label>{{ t('contact.form.email.label') }}</volt-label>
+          <volt-input formControlName="email" type="email" name="email" autocomplete="email" required
+            [readonly]="status() === 'submitting'" [placeholder]="t('contact.form.email.placeholder')" class="h-10 px-3 py-2" />
+          @if (form.controls.email.touched && form.controls.email.invalid) {
+            <volt-error>{{ t(form.controls.email.hasError('required') ? 'contact.form.email.error' : 'contact.form.email.invalid') }}</volt-error>
           }
-        </form>
-      </div>
+        </volt-form-field>
+        <volt-form-field>
+          <volt-label>{{ t('contact.form.message.label') }}</volt-label>
+          <volt-textarea formControlName="message" name="message" [rows]="3" required
+            [readonly]="status() === 'submitting'" [placeholder]="t('contact.form.message.placeholder')" class="px-3 py-2" />
+          @if (form.controls.message.touched && form.controls.message.invalid) {
+            <volt-error>{{ t(form.controls.message.hasError('maxlength') ? 'contact.form.tooLong' : 'contact.form.message.error') }}</volt-error>
+          }
+        </volt-form-field>
+        <volt-button type="submit" class="h-10 w-full bg-linear-to-br from-primary to-primary/65"
+          [disabled]="status() === 'submitting'">
+          @if (status() === 'submitting') {
+            <volt-spinner size="sm" slot="leading" />
+          }
+          {{ t(status() === 'submitting' ? 'contact.form.sending' : 'contact.form.submit') }}
+          @if (status() !== 'submitting') {
+            <lmn-arrow-right size="16" slot="trailing" />
+          }
+        </volt-button>
+        @if (status() === 'success') {
+          <volt-alert variant="success" role="status">
+            <volt-alert-description>{{ t('contact.form.success') }}</volt-alert-description>
+          </volt-alert>
+        } @else if (status() === 'error') {
+          <volt-alert variant="destructive" role="alert">
+            <volt-alert-description>{{ t('contact.form.failure') }}</volt-alert-description>
+          </volt-alert>
+        }
+      </form>
     </section>
-  `,
-  styles: `
-    label { display: grid; gap: 0.375rem; font-weight: 500; }
-    input, textarea {
-      border: 1px solid hsl(var(--border));
-      border-radius: 0.375rem;
-      background: hsl(var(--background));
-      padding: 0.625rem 0.75rem;
-      font-weight: 400;
-    }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ContactForm {
   protected readonly t = injectT(i18n);
   protected readonly status = signal<'idle' | 'submitting' | 'success' | 'error'>('idle');
+  protected readonly form = new FormGroup({
+    username: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.pattern(/\S/), Validators.maxLength(120)],
+    }),
+    email: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.pattern(/^[^\s@]+@[^\s@]+\.[^\s@]+$/), Validators.maxLength(254)],
+    }),
+    message: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.pattern(/\S/), Validators.maxLength(5000)],
+    }),
+  });
 
-  protected async submit(event: Event, form: HTMLFormElement): Promise<void> {
-    event.preventDefault();
+  protected async submit(): Promise<void> {
     if (this.status() === 'submitting') return;
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      this.status.set('idle');
+      return;
+    }
 
-    const fields = new FormData(form);
     this.status.set('submitting');
 
     try {
       const response = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(Object.fromEntries(fields)),
+        body: JSON.stringify(this.form.getRawValue()),
       });
 
       if (!response.ok) {
@@ -73,7 +103,7 @@ export class ContactForm {
         return;
       }
 
-      form.reset();
+      this.form.reset();
       this.status.set('success');
     } catch {
       this.status.set('error');

@@ -82,14 +82,17 @@
       "email": {
         "label": "Correu electrònic",
         "placeholder": "Introdueix el teu correu electrònic",
-        "error": "Si us plau, introdueix el teu correu electrònic"
+        "error": "Si us plau, introdueix el teu correu electrònic",
+        "invalid": "Introdueix una adreça electrònica vàlida."
       },
       "message": {
         "label": "Missatge",
         "placeholder": "Escriu el teu missatge aquí",
         "error": "Si us plau, introdueix el teu missatge"
       },
-      "submit": "Enviar →",
+      "tooLong": "El text supera la longitud permesa.",
+      "submit": "Enviar",
+      "sending": "S’està enviant…",
       "success": "Missatge enviat amb èxit!",
       "failure": "No s’ha pogut enviar el missatge. Torneu-ho a provar."
     }

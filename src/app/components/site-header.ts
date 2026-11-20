@@ -1,53 +1,90 @@
 import { DOCUMENT } from '@angular/common';
 import { afterNextRender, ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { injectI18n } from '@etyma/angular';
-import { i18n } from '../../i18n/i18n';
+import {
+  applyVoltTheme, VoltButton, VoltDialogRoot, VoltDrawerClose, VoltDrawerContent, VoltDrawerDescription,
+  VoltDrawerOverlay, VoltDrawerTitle, VoltNativeButton, VoltSelect, VoltSelectContent, VoltSelectItem, VoltToggle,
+} from '@voltui/components';
+import { LmnBars3Icon } from 'lumen-icons/bars-3';
+import { LmnMoonIcon } from 'lumen-icons/moon';
+import { LmnSunIcon } from 'lumen-icons/sun';
+import { LmnXIcon } from 'lumen-icons/x';
+import flagCa from '../../assets/flag-ca.svg';
+import flagEn from '../../assets/flag-en.svg';
+import flagEs from '../../assets/flag-es.svg';
 import logoLight from '../../assets/logo-black.svg';
 import logoDark from '../../assets/logo-white.svg';
+import { i18n } from '../../i18n/i18n';
+
+const languages = {
+  es: { code: 'es', name: 'Español', flag: flagEs },
+  en: { code: 'en', name: 'English', flag: flagEn },
+  ca: { code: 'ca', name: 'Català', flag: flagCa },
+} as const;
 
 @Component({
   selector: 'app-site-header',
+  imports: [
+    LmnBars3Icon, LmnMoonIcon, LmnSunIcon, LmnXIcon, VoltButton, VoltDialogRoot, VoltDrawerClose,
+    VoltDrawerContent, VoltDrawerDescription, VoltDrawerOverlay, VoltDrawerTitle, VoltNativeButton,
+    VoltSelect, VoltSelectContent, VoltSelectItem, VoltToggle,
+  ],
   template: `
-    <header class="fixed inset-x-0 top-0 z-20 border-b bg-background/90 backdrop-blur-sm">
-      <nav class="container relative flex h-16 items-center justify-between gap-4" [attr.aria-label]="t('ui.navigation')"
-        (keydown.escape)="closeMenu()">
-        <a [href]="homePath() + '#hero'" (click)="closeMenu()" class="shrink-0">
+    <header class="fixed inset-x-0 top-0 z-50 border-b border-border bg-background/80 backdrop-blur-sm">
+      <nav class="container flex h-16 items-center justify-between px-4" [attr.aria-label]="t('ui.navigation')">
+        <a [href]="homePath() + '#hero'" class="shrink-0 rounded-sm">
           <img [src]="logoLight" alt="FalcoTech" width="80" class="block dark:hidden">
           <img [src]="logoDark" alt="FalcoTech" width="80" class="hidden dark:block">
         </a>
-        <div class="ml-auto flex items-center gap-3 md:gap-6">
-          <div id="site-links"
-            class="site-links absolute inset-x-0 top-full flex-col gap-2 border-b bg-background px-6 py-3 md:static md:flex md:flex-row md:gap-6 md:border-0 md:bg-transparent md:p-0"
-            [class.menu-open]="menuOpen()">
+        <div class="flex items-center gap-4 md:gap-6">
+          <div class="hidden items-center gap-6 md:flex">
             @for (item of sections; track item.id) {
-              <a [href]="homePath() + '#' + item.id" (click)="closeMenu()" class="rounded py-2 font-medium hover:underline">
-                {{ t(item.label) }}
-              </a>
+              <a voltButton variant="ghost" [href]="homePath() + '#' + item.id" class="h-10 px-4">{{ t(item.label) }}</a>
             }
           </div>
-          <select [attr.aria-label]="t('ui.language')" [value]="locale()" (change)="changeLocale($event)"
-            class="rounded-md border bg-background px-2 py-1 text-sm">
-            <option value="es" lang="es" [selected]="locale() === 'es'">Español</option>
-            <option value="en" lang="en" [selected]="locale() === 'en'">English</option>
-            <option value="ca" lang="ca" [selected]="locale() === 'ca'">Català</option>
-          </select>
-          <button type="button" class="rounded p-2 hover:bg-secondary" [attr.aria-label]="t('ui.theme')"
-            [attr.aria-pressed]="dark()" (click)="toggleTheme()">
-            <span aria-hidden="true">{{ dark() ? '☾' : '☀' }}</span>
-          </button>
-          <button type="button" class="rounded p-2 hover:bg-secondary md:hidden" [attr.aria-label]="t('ui.navigation')"
-            aria-controls="site-links" [attr.aria-expanded]="menuOpen()" (click)="toggleMenu()">
-            <span aria-hidden="true">☰</span>
-          </button>
+          <volt-toggle variant="ghost" size="icon" class="md:order-1"
+            [aria-label]="t('ui.theme')" [pressed]="dark()" (pressedChange)="changeTheme($event)">
+            @if (dark()) { <lmn-moon size="20" /> } @else { <lmn-sun size="20" /> }
+          </volt-toggle>
+          <div class="relative w-28 shrink-0 sm:w-32">
+            <volt-select [aria-label]="t('ui.language')" [value]="locale()" [displayWith]="languageName"
+              (valueChange)="changeLocale($event)"
+              class="h-8 rounded-md border-0 bg-foreground/45 pr-2 pl-8 text-xs text-background">
+              <volt-select-content>
+                @for (language of languageOptions; track language.code) {
+                  <volt-select-item [value]="language.code" [attr.lang]="language.code">
+                    <img [src]="language.flag" alt="" width="16">
+                    {{ language.name }}
+                  </volt-select-item>
+                }
+              </volt-select-content>
+            </volt-select>
+            <img [src]="currentLanguage().flag" alt="" width="16"
+              class="pointer-events-none absolute start-3 top-1/2 -translate-y-1/2">
+          </div>
+          <div class="md:hidden">
+            <volt-button variant="ghost" size="icon" [aria-label]="t('ui.navigation')"
+              aria-haspopup="dialog" [aria-expanded]="menuOpen()" (click)="menuOpen.set(true)">
+              <lmn-bars-3 size="20" />
+            </volt-button>
+          </div>
         </div>
       </nav>
     </header>
-  `,
-  styles: `
-    @media (max-width: 767px) {
-      .site-links { display: none; }
-      .site-links.menu-open { display: flex; }
-    }
+
+    <ng-template voltDialogRoot [(open)]="menuOpen" let-close="close">
+      <div voltDrawerOverlay></div>
+      <div voltDrawerContent side="right" class="w-3/4 max-w-sm p-6">
+        <h2 voltDrawerTitle class="sr-only">{{ t('ui.navigation') }}</h2>
+        <p voltDrawerDescription class="sr-only">{{ t('nav.home') }} FalcoTech</p>
+        <volt-drawer-close [label]="t('ui.close')" class="absolute top-4 right-4"><lmn-x size="20" /></volt-drawer-close>
+        <div class="mt-10 grid gap-4">
+          @for (item of sections; track item.id) {
+            <a voltButton variant="ghost" [href]="homePath() + '#' + item.id" (click)="close()">{{ t(item.label) }}</a>
+          }
+        </div>
+      </div>
+    </ng-template>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -57,8 +94,14 @@ export class SiteHeader {
   protected readonly t = this.i18n.t;
   protected readonly locale = this.i18n.locale;
   protected readonly homePath = computed(() => this.i18n.path('/'));
+  protected readonly languageOptions = Object.values(languages);
+  protected readonly currentLanguage = computed(() =>
+    this.languageOptions.find(language => language.code === this.locale()) ?? languages.es,
+  );
   protected readonly dark = signal(false);
   protected readonly menuOpen = signal(false);
+  protected readonly languageName = (value: unknown): string =>
+    this.languageOptions.find(language => language.code === value)?.name ?? '';
   protected readonly logoLight = logoLight;
   protected readonly logoDark = logoDark;
   protected readonly sections = [
@@ -71,34 +114,19 @@ export class SiteHeader {
     afterNextRender(() => {
       const dark = this.document.defaultView?.localStorage.getItem('theme') === 'dark';
       this.dark.set(dark);
-      this.document.documentElement.classList.toggle('dark', dark);
+      applyVoltTheme({ dark }, this.document);
     });
   }
 
-  protected async changeLocale(event: Event): Promise<void> {
-    const select = event.target as HTMLSelectElement;
-    const locale = select.value;
-    if (locale !== 'es' && locale !== 'en' && locale !== 'ca') return;
-
-    try {
-      await this.i18n.setLocale(locale);
-      this.closeMenu();
-    } finally {
-      select.value = this.locale();
+  protected async changeLocale(value: unknown): Promise<void> {
+    if (value === 'es' || value === 'en' || value === 'ca') {
+      await this.i18n.setLocale(value);
     }
   }
 
-  protected toggleMenu(): void {
-    this.menuOpen.update(open => !open);
-  }
-
-  protected closeMenu(): void {
-    this.menuOpen.set(false);
-  }
-
-  protected toggleTheme(): void {
-    this.dark.update(dark => !dark);
-    this.document.documentElement.classList.toggle('dark', this.dark());
-    this.document.defaultView?.localStorage.setItem('theme', this.dark() ? 'dark' : 'light');
+  protected changeTheme(dark: boolean): void {
+    this.dark.set(dark);
+    applyVoltTheme({ dark }, this.document);
+    this.document.defaultView?.localStorage.setItem('theme', dark ? 'dark' : 'light');
   }
 }

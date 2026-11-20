@@ -1,5 +1,11 @@
 import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
 import { injectT } from '@etyma/angular';
+import {
+  VoltButton, VoltDialogContent, VoltDialogDescription, VoltDialogOverlay, VoltDialogRoot, VoltDialogTitle,
+} from '@voltui/components';
+import { LmnChevronLeftIcon } from 'lumen-icons/chevron-left';
+import { LmnChevronRightIcon } from 'lumen-icons/chevron-right';
+import { LmnXIcon } from 'lumen-icons/x';
 import { i18n } from '../../i18n/i18n';
 
 const images = import.meta.glob('../../assets/p-*.webp', {
@@ -12,62 +18,69 @@ const photos = Object.keys(images)
   .sort((a, b) => a.localeCompare(b, 'es', { numeric: true }))
   .map(path => images[path]);
 
+const rowSize = 3;
+const pageSize = rowSize * 2;
+
 @Component({
   selector: 'app-portfolio',
+  imports: [
+    LmnChevronLeftIcon, LmnChevronRightIcon, LmnXIcon,
+    VoltButton, VoltDialogContent, VoltDialogDescription, VoltDialogOverlay, VoltDialogRoot, VoltDialogTitle,
+  ],
   template: `
-    <section class="container py-12 md:py-20" [attr.aria-label]="t('ui.gallery')">
-      <div class="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4">
+    <section class="grid h-svh grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 py-20 shadow-sm md:px-8"
+      [attr.aria-label]="t('ui.gallery')">
+      <volt-button size="icon" [class]="pageControlClass"
+        [disabled]="start() === 0" [aria-label]="t('ui.previous')" (click)="step(-1)">
+        <lmn-chevron-left size="20" />
+      </volt-button>
+      <div class="grid h-full min-h-0 grid-cols-1 grid-rows-6 gap-4 md:grid-cols-3 md:grid-rows-2 md:p-5 lg:p-10">
         @for (photo of visiblePhotos(); track photo) {
-          <button type="button" class="group relative overflow-hidden rounded-xl"
-            [attr.aria-label]="t('ui.openPhoto') + ' ' + (page() * pageSize + $index + 1)"
-            (click)="showPhoto(photo, dialog)">
-            <img [src]="photo" alt="" loading="lazy"
-              class="aspect-[4/3] w-full object-cover transition-transform group-hover:scale-105 motion-reduce:transition-none">
-          </button>
+          <div class="min-h-0">
+            <volt-button variant="ghost" class="group relative size-full min-h-0 overflow-hidden rounded-xl p-0"
+              [aria-label]="t('ui.openPhoto') + ' ' + (start() + $index + 1)" aria-haspopup="dialog"
+              (click)="selectedPhoto.set(photo)">
+              <img [src]="photo" alt="" loading="lazy"
+                class="size-full object-cover object-top transition-transform group-hover:scale-105 motion-reduce:transition-none">
+            </volt-button>
+          </div>
         }
       </div>
-      <div class="mt-4 flex justify-center gap-3">
-        <button type="button" class="rounded-full border px-4 py-2 disabled:opacity-40" [disabled]="page() === 0"
-          [attr.aria-label]="t('ui.previous')" (click)="step(-1)">‹</button>
-        <button type="button" class="rounded-full border px-4 py-2 disabled:opacity-40" [disabled]="page() === lastPage"
-          [attr.aria-label]="t('ui.next')" (click)="step(1)">›</button>
-      </div>
+      <volt-button size="icon" [class]="pageControlClass"
+        [disabled]="start() === lastStart" [aria-label]="t('ui.next')" (click)="step(1)">
+        <lmn-chevron-right size="20" />
+      </volt-button>
     </section>
-    <dialog #dialog aria-labelledby="photo-title"
-      class="w-[min(56rem,calc(100%_-_2rem))] max-w-none overflow-hidden rounded-xl bg-background text-foreground backdrop:bg-black/70">
-      @if (selected(); as photo) {
-        <img [src]="photo" alt="" class="max-h-[65vh] w-full bg-black object-contain">
-      }
-      <div class="flex items-start justify-between gap-4 p-4">
-        <div>
-          <h2 id="photo-title" class="font-bold">{{ t('portfolio.title') }}</h2>
-          <p class="text-muted">{{ t('portfolio.description') }}</p>
+
+    <ng-template voltDialogRoot [open]="selectedPhoto() !== null" (closed)="selectedPhoto.set(null)" let-close="close">
+      <div voltDialogOverlay></div>
+      <div voltDialogContent class="isolate flex min-h-[min(50svh,28rem)] w-[min(56rem,calc(100vw_-_2rem))] max-w-none flex-col justify-end overflow-hidden rounded-xl border-0 bg-black p-0 text-white">
+        @if (selectedPhoto(); as photo) {
+          <img [src]="photo" alt="" class="absolute inset-0 -z-10 size-full object-cover">
+        }
+        <div class="bg-linear-to-t from-black/90 to-black/45 px-8 pt-6 pb-4">
+          <h2 voltDialogTitle class="text-xl font-bold text-white md:text-4xl">{{ t('portfolio.title') }}</h2>
+          <p voltDialogDescription class="mt-3 text-base text-white">{{ t('portfolio.description') }}</p>
         </div>
-        <form method="dialog">
-          <button type="submit" class="rounded border px-3 py-1" [attr.aria-label]="t('ui.close')">×</button>
-        </form>
+        <volt-button size="icon" variant="ghost"
+          class="absolute top-3 right-3 rounded-full bg-black/65 text-white data-[hover]:bg-black/85 data-[hover]:text-white"
+          [aria-label]="t('ui.close')" (click)="close()">
+          <lmn-x size="20" />
+        </volt-button>
       </div>
-    </dialog>
+    </ng-template>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Portfolio {
   protected readonly t = injectT(i18n);
-  protected readonly pageSize = 6;
-  protected readonly page = signal(0);
-  protected readonly lastPage = Math.ceil(photos.length / this.pageSize) - 1;
-  protected readonly visiblePhotos = computed(() => {
-    const start = this.page() * this.pageSize;
-    return photos.slice(start, start + this.pageSize);
-  });
-  protected readonly selected = signal<string | null>(null);
+  protected readonly pageControlClass = 'size-10 shrink-0 rounded-full shadow-lg md:size-12';
+  protected readonly selectedPhoto = signal<string | null>(null);
+  protected readonly start = signal(0);
+  protected readonly lastStart = Math.max(0, photos.length - pageSize);
+  protected readonly visiblePhotos = computed(() => photos.slice(this.start(), this.start() + pageSize));
 
   protected step(offset: number): void {
-    this.page.update(page => Math.max(0, Math.min(page + offset, this.lastPage)));
-  }
-
-  protected showPhoto(photo: string, dialog: HTMLDialogElement): void {
-    this.selected.set(photo);
-    dialog.showModal();
+    this.start.update(start => Math.max(0, Math.min(start + offset * rowSize, this.lastStart)));
   }
 }

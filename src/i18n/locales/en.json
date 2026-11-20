@@ -82,14 +82,17 @@
       "email": {
         "label": "Email",
         "placeholder": "Enter your email",
-        "error": "Please enter your email"
+        "error": "Please enter your email",
+        "invalid": "Enter a valid email address."
       },
       "message": {
         "label": "Message",
         "placeholder": "Write your message here",
         "error": "Please enter your message"
       },
-      "submit": "Send →",
+      "tooLong": "The text is longer than allowed.",
+      "submit": "Send",
+      "sending": "Sending…",
       "success": "Message sent successfully!",
       "failure": "The message could not be sent. Please try again."
     }

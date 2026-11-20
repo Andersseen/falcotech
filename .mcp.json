@@ -3,6 +3,10 @@
     "context7": {
       "type": "http",
       "url": "https://mcp.context7.com/mcp"
+    },
+    "volt-ui": {
+      "type": "http",
+      "url": "https://voltui.dev/api/mcp"
     }
   }
 }
