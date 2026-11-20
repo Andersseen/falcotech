@@ -5,12 +5,13 @@
     "features": "Especialidades",
     "contact": "Contacto"
   },
-
   "home": {
     "title": "FALCOTECH",
     "description": "Implementamos soluciones innovadoras para abordar los desafíos contemporáneos que afectan tanto a la sociedad como a la fauna. Nuestra misión es utilizar tecnología de vanguardia para encontrar respuestas efectivas y sostenibles a los conflictos que surgen en estos ámbitos, combinando experiencia, compromiso y un profundo respeto por el entorno natural."
   },
   "features": {
+    "heading": "Tres especialidades, un mismo equipo",
+    "explore": "Ver especialidad",
     "title1": "Nuestro equipo está organizado en tres grupos de trabajo especializados",
     "card1": {
       "title": "Control de Fauna",
@@ -29,6 +30,7 @@
   },
   "about": {
     "section1": {
+      "photoAlt": "Motor y ala de un avión en un aeropuerto",
       "title": "Control fauna",
       "description": {
         "p1": "En FALCOTECH, contamos con un equipo altamente profesional compuesto por técnicos y expertos en control y manejo de fauna, incluyendo especialistas en cetrería. Nuestro equipo combina conocimientos profundos en técnicas tradicionales y modernas, lo que nos permite abordar diversas situaciones con una perspectiva integral y adaptada a cada caso.",
@@ -37,6 +39,7 @@
       }
     },
     "section2": {
+      "photoAlt": "Aerogeneradores en un paisaje agrícola",
       "title": "Consultora ambiental",
       "description": {
         "p1": "Nuestro equipo está compuesto por técnicos y biólogos con amplia experiencia en el seguimiento y estudio de fauna, estudios de Biodiversidad, Evaluación de Impacto Ambiental y análisis estadístico y geoespacial lo que les permite abordar diversas situaciones con solvencia y un enfoque especializado.",
@@ -44,6 +47,7 @@
       }
     },
     "section3": {
+      "photoAlt": "Dron en vuelo sobre un paisaje montañoso",
       "title": "Drones",
       "description": "Nuestra empresa integra tecnología UAV (Unmanned Aerial Vehicle) para optimizar nuestros servicios, proporcionando soluciones avanzadas y precisas. Ofrecemos una gama de servicios con drones, incluyendo grabaciones de alta calidad y detalladas inspecciones de infraestructuras y terrenos. Además, desarrollamos drones especializados, personalizados para realizar trabajos específicos según las necesidades del proyecto."
     },
@@ -83,22 +87,66 @@
       "email": {
         "label": "Correo electrónico",
         "placeholder": "Correo electrónico",
-        "error": "Por favor, escriba su correo electrónico"
+        "error": "Por favor, escriba su correo electrónico",
+        "invalid": "Introduce un correo electrónico válido."
       },
       "message": {
         "label": "Mensaje",
         "placeholder": "Escriba aquí su mensaje",
         "error": "Por favor, escriba su mensaje"
       },
-      "submit": "Enviar →",
-      "success": "¡Mensaje enviado con éxito!"
+      "tooLong": "El texto supera la longitud permitida.",
+      "submit": "Enviar",
+      "sending": "Enviando…",
+      "success": "¡Mensaje enviado con éxito!",
+      "failure": "No se pudo enviar el mensaje. Inténtelo de nuevo.",
+      "limited": "Ha enviado demasiados mensajes seguidos. Inténtelo de nuevo en unos minutos.",
+      "verification": "Complete la verificación antes de enviar el mensaje.",
+      "honeypot": "Deje este campo vacío"
     }
   },
   "portfolio": {
-    "title": "No disponible en estos momentos",
-    "description": "Estamos en proceso de desarrollo"
+    "photos": {
+      "p1": "Halcón encapuchado en un aeropuerto mientras despega un avión",
+      "p2": "Ave rapaz en vuelo sobre un cielo despejado",
+      "p3": "Motor y ala de un avión de pasajeros",
+      "p4": "Aerogeneradores en un paisaje agrícola",
+      "p5": "Cetrero observando a un halcón en vuelo",
+      "p6": "Aguilucho en vuelo con una antena de radar al fondo",
+      "p7": "Ánade real en vuelo",
+      "p8": "Cetrero con un halcón posado en el guante",
+      "p10": "Grupo de moritos levantando el vuelo",
+      "p11": "Vencejo en vuelo",
+      "p12": "Avión en aproximación con una bandada de aves cerca"
+    }
   },
   "footer": {
     "copyright": "Todos los derechos reservados."
+  },
+  "ui": {
+    "navigation": "Navegación principal",
+    "language": "Idioma",
+    "theme": "Modo oscuro",
+    "previous": "Anterior",
+    "next": "Siguiente",
+    "pause": "Pausar carrusel",
+    "play": "Reanudar carrusel",
+    "gallery": "Galería de fotos",
+    "openPhoto": "Abrir foto",
+    "close": "Cerrar",
+    "top": "Volver arriba",
+    "notFound": "Página no encontrada",
+    "skipToContent": "Saltar al contenido",
+    "carousel": "Fotografías de FalcoTech",
+    "slideStatus": "Imagen {$current} de {$total}",
+    "galleryPage": "Fotos {$from} a {$to} de {$total}",
+    "newTab": "se abre en una pestaña nueva"
+  },
+  "meta": {
+    "title": "FalcoTech · Control de fauna, consultoría ambiental y drones",
+    "description": "Control de fauna con cetrería y drones, consultoría ambiental y servicios UAV. Soluciones sostenibles para aeropuertos, ciudades, cultivos y vertederos.",
+    "ogImageAlt": "Halcón encapuchado en un aeropuerto mientras despega un avión",
+    "notFoundTitle": "Página no encontrada · FalcoTech",
+    "notFoundDescription": "La página que busca no existe o ha cambiado de dirección."
   }
 }
