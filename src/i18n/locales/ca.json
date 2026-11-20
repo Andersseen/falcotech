@@ -90,7 +90,8 @@
         "error": "Si us plau, introdueix el teu missatge"
       },
       "submit": "Enviar →",
-      "success": "Missatge enviat amb èxit!"
+      "success": "Missatge enviat amb èxit!",
+      "failure": "No s’ha pogut enviar el missatge. Torneu-ho a provar."
     }
   },
   "portfolio": {
@@ -99,5 +100,19 @@
   },
   "footer": {
     "copyright": "Tots els drets reservats."
+  },
+  "ui": {
+    "navigation": "Navegació principal",
+    "language": "Idioma",
+    "theme": "Canvia el tema",
+    "previous": "Anterior",
+    "next": "Següent",
+    "pause": "Posa en pausa el carrusel",
+    "play": "Reprèn el carrusel",
+    "gallery": "Galeria de fotos",
+    "openPhoto": "Obre la foto",
+    "close": "Tanca",
+    "top": "Torna a dalt",
+    "notFound": "Pàgina no trobada"
   }
 }

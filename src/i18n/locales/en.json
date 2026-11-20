@@ -90,7 +90,8 @@
         "error": "Please enter your message"
       },
       "submit": "Send →",
-      "success": "Message sent successfully!"
+      "success": "Message sent successfully!",
+      "failure": "The message could not be sent. Please try again."
     }
   },
   "portfolio": {
@@ -99,5 +100,19 @@
   },
   "footer": {
     "copyright": "All rights reserved."
+  },
+  "ui": {
+    "navigation": "Main navigation",
+    "language": "Language",
+    "theme": "Toggle theme",
+    "previous": "Previous",
+    "next": "Next",
+    "pause": "Pause slideshow",
+    "play": "Resume slideshow",
+    "gallery": "Photo gallery",
+    "openPhoto": "Open photo",
+    "close": "Close",
+    "top": "Back to top",
+    "notFound": "Page not found"
   }
 }

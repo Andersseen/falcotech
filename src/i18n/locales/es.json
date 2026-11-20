@@ -91,7 +91,8 @@
         "error": "Por favor, escriba su mensaje"
       },
       "submit": "Enviar →",
-      "success": "¡Mensaje enviado con éxito!"
+      "success": "¡Mensaje enviado con éxito!",
+      "failure": "No se pudo enviar el mensaje. Inténtelo de nuevo."
     }
   },
   "portfolio": {
@@ -100,5 +101,19 @@
   },
   "footer": {
     "copyright": "Todos los derechos reservados."
+  },
+  "ui": {
+    "navigation": "Navegación principal",
+    "language": "Idioma",
+    "theme": "Cambiar tema",
+    "previous": "Anterior",
+    "next": "Siguiente",
+    "pause": "Pausar carrusel",
+    "play": "Reanudar carrusel",
+    "gallery": "Galería de fotos",
+    "openPhoto": "Abrir foto",
+    "close": "Cerrar",
+    "top": "Volver arriba",
+    "notFound": "Página no encontrada"
   }
 }

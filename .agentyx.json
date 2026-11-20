@@ -1,0 +1,4 @@
+{
+  "packs": ["technical", "typescript", "angular"],
+  "targets": ["codex", "claude"]
+}
