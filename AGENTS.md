@@ -32,6 +32,11 @@ Run `pnpm check`, `pnpm test` and `pnpm build` before committing.
 - UI atoms come from Volt UI (`@voltui/components`, package mode: `Volt*` classes, `volt-*` selectors).
   Check the `volt-ui` MCP server before writing any button, card, input, alert, overlay or tooltip by hand.
   Links and icon buttons use the native `voltButton` directive; icon-only buttons get a `VoltTooltip`.
+  Site navigation is `VoltNavigationMenu` (header and mobile drawer); picking one photo among several
+  is a `VoltToggleGroup` with `photo-option` items (see `src/styles/globals.css`); labels are `VoltBadge`.
+  Volt puts consumer classes last, so overrides go in `class`; when a part (toggle-group item) keeps
+  its classes on the host, shape the inner element with a `[&>button]` variant or a global class.
+- Known Volt issue: `volt-accordion-content` needs `class="grid"`, or closed panels never collapse.
 - Raster images: drop the best original into `images/`, run `pnpm images`, and render it with
   `NgOptimizedImage` (`[ngSrc]="image.name" [ngSrcset]="image.srcset"` from `siteImage()` in
   `src/app/media/images.ts`, plus `sizes`; `fill` when cropped, `priority` only for the LCP image).

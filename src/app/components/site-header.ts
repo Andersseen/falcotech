@@ -1,9 +1,12 @@
 import { DOCUMENT } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, ElementRef, inject, signal, viewChild } from '@angular/core';
+import {
+  afterNextRender, ChangeDetectionStrategy, Component, computed, DestroyRef, ElementRef, inject, signal, viewChild,
+} from '@angular/core';
 import { injectI18n } from '@etyma/angular';
 import {
   VoltButton, VoltDialogRoot, VoltDrawerClose, VoltDrawerContent, VoltDrawerOverlay, VoltDrawerTitle,
-  VoltNativeButton, VoltSelect, VoltSelectContent, VoltSelectItem, VoltToggle, VoltTooltip, VoltTooltipContent,
+  VoltNativeButton, VoltNavigationMenu, VoltNavigationMenuItem, VoltNavigationMenuLink, VoltNavigationMenuList,
+  VoltSelect, VoltSelectContent, VoltSelectItem, VoltToggle, VoltTooltip, VoltTooltipContent,
 } from '@voltui/components';
 import { MoveAnimator, MoveEnterDirective, MoveStaggerDirective } from 'angular-movement';
 import { LmnBars3Icon } from 'lumen-icons/bars-3';
@@ -29,23 +32,31 @@ const languages = {
   imports: [
     LmnBars3Icon, LmnMoonIcon, LmnSunIcon, LmnXIcon, MoveEnterDirective, MoveStaggerDirective, VoltButton,
     VoltDialogRoot, VoltDrawerClose, VoltDrawerContent, VoltDrawerOverlay, VoltDrawerTitle, VoltNativeButton,
-    VoltSelect, VoltSelectContent, VoltSelectItem, VoltToggle, VoltTooltip, VoltTooltipContent,
+    VoltNavigationMenu, VoltNavigationMenuItem, VoltNavigationMenuLink, VoltNavigationMenuList, VoltSelect,
+    VoltSelectContent, VoltSelectItem, VoltToggle, VoltTooltip, VoltTooltipContent,
   ],
   template: `
     <a voltButton [href]="homePath() + '#main'"
       class="sr-only focus-visible:not-sr-only focus-visible:fixed focus-visible:top-2 focus-visible:left-2 focus-visible:z-60">{{ t('ui.skipToContent') }}</a>
     <header class="fixed inset-x-0 top-0 z-50 border-b border-border bg-background/80 backdrop-blur-sm">
-      <nav class="container flex h-16 items-center justify-between px-4" [attr.aria-label]="t('ui.navigation')">
+      <div class="container flex h-16 items-center justify-between px-4">
         <a [href]="homePath() + '#hero'" class="shrink-0 rounded-sm">
           <img [src]="logoLight" alt="FalcoTech" width="80" class="block dark:hidden">
           <img [src]="logoDark" alt="FalcoTech" width="80" class="hidden dark:block">
         </a>
         <div class="flex items-center gap-2 sm:gap-4 md:gap-6">
-          <div class="hidden items-center gap-6 md:flex">
-            @for (item of sections; track item.id) {
-              <a voltButton variant="ghost" [href]="homePath() + '#' + item.id" class="h-10 px-4">{{ t(item.label) }}</a>
-            }
-          </div>
+          <!-- Volt's navigation menu is the landmark itself (role="navigation"). The section in view is
+               highlighted, but not marked aria-current="page": these are parts of one page. -->
+          <volt-navigation-menu class="hidden md:flex" [attr.aria-label]="t('ui.navigation')">
+            <volt-navigation-menu-list class="gap-1">
+              @for (item of sections; track item.id) {
+                <volt-navigation-menu-item>
+                  <a voltNavigationMenuLink [href]="homePath() + '#' + item.id" [attr.data-current]="currentSection() === item.id ? '' : null"
+                    class="bg-transparent text-muted-foreground data-[current]:bg-accent/60 data-[current]:text-foreground">{{ t(item.label) }}</a>
+                </volt-navigation-menu-item>
+              }
+            </volt-navigation-menu-list>
+          </volt-navigation-menu>
           <volt-toggle #themeToggle variant="ghost" size="icon" class="md:order-1"
             [voltTooltip]="tooltip" [context]="t('ui.theme')" placement="bottom"
             [aria-label]="t('ui.theme')" [pressed]="theme.dark()" (pressedChange)="changeTheme($event)">
@@ -77,7 +88,7 @@ const languages = {
             </volt-button>
           </div>
         </div>
-      </nav>
+      </div>
     </header>
 
     <ng-template voltDialogRoot [(open)]="menuOpen" let-close="close">
@@ -85,11 +96,17 @@ const languages = {
       <div voltDrawerContent side="right" class="w-3/4 max-w-sm p-6">
         <h2 voltDrawerTitle class="sr-only">{{ t('ui.navigation') }}</h2>
         <volt-drawer-close [label]="t('ui.close')" class="absolute top-4 right-4"><lmn-x size="20" /></volt-drawer-close>
-        <div class="mt-10 grid gap-4" moveStagger="60ms">
-          @for (item of sections; track item.id) {
-            <a voltButton variant="ghost" moveEnter="fade-left" [href]="homePath() + '#' + item.id" (click)="close()">{{ t(item.label) }}</a>
-          }
-        </div>
+        <volt-navigation-menu orientation="vertical" class="mt-10 max-w-none items-stretch" [attr.aria-label]="t('ui.navigation')">
+          <volt-navigation-menu-list class="w-full flex-col items-stretch gap-2" moveStagger="60ms">
+            @for (item of sections; track item.id) {
+              <volt-navigation-menu-item moveEnter="fade-left">
+                <a voltNavigationMenuLink [href]="homePath() + '#' + item.id" (click)="close()"
+                  [attr.data-current]="currentSection() === item.id ? '' : null"
+                  class="h-11 w-full justify-start bg-transparent text-base data-[current]:bg-accent/60">{{ t(item.label) }}</a>
+              </volt-navigation-menu-item>
+            }
+          </volt-navigation-menu-list>
+        </volt-navigation-menu>
       </div>
     </ng-template>
 
@@ -120,8 +137,28 @@ export class SiteHeader {
   protected readonly sections = [
     { id: 'about', label: 'nav.about' },
     { id: 'features', label: 'nav.features' },
+    { id: 'gallery', label: 'nav.gallery' },
     { id: 'contact', label: 'nav.contact' },
   ] as const;
+  /** The section crossing the middle of the viewport, highlighted in the menu. */
+  protected readonly currentSection = signal<string | null>(null);
+
+  constructor() {
+    const destroyRef = inject(DestroyRef);
+    afterNextRender(() => {
+      const observer = new IntersectionObserver(entries => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) this.currentSection.set(entry.target.id);
+          else if (this.currentSection() === entry.target.id) this.currentSection.set(null);
+        }
+      }, { rootMargin: '-45% 0px -50% 0px' });
+      for (const { id } of this.sections) {
+        const section = this.document.getElementById(id);
+        if (section) observer.observe(section);
+      }
+      destroyRef.onDestroy(() => observer.disconnect());
+    });
+  }
 
   /**
    * Switches the theme inside a View Transition and reveals the new one as a circle growing from the

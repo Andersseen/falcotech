@@ -64,9 +64,9 @@
                 moveDuration="520ms">
             }
             @let active = services[activeChapter()]!;
-            <span class="specialty-frame-caption">
+            <volt-badge variant="secondary" class="specialty-frame-caption">
               <span class="tabular-nums">{{ pad(activeChapter() + 1) }}</span>{{ t(active.title) }}
-            </span>
+            </volt-badge>
           </div>
         </div>
         <div class="specialty-chapters">
@@ -96,7 +96,9 @@
                     @for (item of accordionItems; track item.key) {
                       <volt-accordion-item [value]="item.key">
                         <h4><volt-accordion-trigger>{{ t(item.trigger) }}</volt-accordion-trigger></h4>
-                        <volt-accordion-content>{{ t(item.content) }}</volt-accordion-content>
+                        <!-- grid: Volt's own class list ends with "block", which cancels the grid its collapse animation needs, so
+                             a closed panel never collapses and stays visible. Consumer classes win the merge. -->
+                        <volt-accordion-content class="grid text-muted-foreground">{{ t(item.content) }}</volt-accordion-content>
                       </volt-accordion-item>
                     }
                   </volt-accordion>
@@ -176,7 +178,7 @@
 </footer>
 
 <ng-container *movePresence="showBackToTop()">
-  <a voltButton size="icon" class="fixed right-4 bottom-4 z-30 size-10 opacity-90 shadow-md"
+  <a voltButton size="icon" class="fixed right-4 bottom-20 z-30 size-10 opacity-90 shadow-md"
     [href]="homePath() + '#hero'" [attr.aria-label]="t('ui.top')"
     [voltTooltip]="tooltip" [context]="t('ui.top')" placement="left" moveWhileTap="press"
     [moveEnter]="{ opacity: [0, 1], scale: [0.8, 1] }" [moveLeave]="{ opacity: [1, 0], scale: [1, 0.8] }"

@@ -7,7 +7,8 @@ import {
 } from 'angular-movement';
 import {
   VoltAccordion, VoltAccordionContent, VoltAccordionItem, VoltAccordionTrigger,
-  VoltButton, VoltCard, VoltCardContent, VoltCardTitle, VoltNativeButton, VoltSeparator, VoltTooltip, VoltTooltipContent,
+  VoltBadge, VoltButton, VoltCard, VoltCardContent, VoltCardTitle, VoltNativeButton, VoltSeparator, VoltTooltip,
+  VoltTooltipContent,
 } from '@voltui/components';
 import { LmnArrowDownRightIcon } from 'lumen-icons/arrow-down-right';
 import { LmnEyeIcon } from 'lumen-icons/eye';
@@ -34,7 +35,8 @@ import { imageSrcset, imageUrl, siteImage } from '../media/images';
 @Component({
   imports: [
     VoltAccordion, VoltAccordionContent, VoltAccordionItem, VoltAccordionTrigger,
-    VoltButton, VoltCard, VoltCardContent, VoltCardTitle, VoltNativeButton, VoltSeparator, VoltTooltip, VoltTooltipContent,
+    VoltBadge, VoltButton, VoltCard, VoltCardContent, VoltCardTitle, VoltNativeButton, VoltSeparator, VoltTooltip,
+    VoltTooltipContent,
     ContactForm, DottedGlow, Hero, LmnMapPinIcon, LmnArrowDownRightIcon, LmnArrowUpIcon, MoveEnterDirective, MoveInViewDirective, MoveLeaveDirective,
     MovePresenceDirective, MoveStaggerDirective, MoveTapDirective, MoveVariantsDirective, NgComponentOutlet, NgOptimizedImage,
     Portfolio, SiteHeader,

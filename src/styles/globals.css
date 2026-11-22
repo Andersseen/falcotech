@@ -52,3 +52,30 @@
   animation: none;
   mix-blend-mode: normal;
 }
+
+/*
+ * A photo inside a Volt toggle group item (hero and gallery thumbnails). Volt puts the item's
+ * classes on its host, so the inner button is shaped here. Half colour at rest, most of it on
+ * hover, all of it once chosen.
+ */
+.photo-option > button {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  background: var(--muted);
+  filter: grayscale(0.5);
+  transition: filter 300ms ease, box-shadow 300ms ease;
+}
+
+.photo-option > button:hover,
+.photo-option > button:focus-visible {
+  filter: grayscale(0.2);
+}
+
+.photo-option > button[data-selected] {
+  filter: none;
+  box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--foreground);
+}

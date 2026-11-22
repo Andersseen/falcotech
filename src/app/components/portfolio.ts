@@ -5,7 +5,7 @@ import {
 import { injectT } from '@etyma/angular';
 import {
   VoltButton, VoltDialogContent, VoltDialogOverlay, VoltDialogRoot, VoltDialogTitle, VoltNativeButton, VoltTabs,
-  VoltTabsContent, VoltTabsList, VoltTabsTrigger, VoltTooltip, VoltTooltipContent,
+  VoltTabsContent, VoltTabsList, VoltTabsTrigger, VoltToggleGroup, VoltToggleGroupItem, VoltTooltip, VoltTooltipContent,
 } from '@voltui/components';
 import {
   MoveEnterDirective, MoveHoverDirective, MoveInViewDirective, MoveLeaveDirective, MovePresenceForDirective,
@@ -68,7 +68,7 @@ type Photo = Category['photos'][number];
     LmnArrowsPointingOutIcon, LmnPauseIcon, LmnPlayIcon, LmnXIcon, MoveEnterDirective, MoveHoverDirective,
     MoveInViewDirective, MoveLeaveDirective, MovePresenceForDirective, MoveTapDirective, NgOptimizedImage, VoltButton,
     VoltDialogContent, VoltDialogOverlay, VoltDialogRoot, VoltDialogTitle, VoltNativeButton, VoltTabs, VoltTabsContent,
-    VoltTabsList, VoltTabsTrigger, VoltTooltip, VoltTooltipContent,
+    VoltTabsList, VoltTabsTrigger, VoltToggleGroup, VoltToggleGroupItem, VoltTooltip, VoltTooltipContent,
   ],
   template: `
     <section #gallery id="gallery" class="container py-20 sm:py-28" aria-labelledby="gallery-title"
@@ -139,20 +139,19 @@ type Photo = Category['photos'][number];
                         moveDuration="220ms" [moveDisabled]="!changed()">{{ t(current.alt) }}</h3>
                     </div>
                   </div>
-                  <ul class="mt-auto grid grid-cols-4 gap-3 lg:grid-cols-2 lg:gap-4" [attr.aria-label]="t(item.label)">
-                    @for (thumb of item.photos; track thumb.image.name; let index = $index) {
-                      <li>
-                        <button voltButton type="button" variant="ghost" moveWhileTap="press"
-                          class="gallery-thumb relative aspect-[4/3] h-auto w-full overflow-hidden rounded-xl p-0 lg:rounded-2xl"
-                          [attr.aria-label]="t(thumb.alt)" [attr.aria-current]="index === selected() ? 'true' : null"
-                          (click)="select(index)">
-                          <img [ngSrc]="thumb.image.name" [ngSrcset]="thumb.image.srcset" fill alt="" class="object-cover"
-                            sizes="(min-width: 64rem) 14rem, 22vw" [style.object-position]="thumb.focus"
-                            [moveWhileHover]="{ scale: [1, 1.06] }">
-                        </button>
-                      </li>
+                  <!-- A Volt toggle group: one photo chosen at a time, arrow keys move between them. -->
+                  <volt-toggle-group type="single" [allowDeselection]="false" [value]="selectedValue()"
+                    (valueChange)="selectValue($event)" [attr.aria-label]="t(item.label)"
+                    class="mt-auto grid grid-cols-4 gap-3 border-0 bg-transparent p-0 shadow-none lg:grid-cols-2 lg:gap-4">
+                    @for (thumb of item.photos; track thumb.image.name) {
+                      <volt-toggle-group-item [value]="thumb.image.name" [aria-label]="t(thumb.alt)" moveWhileTap="press"
+                        class="photo-option aspect-[4/3] w-full rounded-xl lg:rounded-2xl">
+                        <img [ngSrc]="thumb.image.name" [ngSrcset]="thumb.image.srcset" fill alt="" class="object-cover"
+                          sizes="(min-width: 64rem) 14rem, 22vw" [style.object-position]="thumb.focus"
+                          [moveWhileHover]="{ scale: [1, 1.06] }">
+                      </volt-toggle-group-item>
                     }
-                  </ul>
+                  </volt-toggle-group>
                 </div>
               </div>
             }
@@ -215,24 +214,6 @@ type Photo = Category['photos'][number];
       to { transform: scaleX(1); }
     }
 
-    /*
-     * Half colour until chosen (half the original, half greyscale), most of the colour on hover and
-     * all of it once picked, so the featured photo keeps the attention without dead grey thumbnails.
-     */
-    .gallery-thumb {
-      filter: grayscale(0.5);
-      transition: filter 300ms ease, box-shadow 300ms ease;
-    }
-
-    .gallery-thumb:hover,
-    .gallery-thumb:focus-visible {
-      filter: grayscale(0.2);
-    }
-
-    .gallery-thumb[aria-current='true'] {
-      filter: none;
-      box-shadow: 0 0 0 2px var(--color-background), 0 0 0 4px var(--color-foreground);
-    }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -285,6 +266,13 @@ export class Portfolio {
 
   protected pad(value: number): string {
     return String(value).padStart(2, '0');
+  }
+
+  protected readonly selectedValue = computed(() => [this.featured().image.name]);
+
+  protected selectValue(value: readonly string[]): void {
+    const index = this.current().photos.findIndex(photo => photo.image.name === value[0]);
+    if (index >= 0) this.select(index);
   }
 
   protected selectCategory(value: unknown): void {

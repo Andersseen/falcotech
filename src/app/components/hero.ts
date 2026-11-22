@@ -1,7 +1,9 @@
 import { NgOptimizedImage } from '@angular/common';
-import { afterNextRender, ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
+import { afterNextRender, ChangeDetectionStrategy, Component, computed, DestroyRef, inject, signal } from '@angular/core';
 import { injectI18n } from '@etyma/angular';
-import { VoltBadge, VoltNativeButton, VoltTooltip, VoltTooltipContent } from '@voltui/components';
+import {
+  VoltBadge, VoltNativeButton, VoltToggleGroup, VoltToggleGroupItem, VoltTooltip, VoltTooltipContent,
+} from '@voltui/components';
 import {
   MoveEnterDirective, MoveHoverDirective, MoveLeaveDirective, MovePresenceForDirective, MoveTapDirective,
 } from 'angular-movement';
@@ -30,8 +32,9 @@ type Slide = (typeof slides)[number];
 @Component({
   selector: 'app-hero',
   imports: [
-    LmnArrowRightIcon, LmnPauseIcon, NgOptimizedImage, LmnPlayIcon, MoveEnterDirective, MoveHoverDirective, MoveLeaveDirective,
-    MovePresenceForDirective, MoveTapDirective, VoltBadge, VoltNativeButton, VoltTooltip, VoltTooltipContent,
+    LmnArrowRightIcon, LmnPauseIcon, LmnPlayIcon, MoveEnterDirective, MoveHoverDirective, MoveLeaveDirective,
+    MovePresenceForDirective, MoveTapDirective, NgOptimizedImage, VoltBadge, VoltNativeButton, VoltToggleGroup,
+    VoltToggleGroupItem, VoltTooltip, VoltTooltipContent,
   ],
   template: `
     <section id="hero" class="container grid min-h-svh content-center gap-10 pt-24 pb-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:gap-16 lg:pb-12">
@@ -62,7 +65,6 @@ type Slide = (typeof slides)[number];
 
       <div class="hero-enter flex min-w-0 flex-col gap-3" style="--hero-delay: 160ms"
         aria-roledescription="carousel" [attr.aria-label]="t('ui.carousel')"
-        (keydown.arrowleft)="step(-1)" (keydown.arrowright)="step(1)"
         (pointerenter)="suspended.set(true)" (pointerleave)="suspended.set(false)"
         (focusin)="suspended.set(isKeyboardFocus($event))" (focusout)="suspended.set(false)">
         <div class="hero-frame relative isolate overflow-hidden rounded-[2rem] bg-muted">
@@ -76,12 +78,12 @@ type Slide = (typeof slides)[number];
               [style.object-position]="current.focus"
               [moveEnter]="{ opacity: [0, 1], scale: [1.06, 1] }" moveDuration="1100ms" [moveDisabled]="!changedSlide()">
           </div>
-          <div class="hero-rail" role="group" [attr.aria-label]="t('ui.gallery')">
+          <!-- A Volt toggle group: one photo chosen at a time, arrow keys move between them. -->
+          <volt-toggle-group class="hero-rail" type="single" [allowDeselection]="false" [orientation]="railOrientation()"
+            [value]="selectedValue()" (valueChange)="showValue($event)" [attr.aria-label]="t('ui.gallery')">
             @for (item of slides; track item.image.name; let index = $index) {
-              <button voltButton type="button" variant="ghost"
-                class="hero-thumb relative size-12 shrink-0 overflow-hidden rounded-xl p-0 sm:size-14 lg:size-16"
-                [attr.aria-label]="t(item.alt)" [attr.aria-current]="index === slide() ? 'true' : null"
-                moveWhileTap="press" (click)="show(index)">
+              <volt-toggle-group-item [value]="item.image.name" [aria-label]="t(item.alt)" moveWhileTap="press"
+                class="photo-option size-12 shrink-0 rounded-xl sm:size-14 lg:size-16">
                 <img [ngSrc]="item.image.name" [ngSrcset]="item.image.srcset" fill sizes="64px" alt=""
                   class="object-cover" [style.object-position]="item.focus"
                   [moveWhileHover]="{ scale: [1, 1.08] }">
@@ -90,9 +92,9 @@ type Slide = (typeof slides)[number];
                        moves to the next photo when it fills, so what you see and what happens never drift. -->
                   <span class="hero-progress" aria-hidden="true" [class.paused]="suspended()" (animationend)="step(1)"></span>
                 }
-              </button>
+              </volt-toggle-group-item>
             }
-          </div>
+          </volt-toggle-group>
         </div>
         <div class="flex items-center justify-between gap-4 px-1 text-sm">
           <p class="flex min-w-0 items-baseline gap-3">
@@ -134,7 +136,11 @@ type Slide = (typeof slides)[number];
      * background, and the two pseudo-elements round the photo's edge into it (inverted corners).
      * Below lg the strip runs along the bottom edge; from lg it runs down the right edge.
      */
+    /* Volt's toggle group draws a bordered pill; here it is the notch, so its own surface goes. */
     .hero-rail {
+      border: 0;
+      box-shadow: none;
+      align-items: center;
       --notch: 1.25rem;
       --cut: var(--color-background);
       position: absolute;
@@ -201,20 +207,6 @@ type Slide = (typeof slides)[number];
       }
     }
 
-    .hero-thumb {
-      opacity: 0.55;
-      transition: opacity 200ms ease;
-    }
-
-    .hero-thumb:hover,
-    .hero-thumb[aria-current='true'] {
-      opacity: 1;
-    }
-
-    .hero-thumb[aria-current='true'] {
-      box-shadow: inset 0 0 0 2px var(--color-foreground);
-    }
-
     .hero-progress {
       position: absolute;
       inset: auto 0 0;
@@ -259,8 +251,14 @@ export class Hero {
   protected readonly suspended = signal(false);
 
   constructor() {
+    const destroyRef = inject(DestroyRef);
     afterNextRender(() => {
       if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) this.playing.set(true);
+      const wide = window.matchMedia('(min-width: 64rem)');
+      const orient = () => this.railOrientation.set(wide.matches ? 'vertical' : 'horizontal');
+      orient();
+      wide.addEventListener('change', orient);
+      destroyRef.onDestroy(() => wide.removeEventListener('change', orient));
     });
   }
 
@@ -275,6 +273,15 @@ export class Hero {
 
   protected step(offset: number): void {
     this.show((this.slide() + offset + slides.length) % slides.length);
+  }
+
+  protected readonly selectedValue = computed(() => [slides[this.slide()]!.image.name]);
+  /** The strip runs down the photo from lg and along its bottom edge below that; arrow keys follow it. */
+  protected readonly railOrientation = signal<'horizontal' | 'vertical'>('horizontal');
+
+  protected showValue(value: readonly string[]): void {
+    const index = slides.findIndex(item => item.image.name === value[0]);
+    if (index >= 0) this.show(index);
   }
 
   protected show(index: number): void {

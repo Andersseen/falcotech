@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { VoltBadge } from '@voltui/components';
 import { MoveLoopDirective } from 'angular-movement';
 
 import { EUROPE_MAP } from './europe-map.data';
@@ -9,7 +10,7 @@ import { EUROPE_MAP } from './europe-map.data';
  */
 @Component({
   selector: 'app-europe-map',
-  imports: [MoveLoopDirective],
+  imports: [MoveLoopDirective, VoltBadge],
   template: `
     <div class="europe-map" role="img" [attr.aria-label]="label()">
       <div class="europe-plane">
@@ -24,10 +25,10 @@ import { EUROPE_MAP } from './europe-map.data';
         <!-- Anchored to Spain inside the tilted plane, then turned back upright so it stands on the pin. -->
         <span class="pin-anchor" [style.left.%]="(map.pin.x / map.width) * 100" [style.top.%]="(map.pin.y / map.height) * 100"
           aria-hidden="true">
-          <span class="pin-label">
+          <volt-badge variant="outline" class="pin-label">
             <span class="font-semibold">{{ here() }}</span>
-            <span class="text-muted-foreground">{{ place() }}</span>
-          </span>
+            <span class="font-normal text-muted-foreground">{{ place() }}</span>
+          </volt-badge>
         </span>
       </div>
     </div>
@@ -109,23 +110,18 @@ import { EUROPE_MAP } from './europe-map.data';
       transform-style: preserve-3d;
     }
 
+    /* A Volt badge, stood upright on the pin. */
     .pin-label {
       position: absolute;
       bottom: 0;
       left: 0;
-      display: flex;
       flex-direction: column;
-      align-items: center;
       gap: 0.125rem;
       margin-bottom: 2.75rem;
       padding: 0.375rem 0.75rem;
-      border: 1px solid var(--color-border);
-      border-radius: 0.75rem;
       background: var(--color-background);
-      font-size: 0.75rem;
       line-height: 1.2;
       white-space: nowrap;
-      box-shadow: 0 8px 24px -12px rgb(0 0 0 / 0.4);
       transform: translateX(-50%) rotateX(-42deg);
       transform-origin: 50% calc(100% + 2.75rem);
     }
