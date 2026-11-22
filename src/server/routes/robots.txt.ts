@@ -1,5 +1,5 @@
 import { defineEventHandler, setResponseHeader } from 'h3';
-import { isIndexable, requestOrigin } from '../site';
+import { isIndexable, SITE_ORIGIN } from '../site';
 
 export default defineEventHandler((event) => {
   setResponseHeader(event, 'Content-Type', 'text/plain; charset=utf-8');
@@ -12,7 +12,7 @@ export default defineEventHandler((event) => {
     'Allow: /',
     'Disallow: /api/',
     '',
-    `Sitemap: ${requestOrigin(event)}/sitemap.xml`,
+    `Sitemap: ${SITE_ORIGIN}/sitemap.xml`,
     '',
   ].join('\n');
 });

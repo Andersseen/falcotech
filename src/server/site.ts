@@ -1,12 +1,12 @@
 import { getRequestHeader, getRequestIP, getRequestURL, type H3Event } from 'h3';
+import { SITE } from '../app/seo/site';
 import { i18n } from '../i18n/i18n';
 
 /** Pages to publish, as router paths in the source locale. */
 export const PUBLIC_PAGES = ['/'] as const;
 
-export function requestOrigin(event: H3Event): string {
-  return getRequestURL(event, { xForwardedHost: true, xForwardedProto: true }).origin;
-}
+/** The production origin: sitemaps and robots.txt name it whichever host serves them. */
+export const SITE_ORIGIN = SITE.origin;
 
 /** Every localized URL of a page, keyed by locale. */
 export function localizedUrls(origin: string, path: string): ReadonlyArray<{ locale: string; href: string }> {
@@ -17,7 +17,7 @@ export function localizedUrls(origin: string, path: string): ReadonlyArray<{ loc
  * Hosts that serve the real site. Every other host (previews, workers.dev, vercel.app, localhost)
  * is a copy that must stay out of search results, whichever provider serves it.
  */
-export const PRODUCTION_HOSTS: ReadonlySet<string> = new Set(['www.falcotech.es']);
+export const PRODUCTION_HOSTS: ReadonlySet<string> = new Set([new URL(SITE.origin).hostname]);
 
 export function isIndexable(event: H3Event): boolean {
   return PRODUCTION_HOSTS.has(getRequestURL(event, { xForwardedHost: true }).hostname);

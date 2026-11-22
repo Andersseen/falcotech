@@ -6,13 +6,15 @@ import { provideEtyma } from '@etyma/angular';
 import { provideMovement } from 'angular-movement';
 import { i18n } from '../i18n/i18n';
 import { provideSiteImages } from './media/images';
+import { SITE } from './seo/site';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideFileRouter(withLocalizedRoutes()),
     provideClientHydration(withEventReplay()),
     provideEtyma(i18n),
-    provideEtymaAnalog(),
+    // Canonical and hreflang name the production site, whichever host renders the page.
+    provideEtymaAnalog({ origin: SITE.origin }),
     provideSiteImages(),
     // One motion vocabulary for the whole site. Reduced motion is honoured by the library itself.
     provideMovement({ duration: '320ms', easing: 'cubic-bezier(0.16, 1, 0.3, 1)' }),
