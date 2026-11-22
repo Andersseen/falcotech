@@ -12,7 +12,10 @@ import sharp from 'sharp';
 
 const SOURCE = 'images';
 const TARGET = 'src/assets/img';
-const WIDTHS = [160, 320, 640, 960, 1280, 1920, 2560];
+const WIDTHS = [160, 320, 640, 960, 1280, 1920, 2560] as const;
+const MAX_WIDTH = 2560;
+/** Illustrations are never shown wider than a card. */
+const MAX_ILLUSTRATION_WIDTH = 960;
 /** A master this close to a standard width replaces it instead of adding an almost identical file. */
 const MERGE_RATIO = 0.85;
 
@@ -20,15 +23,20 @@ const masters = (await readdir(SOURCE)).filter(file => /\.(webp|png|jpe?g)$/i.te
 await rm(TARGET, { recursive: true, force: true });
 await mkdir(TARGET, { recursive: true });
 
-const manifest = {};
+interface ManifestEntry {
+  readonly width: number;
+  readonly height: number;
+  readonly widths: readonly number[];
+}
+
+const manifest: Record<string, ManifestEntry> = {};
 for (const file of masters) {
   const name = basename(file, extname(file));
   const input = sharp(join(SOURCE, file)).rotate();
   const { width, height, hasAlpha } = await input.metadata();
 
-  // Illustrations are never shown wider than a card, so they stop at 960 px.
-  const largest = Math.min(width, hasAlpha ? 960 : WIDTHS.at(-1));
-  const widths = WIDTHS.filter(candidate => candidate < largest * MERGE_RATIO);
+  const largest = Math.min(width, hasAlpha ? MAX_ILLUSTRATION_WIDTH : MAX_WIDTH);
+  const widths: number[] = WIDTHS.filter(candidate => candidate < largest * MERGE_RATIO);
   widths.push(largest);
 
   for (const target of widths) {

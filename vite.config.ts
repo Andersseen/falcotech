@@ -1,4 +1,5 @@
 import analog from '@analogjs/platform';
+import tailwindcss from '@tailwindcss/vite';
 import { defineConfig, loadEnv } from 'vite';
 
 // A Content-Security-Policy is left out on purpose: hydration event replay injects an inline script,
@@ -25,6 +26,7 @@ export default defineConfig(({ command, mode }) => {
       assetsInlineLimit: (file: string) => (file.includes('/src/assets/img/') ? false : undefined),
     },
     plugins: [
+      tailwindcss(),
       analog({
         ssr: true,
         // Etyma uses the request origin for canonical URLs and language alternates.

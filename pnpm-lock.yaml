@@ -78,15 +78,21 @@ importers:
       '@angular/compiler-cli':
         specifier: ~21.2.0
         version: 21.2.26(@angular/compiler@21.2.26)(typescript@5.9.3)
-      '@tailwindcss/postcss':
+      '@tailwindcss/vite':
         specifier: ^4.3.5
-        version: 4.3.5
+        version: 4.3.5(vite@7.3.8(@types/node@22.20.5)(jiti@2.7.0)(lightningcss@1.33.0)(sass@1.97.3)(terser@5.51.3)(yaml@2.6.1))
+      '@types/geojson':
+        specifier: ^7946.0.16
+        version: 7946.0.16
       '@types/node':
-        specifier: ^22.0.0
+        specifier: ^22
         version: 22.20.5
       '@types/topojson-client':
         specifier: ^3.1.5
         version: 3.1.5
+      '@types/topojson-specification':
+        specifier: ^1.0.5
+        version: 1.0.5
       '@voltui/agent':
         specifier: 0.6.0
         version: 0.6.0
@@ -138,10 +144,6 @@ packages:
   '@agentyx/core@0.24.0':
     resolution: {integrity: sha512-Mmd0k2ybzkFZzynwRfFCpFz0WcZIbn82Lt4cjMpTQvTmMTHwJtnfYKc5mUWfVWmdmateoiH/xzz3JhX5eHGVow==}
     engines: {node: '>=22'}
-
-  '@alloc/quick-lru@5.2.0':
-    resolution: {integrity: sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw==}
-    engines: {node: '>=10'}
 
   '@ampproject/remapping@2.3.0':
     resolution: {integrity: sha512-30iZtAPgz+LTIYoeivqYo853f02jBYSd5uGnGpkFV0M3xOt9aN73erkgYAmZU43x4VfqcnLxW9Kpg3R5LC4YYw==}
@@ -2103,8 +2105,10 @@ packages:
     resolution: {integrity: sha512-PynqGLZsZvwM9tqD/CUxkOIfyd6K5elZ2MooauzJryP/UqXYgi3yYbtt3N0Xe+MHV/eFKPFQCEfIKAqlAS1CBg==}
     engines: {node: '>= 20'}
 
-  '@tailwindcss/postcss@4.3.5':
-    resolution: {integrity: sha512-FAV37Tlx9wBiT/hkfgVD0Q6CWsP2oUX3lf28nrfjW8+ksILjnpuFulUqWDfNR4/ZiEHHDRBX8DUTzD1Rys687A==}
+  '@tailwindcss/vite@4.3.5':
+    resolution: {integrity: sha512-BCNiY0a1ZjdOHVqw7kyb7U72BwfMF3dfUuN+tQsLWky/J5JOI/r7abibglXfygrZhVO/3u3V+E25kkKTeMkXaQ==}
+    peerDependencies:
+      vite: ^5.2.0 || ^6 || ^7 || ^8
 
   '@tybys/wasm-util@0.10.5':
     resolution: {integrity: sha512-dOGOPxlaNV+G046mZzN+9C0dAcQZeSKcXiVaM0TYy/LM4ttTmgSBDxYfovcYI8Em3+eAbiAYpvWLOv8+ZVRJKA==}
@@ -4531,8 +4535,6 @@ snapshots:
     dependencies:
       zod: 4.6.7
 
-  '@alloc/quick-lru@5.2.0': {}
-
   '@ampproject/remapping@2.3.0':
     dependencies:
       '@jridgewell/gen-mapping': 0.3.13
@@ -6070,13 +6072,12 @@ snapshots:
       '@tailwindcss/oxide-win32-arm64-msvc': 4.3.5
       '@tailwindcss/oxide-win32-x64-msvc': 4.3.5
 
-  '@tailwindcss/postcss@4.3.5':
+  '@tailwindcss/vite@4.3.5(vite@7.3.8(@types/node@22.20.5)(jiti@2.7.0)(lightningcss@1.33.0)(sass@1.97.3)(terser@5.51.3)(yaml@2.6.1))':
     dependencies:
-      '@alloc/quick-lru': 5.2.0
       '@tailwindcss/node': 4.3.5
       '@tailwindcss/oxide': 4.3.5
-      postcss: 8.5.33
       tailwindcss: 4.3.5
+      vite: 7.3.8(@types/node@22.20.5)(jiti@2.7.0)(lightningcss@1.33.0)(sass@1.97.3)(terser@5.51.3)(yaml@2.6.1)
 
   '@tybys/wasm-util@0.10.5':
     dependencies:
