@@ -3,6 +3,7 @@
     "home": "Inicio",
     "about": "Quiénes somos",
     "features": "Especialidades",
+    "gallery": "Galería",
     "contact": "Contacto"
   },
   "home": {
@@ -81,9 +82,10 @@
   "contact": {
     "title": "Contacte con FalcoTech",
     "description": "¿Tiene un problema con la fauna en sus instalaciones o un proyecto ambiental en marcha? Cuéntenos qué necesita y le responderemos lo antes posible.",
-    "location": "Barcelona, España",
-    "here": "Estamos aquí",
-    "mapLabel": "Mapa de España con FalcoTech señalado en Barcelona",
+    "location": "Servicio en toda España",
+    "here": "España",
+    "area": "Trabajamos en todo el territorio",
+    "mapLabel": "Mapa de Europa con España destacada",
     "form": {
       "username": {
         "label": "Nombre y apellido",
@@ -134,6 +136,8 @@
     }
   },
   "footer": {
+    "explore": "Explorar",
+    "area": "Trabajamos en toda España",
     "copyright": "Todos los derechos reservados."
   },
   "ui": {

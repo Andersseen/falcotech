@@ -113,25 +113,65 @@
   <app-contact-form />
 </main>
 
-<footer class="sticky bottom-0 flex h-svh flex-col items-center justify-between bg-linear-to-r from-transparent via-secondary to-transparent px-4 sm:px-6 md:px-8">
-  <div class="flex flex-1 flex-col items-center justify-center gap-6">
-    <a voltButton variant="ghost" [href]="homePath() + '#hero'" class="text-2xl font-bold">{{ site.name }}</a>
-    <ul class="flex gap-4 sm:gap-6" moveStagger="70ms">
-      @for (link of contactLinks; track link.href) {
-        <li moveInView="fade-up">
-          <a voltButton variant="ghost" size="icon" [href]="link.href" class="text-muted-foreground"
-            [attr.target]="link.external ? '_blank' : null" [attr.rel]="link.external ? 'noopener noreferrer' : null"
-            [attr.aria-label]="link.external ? link.label + ' (' + t('ui.newTab') + ')' : link.label"
-            [voltTooltip]="tooltip" [context]="link.label" moveWhileTap="press">
-            <ng-container *ngComponentOutlet="link.icon" />
-          </a>
-        </li>
-      }
-    </ul>
+<footer class="sticky bottom-0 isolate flex min-h-svh flex-col overflow-hidden bg-background lg:min-h-[50svh]">
+  <!-- Revealed from behind the page as it scrolls away; the glow is decorative. -->
+  <app-dotted-glow class="-z-10" />
+  <div class="container flex flex-1 flex-col justify-center py-16 lg:py-12">
+    <div class="grid grid-cols-2 gap-x-6 gap-y-10 lg:grid-cols-[1.5fr_repeat(3,minmax(0,1fr))] lg:gap-8">
+      <div class="col-span-2 flex flex-col items-start gap-4 lg:col-span-1">
+        <a [href]="homePath() + '#hero'" class="rounded-sm">
+          <img [src]="logoLight" alt="FalcoTech" width="104" height="72" class="block h-auto w-26 dark:hidden">
+          <img [src]="logoDark" alt="FalcoTech" width="104" height="72" class="hidden h-auto w-26 dark:block">
+        </a>
+        <p class="max-w-xs text-sm leading-relaxed text-muted-foreground">{{ t('home.title') }}</p>
+        <ul class="flex gap-2" moveStagger="70ms">
+          @for (link of socialLinks; track link.href) {
+            <li moveInView="fade-up">
+              <a voltButton variant="outline" size="icon" [href]="link.href" class="rounded-full text-muted-foreground"
+                target="_blank" rel="noopener noreferrer" [attr.aria-label]="link.label + ' (' + t('ui.newTab') + ')'"
+                [voltTooltip]="tooltip" [context]="link.label" moveWhileTap="press">
+                <ng-container *ngComponentOutlet="link.icon" />
+              </a>
+            </li>
+          }
+        </ul>
+      </div>
+      <nav [attr.aria-labelledby]="'footer-explore'">
+        <h2 id="footer-explore" class="text-sm font-semibold">{{ t('footer.explore') }}</h2>
+        <ul class="mt-4 grid gap-2.5 text-sm">
+          @for (item of footerSections; track item.id) {
+            <li><a voltButton variant="link" class="h-auto p-0 text-muted-foreground data-[hover]:text-foreground"
+              [href]="homePath() + '#' + item.id">{{ t(item.label) }}</a></li>
+          }
+        </ul>
+      </nav>
+      <div>
+        <h2 class="text-sm font-semibold">{{ t('nav.features') }}</h2>
+        <ul class="mt-4 grid gap-2.5 text-sm">
+          @for (service of services; track service.key) {
+            <li><a voltButton variant="link" class="h-auto p-0 text-muted-foreground data-[hover]:text-foreground"
+              [href]="homePath() + '#' + service.fragment">{{ t(service.title) }}</a></li>
+          }
+        </ul>
+      </div>
+      <div class="col-span-2 lg:col-span-1">
+        <h2 class="text-sm font-semibold">{{ t('nav.contact') }}</h2>
+        <ul class="mt-4 grid gap-2.5 text-sm">
+          @for (link of directLinks; track link.href) {
+            <li><a voltButton variant="link" class="h-auto gap-2 p-0 text-muted-foreground data-[hover]:text-foreground"
+              [href]="link.href"><ng-container *ngComponentOutlet="link.icon; inputs: { size: 16 }" />{{ link.label }}</a></li>
+          }
+          <li class="flex items-center gap-2 text-muted-foreground"><lmn-map-pin size="16" />{{ t('contact.location') }}</li>
+        </ul>
+      </div>
+    </div>
   </div>
-  <div class="w-full">
+  <div class="container">
     <volt-separator />
-    <p class="py-4 text-xs text-muted-foreground">&copy;{{ year }} {{ site.name }}. {{ t('footer.copyright') }}</p>
+    <div class="flex flex-wrap items-center justify-between gap-2 py-5 text-xs text-muted-foreground">
+      <p>&copy; {{ year }} {{ site.name }}. {{ t('footer.copyright') }}</p>
+      <p>{{ t('footer.area') }}</p>
+    </div>
   </div>
 </footer>
 

@@ -12,6 +12,7 @@ from `main`); the live www.falcotech.es is still on Vercel until the switch. One
 - `pnpm build && pnpm preview`: production SSR build served locally
 - `pnpm build:cloudflare && pnpm preview:cloudflare`: the Workers build, served by workerd on :8787
 - `pnpm images`: regenerate the responsive WebP variants in `src/assets/img/` from `images/`
+- `pnpm map`: regenerate the dotted Europe map (`src/app/components/europe-map.data.ts`) from Natural Earth
 - `pnpm agents:check`: verify the Agentyx-managed skills
 
 Run `pnpm check`, `pnpm test` and `pnpm build` before committing.

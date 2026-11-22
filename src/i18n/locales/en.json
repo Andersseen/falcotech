@@ -3,6 +3,7 @@
     "home": "Home",
     "about": "About Us",
     "features": "Features",
+    "gallery": "Gallery",
     "contact": "Contact"
   },
   "home": {
@@ -81,9 +82,10 @@
   "contact": {
     "title": "Contact FalcoTech",
     "description": "Dealing with wildlife at your site, or planning an environmental project? Tell us what you need and we will get back to you as soon as we can.",
-    "location": "Barcelona, Spain",
-    "here": "We are here",
-    "mapLabel": "Map of Spain with FalcoTech marked in Barcelona",
+    "location": "Working across Spain",
+    "here": "Spain",
+    "area": "We work across the country",
+    "mapLabel": "Map of Europe with Spain highlighted",
     "form": {
       "username": {
         "label": "Full Name",
@@ -134,6 +136,8 @@
     }
   },
   "footer": {
+    "explore": "Explore",
+    "area": "Working across Spain",
     "copyright": "All rights reserved."
   },
   "ui": {

@@ -17,7 +17,7 @@ import {
 } from '../../shared/contact';
 import { i18n } from '../../i18n/i18n';
 import { SITE } from '../seo/site';
-import { SpainMap } from './spain-map';
+import { EuropeMap } from './europe-map';
 import { Turnstile } from './turnstile';
 
 type Status = 'idle' | 'submitting' | 'success' | 'error' | 'limited' | 'verification';
@@ -26,7 +26,7 @@ type Status = 'idle' | 'submitting' | 'success' | 'error' | 'limited' | 'verific
   selector: 'app-contact-form',
   imports: [
     LmnArrowRightIcon, LmnEnvelopeIcon, LmnMapPinIcon, LmnPhoneIcon, MoveEnterDirective, MoveInViewDirective,
-    MoveTapDirective, ReactiveFormsModule, SpainMap, Turnstile, VoltAlert, VoltAlertDescription, VoltButton, VoltCard,
+    MoveTapDirective, ReactiveFormsModule, EuropeMap, Turnstile, VoltAlert, VoltAlertDescription, VoltButton, VoltCard,
     VoltCardContent, VoltError, VoltFormField, VoltInput, VoltLabel, VoltNativeButton, VoltSpinner, VoltTextarea,
   ],
   template: `
@@ -43,8 +43,8 @@ type Status = 'idle' | 'submitting' | 'success' | 'error' | 'limited' | 'verific
               <lmn-phone size="16" />{{ phone }}</a></li>
             <li class="flex items-center gap-2 text-muted-foreground"><lmn-map-pin size="16" />{{ t('contact.location') }}</li>
           </ul>
-          <app-spain-map class="-mt-4 w-full max-w-lg" [label]="t('contact.mapLabel')" [here]="t('contact.here')"
-            place="Barcelona" />
+          <app-europe-map class="w-full max-w-lg" [label]="t('contact.mapLabel')"
+            [here]="t('contact.here')" [place]="t('contact.area')" />
         </div>
 
         <volt-card moveInView="fade-up" moveDuration="420" class="contact-card relative overflow-hidden rounded-3xl p-6 shadow-lg sm:p-8">

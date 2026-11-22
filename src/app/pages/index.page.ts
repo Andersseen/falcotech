@@ -17,8 +17,12 @@ import { LmnArrowUpIcon } from 'lumen-icons/arrow-up';
 import { LmnCameraIcon } from 'lumen-icons/camera';
 import { LmnChatBubbleOvalLeftEllipsisIcon } from 'lumen-icons/chat-bubble-oval-left-ellipsis';
 import { LmnEnvelopeIcon } from 'lumen-icons/envelope';
+import { LmnMapPinIcon } from 'lumen-icons/map-pin';
 import { LmnPhoneIcon } from 'lumen-icons/phone';
+import logoLight from '../../assets/logo-black.svg';
+import logoDark from '../../assets/logo-white.svg';
 import { ContactForm } from '../components/contact-form';
+import { DottedGlow } from '../components/dotted-glow';
 import { Hero } from '../components/hero';
 import { Portfolio } from '../components/portfolio';
 import { SiteHeader } from '../components/site-header';
@@ -31,7 +35,7 @@ import { imageSrcset, imageUrl, siteImage } from '../media/images';
   imports: [
     VoltAccordion, VoltAccordionContent, VoltAccordionItem, VoltAccordionTrigger,
     VoltButton, VoltCard, VoltCardContent, VoltCardTitle, VoltNativeButton, VoltSeparator, VoltTooltip, VoltTooltipContent,
-    ContactForm, Hero, LmnArrowDownRightIcon, LmnArrowUpIcon, MoveEnterDirective, MoveInViewDirective, MoveLeaveDirective,
+    ContactForm, DottedGlow, Hero, LmnMapPinIcon, LmnArrowDownRightIcon, LmnArrowUpIcon, MoveEnterDirective, MoveInViewDirective, MoveLeaveDirective,
     MovePresenceDirective, MoveStaggerDirective, MoveTapDirective, MoveVariantsDirective, NgComponentOutlet, NgOptimizedImage,
     Portfolio, SiteHeader,
   ],
@@ -47,12 +51,26 @@ export default class HomePage {
   protected readonly showBackToTop = signal(false);
   protected readonly year = new Date().getFullYear();
   protected readonly site = SITE;
-  protected readonly contactLinks = [
-    { label: 'Instagram', href: SITE.instagram, icon: LmnCameraIcon, external: true },
-    { label: 'WhatsApp', href: SITE.whatsapp, icon: LmnChatBubbleOvalLeftEllipsisIcon, external: true },
-    { label: SITE.email, href: `mailto:${SITE.email}`, icon: LmnEnvelopeIcon, external: false },
-    { label: SITE.telephone.replace(/^(\+34)(\d{3})(\d{3})(\d{3})$/, '$1 $2 $3 $4'), href: `tel:${SITE.telephone}`, icon: LmnPhoneIcon, external: false },
+  protected readonly socialLinks = [
+    { label: 'Instagram', href: SITE.instagram, icon: LmnCameraIcon },
+    { label: 'WhatsApp', href: SITE.whatsapp, icon: LmnChatBubbleOvalLeftEllipsisIcon },
   ] as const;
+  protected readonly directLinks = [
+    { label: SITE.email, href: `mailto:${SITE.email}`, icon: LmnEnvelopeIcon },
+    {
+      label: SITE.telephone.replace(/^(\+34)(\d{3})(\d{2})(\d{2})(\d{2})$/, '$1 $2 $3 $4 $5'),
+      href: `tel:${SITE.telephone}`,
+      icon: LmnPhoneIcon,
+    },
+  ] as const;
+  protected readonly footerSections = [
+    { id: 'about', label: 'nav.about' },
+    { id: 'features', label: 'nav.features' },
+    { id: 'gallery', label: 'nav.gallery' },
+    { id: 'contact', label: 'nav.contact' },
+  ] as const;
+  protected readonly logoLight = logoLight;
+  protected readonly logoDark = logoDark;
   protected readonly services = ([
     {
       key: 'card1', section: 'section1', fragment: 'fauna', icon: LmnEyeIcon,

@@ -64,7 +64,7 @@ type Slide = (typeof slides)[number];
         aria-roledescription="carousel" [attr.aria-label]="t('ui.carousel')"
         (keydown.arrowleft)="step(-1)" (keydown.arrowright)="step(1)"
         (pointerenter)="suspended.set(true)" (pointerleave)="suspended.set(false)"
-        (focusin)="suspended.set(true)" (focusout)="suspended.set(false)">
+        (focusin)="suspended.set(isKeyboardFocus($event))" (focusout)="suspended.set(false)">
         <div class="hero-frame relative isolate overflow-hidden rounded-[2rem] bg-muted">
           <!-- One slide at a time; the outgoing one stays until its fade-out ends, so they cross-fade. -->
           <div *movePresenceFor="let current of currentSlide(); trackBy: trackSlide; mode: 'sync'" class="absolute inset-0"
@@ -262,6 +262,11 @@ export class Hero {
     afterNextRender(() => {
       if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) this.playing.set(true);
     });
+  }
+
+  /** Keyboard focus pauses autoplay; a mouse click on a thumbnail must not stop it for good. */
+  protected isKeyboardFocus(event: FocusEvent): boolean {
+    return event.target instanceof Element && event.target.matches(':focus-visible');
   }
 
   protected pad(value: number): string {
