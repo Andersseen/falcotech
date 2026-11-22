@@ -1,9 +1,10 @@
-import { afterNextRender, ChangeDetectionStrategy, Component, computed, DestroyRef, inject, signal } from '@angular/core';
-import { injectT } from '@etyma/angular';
-import { VoltNativeButton, VoltTooltip, VoltTooltipContent } from '@voltui/components';
-import { MoveEnterDirective, MoveLeaveDirective, MovePresenceForDirective, MoveTapDirective } from 'angular-movement';
-import { LmnChevronLeftIcon } from 'lumen-icons/chevron-left';
-import { LmnChevronRightIcon } from 'lumen-icons/chevron-right';
+import { afterNextRender, ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
+import { injectI18n } from '@etyma/angular';
+import { VoltBadge, VoltNativeButton, VoltTooltip, VoltTooltipContent } from '@voltui/components';
+import {
+  MoveEnterDirective, MoveHoverDirective, MoveLeaveDirective, MovePresenceForDirective, MoveTapDirective,
+} from 'angular-movement';
+import { LmnArrowRightIcon } from 'lumen-icons/arrow-right';
 import { LmnPauseIcon } from 'lumen-icons/pause';
 import { LmnPlayIcon } from 'lumen-icons/play';
 import image1 from '../../assets/p-1.webp';
@@ -12,48 +13,106 @@ import image3 from '../../assets/p-6.webp';
 import image4 from '../../assets/p-8.webp';
 import image5 from '../../assets/p-11.webp';
 import { i18n } from '../../i18n/i18n';
+import { SITE } from '../seo/site';
 
+const slides = [
+  { src: image1, alt: 'portfolio.photos.p1' },
+  { src: image2, alt: 'portfolio.photos.p10' },
+  { src: image3, alt: 'portfolio.photos.p6' },
+  { src: image4, alt: 'portfolio.photos.p8' },
+  { src: image5, alt: 'portfolio.photos.p11' },
+] as const;
+
+type Slide = (typeof slides)[number];
+
+/**
+ * Split hero: the message on one side, a tall photo on the other with a strip of thumbnails cut
+ * into its edge. The thumbnails pick the photo; autoplay moves through them and can be paused.
+ */
 @Component({
   selector: 'app-hero',
   imports: [
-    LmnChevronLeftIcon, LmnChevronRightIcon, LmnPauseIcon, LmnPlayIcon, MoveEnterDirective, MoveLeaveDirective,
-    MovePresenceForDirective, MoveTapDirective, VoltNativeButton, VoltTooltip, VoltTooltipContent,
+    LmnArrowRightIcon, LmnPauseIcon, LmnPlayIcon, MoveEnterDirective, MoveHoverDirective, MoveLeaveDirective,
+    MovePresenceForDirective, MoveTapDirective, VoltBadge, VoltNativeButton, VoltTooltip, VoltTooltipContent,
   ],
   template: `
-    <section id="hero" class="group relative flex h-svh items-end justify-end overflow-hidden bg-neutral-900 text-white"
-      aria-roledescription="carousel" [attr.aria-label]="t('ui.carousel')"
-      (keydown.arrowleft)="step(-1)" (keydown.arrowright)="step(1)"
-      (pointerenter)="suspended.set(true)" (pointerleave)="suspended.set(false)"
-      (focusin)="suspended.set(true)" (focusout)="suspended.set(false)">
-      <!-- One slide at a time; the outgoing one stays until its fade-out ends, so they cross-fade. -->
-      <div *movePresenceFor="let image of currentSlide(); trackBy: trackImage; mode: 'sync'" class="absolute inset-0"
-        [moveLeave]="{ opacity: [1, 0] }" moveDuration="900ms">
-        <!-- The server-rendered first slide must not fade in again after hydration. -->
-        <img [src]="image" alt="" class="size-full object-cover"
-          [attr.fetchpriority]="image === images[0] ? 'high' : null" [attr.decoding]="image === images[0] ? null : 'async'"
-          [moveEnter]="{ opacity: [0, 1], scale: [1.04, 1] }" moveDuration="900ms" [moveDisabled]="!changedSlide()">
+    <section id="hero" class="container grid min-h-svh content-center gap-10 pt-24 pb-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:gap-16 lg:pb-12">
+      <!-- Visible at first paint, so it enters with CSS (see hero-enter below), not after hydration. -->
+      <div class="flex flex-col items-start gap-6 lg:py-8">
+        <p class="hero-enter flex items-center gap-3 text-xs font-semibold tracking-[0.25em] text-muted-foreground uppercase"
+          style="--hero-delay: 60ms">
+          <span class="h-px w-8 bg-current" aria-hidden="true"></span>{{ site.name }}
+        </p>
+        <h1 class="hero-enter text-4xl leading-[1.05] font-bold tracking-tight text-balance sm:text-5xl xl:text-6xl"
+          style="--hero-delay: 120ms">{{ t('home.title') }}</h1>
+        <p class="hero-enter max-w-xl text-base leading-relaxed text-pretty text-muted-foreground sm:text-lg"
+          style="--hero-delay: 200ms">{{ t('home.description') }}</p>
+        <div class="hero-enter flex flex-wrap gap-3 pt-2" style="--hero-delay: 280ms">
+          <a voltButton size="lg" class="rounded-full" [href]="homePath() + '#contact'" moveWhileTap="press">
+            {{ t('home.primaryCta') }} <lmn-arrow-right size="16" />
+          </a>
+          <a voltButton size="lg" variant="outline" class="rounded-full" [href]="homePath() + '#about'" moveWhileTap="press">
+            {{ t('home.secondaryCta') }}
+          </a>
+        </div>
+        <ul class="hero-enter flex flex-wrap gap-2 pt-4" style="--hero-delay: 360ms" [attr.aria-label]="t('nav.features')">
+          @for (service of services; track service) {
+            <li><volt-badge variant="outline" class="rounded-full px-3 py-1 font-medium">{{ t(service) }}</volt-badge></li>
+          }
+        </ul>
       </div>
-      <div class="absolute inset-0 bg-black/60"></div>
-      <p class="sr-only" [attr.aria-live]="playing() ? 'off' : 'polite'">
-        {{ t('ui.slideStatus', { current: slide() + 1, total: images.length }) }}
-      </p>
-      <!-- Visible at first paint, so it enters with CSS (see hero-copy below), not after hydration. -->
-      <div class="hero-copy relative flex max-w-[min(100%,54rem)] flex-col items-end gap-5 p-2 md:p-12">
-        <h1 class="text-2xl leading-8 font-bold tracking-[-0.02em] drop-shadow-sm md:text-5xl md:leading-12">{{ t('home.title') }}</h1>
-        <p class="max-w-3xl text-left text-base tracking-[-0.02em] drop-shadow-sm md:text-xl">{{ t('home.description') }}</p>
-      </div>
-      <div class="absolute top-20 right-2 flex gap-2 opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100 pointer-coarse:opacity-100 md:right-12">
-        <button voltButton type="button" variant="outline" size="icon" [class]="controlClass" moveWhileTap="press"
-          [voltTooltip]="tooltip" [context]="t('ui.previous')" placement="bottom"
-          [attr.aria-label]="t('ui.previous')" (click)="step(-1)"><lmn-chevron-left size="20" /></button>
-        <button voltButton type="button" variant="outline" size="icon" [class]="controlClass" moveWhileTap="press"
-          [voltTooltip]="tooltip" [context]="t('ui.next')" placement="bottom"
-          [attr.aria-label]="t('ui.next')" (click)="step(1)"><lmn-chevron-right size="20" /></button>
-        <button voltButton type="button" variant="outline" size="icon" [class]="controlClass" moveWhileTap="press"
-          [voltTooltip]="tooltip" [context]="t(playing() ? 'ui.pause' : 'ui.play')" placement="bottom"
-          [attr.aria-label]="t(playing() ? 'ui.pause' : 'ui.play')" (click)="toggleAutoplay()">
-          @if (playing()) { <lmn-pause size="20" /> } @else { <lmn-play size="20" /> }
-        </button>
+
+      <div class="hero-enter flex min-w-0 flex-col gap-3" style="--hero-delay: 160ms"
+        aria-roledescription="carousel" [attr.aria-label]="t('ui.carousel')"
+        (keydown.arrowleft)="step(-1)" (keydown.arrowright)="step(1)"
+        (pointerenter)="suspended.set(true)" (pointerleave)="suspended.set(false)"
+        (focusin)="suspended.set(true)" (focusout)="suspended.set(false)">
+        <div class="hero-frame relative isolate overflow-hidden rounded-[2rem] bg-muted">
+          <!-- One slide at a time; the outgoing one stays until its fade-out ends, so they cross-fade. -->
+          <div *movePresenceFor="let current of currentSlide(); trackBy: trackSlide; mode: 'sync'" class="absolute inset-0"
+            [moveLeave]="{ opacity: [1, 0] }" moveDuration="900ms">
+            <!-- The server-rendered first slide must not fade in again after hydration. -->
+            <img [src]="current.src" [alt]="t(current.alt)" class="size-full object-cover"
+              [attr.fetchpriority]="current === slides[0] ? 'high' : null"
+              [attr.decoding]="current === slides[0] ? null : 'async'"
+              [moveEnter]="{ opacity: [0, 1], scale: [1.06, 1] }" moveDuration="1100ms" [moveDisabled]="!changedSlide()">
+          </div>
+          <div class="hero-rail" role="group" [attr.aria-label]="t('ui.gallery')">
+            @for (item of slides; track item.src; let index = $index) {
+              <button voltButton type="button" variant="ghost"
+                class="hero-thumb relative size-12 shrink-0 overflow-hidden rounded-xl p-0 sm:size-14 lg:size-16"
+                [attr.aria-label]="t(item.alt)" [attr.aria-current]="index === slide() ? 'true' : null"
+                moveWhileTap="press" (click)="show(index)">
+                <img [src]="item.src" alt="" loading="lazy" decoding="async" class="size-full object-cover"
+                  [moveWhileHover]="{ scale: [1, 1.08] }">
+                @if (index === slide() && playing()) {
+                  <!-- The bar is the autoplay clock: it restarts with each slide, pauses with the carousel and
+                       moves to the next photo when it fills, so what you see and what happens never drift. -->
+                  <span class="hero-progress" aria-hidden="true" [class.paused]="suspended()" (animationend)="step(1)"></span>
+                }
+              </button>
+            }
+          </div>
+        </div>
+        <div class="flex items-center justify-between gap-4 px-1 text-sm">
+          <p class="flex min-w-0 items-baseline gap-3">
+            <span class="font-semibold tabular-nums">{{ pad(slide() + 1) }}<span class="text-muted-foreground"> / {{ pad(slides.length) }}</span></span>
+            <span class="relative min-w-0 flex-1 overflow-hidden">
+              <span *movePresenceFor="let current of currentSlide(); trackBy: trackSlide; mode: 'wait'"
+                class="block truncate text-muted-foreground" aria-hidden="true"
+                [moveEnter]="{ opacity: [0, 1], y: [6, 0] }" [moveLeave]="{ opacity: [1, 0], y: [0, -6] }"
+                moveDuration="220ms" [moveDisabled]="!changedSlide()">{{ t(current.alt) }}</span>
+            </span>
+          </p>
+          <button voltButton type="button" variant="ghost" size="icon" class="size-9 shrink-0 rounded-full"
+            moveWhileTap="press" [voltTooltip]="tooltip" [context]="t(playing() ? 'ui.pause' : 'ui.play')" placement="top"
+            [attr.aria-label]="t(playing() ? 'ui.pause' : 'ui.play')" (click)="toggleAutoplay()">
+            @if (playing()) { <lmn-pause size="16" /> } @else { <lmn-play size="16" /> }
+          </button>
+        </div>
+        <p class="sr-only" [attr.aria-live]="playing() ? 'off' : 'polite'">
+          {{ t('ui.slideStatus', { current: slide() + 1, total: slides.length }) }}
+        </p>
       </div>
     </section>
 
@@ -62,50 +121,164 @@ import { i18n } from '../../i18n/i18n';
     </ng-template>
   `,
   styles: `
-    @keyframes hero-copy-in {
+    .hero-frame {
+      height: min(68svh, 36rem);
+    }
+
+    @media (min-width: 64rem) {
+      .hero-frame { height: min(calc(100svh - 11rem), 52rem); }
+    }
+
+    /*
+     * The thumbnail strip sits in a notch cut out of the photo. The notch is painted in the page
+     * background, and the two pseudo-elements round the photo's edge into it (inverted corners).
+     * Below lg the strip runs along the bottom edge; from lg it runs down the right edge.
+     */
+    .hero-rail {
+      --notch: 1.25rem;
+      --cut: var(--color-background);
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      translate: -50% 0;
+      display: flex;
+      gap: 0.375rem;
+      padding: 0.375rem 0.375rem 0;
+      border-radius: var(--notch) var(--notch) 0 0;
+      background: var(--cut);
+    }
+
+    .hero-rail::before,
+    .hero-rail::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      width: var(--notch);
+      height: var(--notch);
+      pointer-events: none;
+    }
+
+    .hero-rail::before {
+      right: 100%;
+      background: radial-gradient(circle at 0 0, transparent var(--notch), var(--cut) calc(var(--notch) + 0.5px));
+    }
+
+    .hero-rail::after {
+      left: 100%;
+      background: radial-gradient(circle at 100% 0, transparent var(--notch), var(--cut) calc(var(--notch) + 0.5px));
+    }
+
+    @media (min-width: 64rem) {
+      .hero-rail {
+        --notch: 1.5rem;
+        top: 50%;
+        right: 0;
+        bottom: auto;
+        left: auto;
+        translate: 0 -50%;
+        flex-direction: column;
+        gap: 0.5rem;
+        padding: 0.5rem 0 0.5rem 0.5rem;
+        border-radius: var(--notch) 0 0 var(--notch);
+      }
+
+      .hero-rail::before,
+      .hero-rail::after {
+        right: 0;
+        left: auto;
+      }
+
+      .hero-rail::before {
+        top: auto;
+        bottom: 100%;
+        background: radial-gradient(circle at 0 0, transparent var(--notch), var(--cut) calc(var(--notch) + 0.5px));
+      }
+
+      .hero-rail::after {
+        top: 100%;
+        bottom: auto;
+        background: radial-gradient(circle at 0 100%, transparent var(--notch), var(--cut) calc(var(--notch) + 0.5px));
+      }
+    }
+
+    .hero-thumb {
+      opacity: 0.55;
+      transition: opacity 200ms ease;
+    }
+
+    .hero-thumb:hover,
+    .hero-thumb[aria-current='true'] {
+      opacity: 1;
+    }
+
+    .hero-thumb[aria-current='true'] {
+      box-shadow: inset 0 0 0 2px var(--color-foreground);
+    }
+
+    .hero-progress {
+      position: absolute;
+      inset: auto 0 0;
+      height: 3px;
+      background: var(--color-foreground);
+      transform-origin: left;
+      animation: hero-progress 8s linear both;
+    }
+
+    .hero-progress.paused {
+      animation-play-state: paused;
+    }
+
+    @keyframes hero-progress {
+      from { transform: scaleX(0); }
+      to { transform: scaleX(1); }
+    }
+
+    @keyframes hero-enter {
       from { opacity: 0; translate: 0 1rem; }
     }
 
     @media (prefers-reduced-motion: no-preference) {
-      .hero-copy { animation: hero-copy-in 700ms cubic-bezier(0.16, 1, 0.3, 1) 120ms both; }
+      .hero-enter { animation: hero-enter 800ms cubic-bezier(0.16, 1, 0.3, 1) var(--hero-delay, 0ms) both; }
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Hero {
-  protected readonly t = injectT(i18n);
-  protected readonly controlClass =
-    'size-10 rounded-full border-white/60 bg-black/50 text-white data-[hover]:bg-black/70 data-[hover]:text-white';
-  protected readonly images = [image1, image2, image3, image4, image5];
+  private readonly i18n = injectI18n(i18n);
+  protected readonly t = this.i18n.t;
+  protected readonly homePath = computed(() => this.i18n.path('/'));
+  protected readonly site = SITE;
+  protected readonly slides = slides;
+  protected readonly services = ['features.card1.title', 'features.card2.title', 'features.card3.title'] as const;
   protected readonly slide = signal(0);
-  protected readonly trackImage = (_: number, image: string) => image;
-  protected readonly currentSlide = computed(() => [this.images[this.slide()]!]);
+  protected readonly trackSlide = (_: number, item: Slide) => item.src;
+  protected readonly currentSlide = computed(() => [slides[this.slide()]!]);
   protected readonly changedSlide = signal(false);
   protected readonly playing = signal(false);
   /** Autoplay waits while the pointer or keyboard focus is on the carousel. */
   protected readonly suspended = signal(false);
-  private timer: ReturnType<typeof setInterval> | undefined;
 
   constructor() {
     afterNextRender(() => {
-      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) this.toggleAutoplay();
+      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) this.playing.set(true);
     });
-    inject(DestroyRef).onDestroy(() => clearInterval(this.timer));
+  }
+
+  protected pad(value: number): string {
+    return String(value).padStart(2, '0');
   }
 
   protected step(offset: number): void {
+    this.show((this.slide() + offset + slides.length) % slides.length);
+  }
+
+  protected show(index: number): void {
+    if (index === this.slide()) return;
     this.changedSlide.set(true);
-    this.slide.update(current => (current + offset + this.images.length) % this.images.length);
+    this.slide.set(index);
   }
 
   protected toggleAutoplay(): void {
-    if (this.playing()) {
-      clearInterval(this.timer);
-    } else {
-      this.timer = setInterval(() => {
-        if (!this.suspended()) this.step(1);
-      }, 10_000);
-    }
     this.playing.update(playing => !playing);
   }
 }

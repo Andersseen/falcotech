@@ -6,8 +6,10 @@
     "contact": "Contacte"
   },
   "home": {
-    "title": "FALCOTECH",
-    "description": "Implementem solucions innovadores per abordar els desafiaments contemporanis que afecten tant la societat com la fauna. La nostra missió és utilitzar tecnologia d'avantguarda per trobar respostes efectives i sostenibles als conflictes que sorgeixen en aquests àmbits, combinant experiència, compromís i un profund respecte per l'entorn natural."
+    "title": "Tecnologia i falconeria per conviure amb la fauna.",
+    "description": "Implementem solucions innovadores per abordar els desafiaments contemporanis que afecten tant la societat com la fauna. La nostra missió és utilitzar tecnologia d'avantguarda per trobar respostes efectives i sostenibles als conflictes que sorgeixen en aquests àmbits, combinant experiència, compromís i un profund respecte per l'entorn natural.",
+    "primaryCta": "Contacta amb nosaltres",
+    "secondaryCta": "Veure especialitats"
   },
   "features": {
     "heading": "Tres especialitats, un mateix equip",

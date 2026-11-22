@@ -6,8 +6,10 @@
     "contact": "Contact"
   },
   "home": {
-    "title": "FALCOTECH",
-    "description": "We implement innovative solutions to address contemporary challenges affecting both society and wildlife. Our mission is to use cutting-edge technology to find effective and sustainable responses to conflicts arising in these areas, combining expertise, commitment, and a deep respect for the natural environment."
+    "title": "Technology and falconry for living alongside wildlife.",
+    "description": "We implement innovative solutions to address contemporary challenges affecting both society and wildlife. Our mission is to use cutting-edge technology to find effective and sustainable responses to conflicts arising in these areas, combining expertise, commitment, and a deep respect for the natural environment.",
+    "primaryCta": "Contact us",
+    "secondaryCta": "See our specialties"
   },
   "features": {
     "heading": "Three specialties, one team",
