@@ -1,12 +1,12 @@
 import { defineEventHandler, setResponseHeader } from 'h3';
 import { i18n } from '../../i18n/i18n';
-import { localizedUrls, PUBLIC_PAGES, requestOrigin } from '../site';
+import { localizedUrls, PUBLIC_PAGES, SITE_ORIGIN } from '../site';
 
 const escapeXml = (value: string) =>
   value.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;');
 
 export default defineEventHandler((event) => {
-  const origin = requestOrigin(event);
+  const origin = SITE_ORIGIN;
 
   // One <url> per localized page, each listing every translation (itself included) and x-default.
   const urls = PUBLIC_PAGES.flatMap(path => {

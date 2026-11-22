@@ -1,6 +1,11 @@
 /** Facts about the business that the page, the footer and structured data all repeat. */
 export const SITE = {
   name: 'FalcoTech',
+  /**
+   * The one public address. Canonical URLs, language alternates, Open Graph, structured data and
+   * the sitemap always point here, so a preview or a provider URL never presents itself as the site.
+   */
+  origin: 'https://www.falcotech.es',
   email: 'info@falcotech.es',
   telephone: '+34694236492',
   instagram: 'https://www.instagram.com/falcotechsl',

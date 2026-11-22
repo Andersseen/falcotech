@@ -1,7 +1,6 @@
 import { DOCUMENT, Location } from '@angular/common';
 import { effect, inject, Injectable } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
-import { injectBaseURL } from '@analogjs/router/tokens';
 import { injectI18n } from '@etyma/angular';
 import { i18n } from '../../i18n/i18n';
 import { ogLocale, SITE } from './site';
@@ -30,7 +29,7 @@ export class PageSeo {
   private readonly title = inject(Title);
   private readonly meta = inject(Meta);
   private readonly i18n = injectI18n(i18n);
-  private readonly origin = resolveOrigin();
+  private readonly origin = SITE.origin;
 
   apply(page: PageMeta): void {
     const locale = this.i18n.locale();
@@ -119,10 +118,4 @@ export class PageSeo {
 export function injectPageMeta(page: () => PageMeta): void {
   const seo = inject(PageSeo);
   effect(() => seo.apply(page()));
-}
-
-/** Same resolution Etyma uses for canonical URLs: the request on the server, the location in the browser. */
-function resolveOrigin(): string {
-  const origin = injectBaseURL() || inject(DOCUMENT).defaultView?.location.origin || '';
-  return origin.endsWith('/') ? origin.slice(0, -1) : origin;
 }
