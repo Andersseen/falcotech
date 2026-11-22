@@ -72,12 +72,24 @@ jobs:
           ALIAS: pr-${{ github.event.pull_request.number }}
           MESSAGE: PR ${{ github.event.pull_request.number }} at ${{ github.event.pull_request.head.sha }}
         run: |
+          set -o pipefail
+          if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            echo "::error::Add the CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID repository secrets, then re-run this job."
+            exit 1
+          fi
+          config=dist/analog/server/wrangler.json
+          # Preview versions attach to an existing Worker. The very first run creates it with one deploy
+          # (on workers.dev, which is never indexed); every later run only uploads versions.
+          if ! pnpm exec wrangler deployments list --config "$config" > /dev/null 2>&1; then
+            echo "::notice::No Worker yet: deploying it once so preview versions have something to attach to."
+            pnpm exec wrangler deploy --config "$config" --message "First deploy, from $MESSAGE"
+          fi
           # A version upload never touches production traffic; the alias keeps one stable URL per PR.
-          pnpm exec wrangler versions upload --config dist/analog/server/wrangler.json \
+          pnpm exec wrangler versions upload --config "$config" \
             --preview-alias "$ALIAS" --message "$MESSAGE" | tee upload.log
           url=$(grep -oE "https://$ALIAS-[a-z0-9.-]+\.workers\.dev" upload.log | head -1)
           if [ -z "$url" ]; then
-            echo "::error::Wrangler did not report a preview alias URL. Is preview_urls enabled and the Worker deployed once?"
+            echo "::error::Wrangler did not report a preview alias URL. Is preview_urls enabled in wrangler.jsonc?"
             exit 1
           fi
           echo "url=$url" >> "$GITHUB_OUTPUT"
@@ -134,6 +146,11 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           MESSAGE: ${{ github.ref_name }} at ${{ github.sha }}
         run: |
+          set -o pipefail
+          if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            echo "::error::Add the CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID repository secrets, then re-run this job."
+            exit 1
+          fi
           pnpm exec wrangler deploy --config dist/analog/server/wrangler.json --message "$MESSAGE" | tee deploy.log
           url=$(grep -oE "https://[a-z0-9.-]+\.workers\.dev" deploy.log | head -1)
           echo "url=$url" >> "$GITHUB_OUTPUT"
