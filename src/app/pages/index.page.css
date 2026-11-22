@@ -1,0 +1,285 @@
+.service-panels {
+  display: grid;
+  gap: 1rem;
+}
+
+.service-card {
+  --service-padding: clamp(1.125rem, 2.3vw, 1.75rem);
+
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 2rem;
+  padding: var(--service-padding);
+  overflow: clip;
+  background: var(--surface);
+}
+
+.service-trigger,
+.service-indicator,
+.service-compact-title,
+.specialty-stage {
+  display: none;
+}
+
+.service-card-top {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  pointer-events: none;
+}
+
+.service-indicator {
+  display: none;
+  place-items: center;
+  border-radius: 50%;
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid var(--border);
+  background: var(--background);
+  color: var(--muted-foreground);
+}
+
+.service-card-top,
+.service-copy,
+.service-compact-title {
+  position: relative;
+  z-index: 1;
+}
+
+/*
+ * The illustrations are drawn for a light page: a soft halo behind them keeps them legible on a
+ * dark card, and a radial mask fades whatever reaches the square's corners.
+ */
+.service-illustration {
+  position: relative;
+  align-self: flex-end;
+  width: min(42%, 9.5rem);
+  aspect-ratio: 1;
+  margin-block: -0.25rem -4.5rem;
+  pointer-events: none;
+}
+
+.service-illustration::before {
+  content: '';
+  position: absolute;
+  inset: 6%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, color-mix(in oklab, var(--foreground) 9%, transparent), transparent);
+}
+
+.service-illustration img {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  mask-image: radial-gradient(farthest-side, black 82%, transparent);
+}
+
+.service-link {
+  position: relative;
+  z-index: 11;
+  color: var(--foreground);
+}
+
+.specialty-chapters {
+  display: grid;
+  gap: 3rem;
+}
+
+.specialty-row {
+  display: grid;
+  gap: 1.75rem;
+  scroll-margin-top: 0.5rem;
+  outline: none;
+}
+
+.specialty-row:focus-visible h3 {
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+@media (min-width: 64rem) {
+  .service-panels {
+    container-type: inline-size;
+    grid-template-columns: var(--service-columns);
+  }
+
+  .service-card {
+    --compact-width: calc((100cqw - 2rem) / 4.65 - 2 * var(--service-padding) - 2px);
+    --expanded-width: calc((100cqw - 2rem) * 2.65 / 4.65 - 2 * var(--service-padding) - 2px);
+
+    min-height: 26rem;
+    gap: 4rem;
+    transition: border-color 220ms ease;
+  }
+
+  .service-trigger {
+    display: block;
+    position: absolute;
+    inset: 0;
+  }
+  .service-indicator { display: grid; }
+  /*
+   * Same size in both states, anchored to the card's right edge: centred in a collapsed card, beside
+   * the copy in the expanded one, so it only slides while the columns resize.
+   */
+  .service-illustration {
+    --illustration-size: min(var(--compact-width), 14rem);
+
+    position: absolute;
+    z-index: 0;
+    top: calc(var(--service-padding) + 3.25rem);
+    right: calc(var(--service-padding) + (var(--compact-width) - var(--illustration-size)) / 2);
+    width: var(--illustration-size);
+    margin: 0;
+    /* Same rule as the gallery: half colour at rest, most of it on hover, all of it when open. */
+    filter: grayscale(0.5);
+    transition: filter 260ms ease, scale 320ms cubic-bezier(0.22, 0.7, 0.24, 1);
+  }
+
+  .service-card:hover .service-illustration { filter: grayscale(0.2); }
+
+  .service-card[data-expanded='true'],
+  .service-card:focus-within {
+    border-color: color-mix(in oklab, var(--foreground) 42%, var(--border));
+  }
+
+  .service-card[data-expanded='true'] .service-illustration {
+    filter: none;
+    scale: 1.04;
+  }
+
+  /* The three cards lay out their copy at the final expanded width throughout the transition. */
+  .service-copy {
+    width: calc(var(--expanded-width) - min(var(--compact-width), 14rem) - 1.5rem);
+  }
+
+  .service-compact-title {
+    display: block;
+    position: absolute;
+    inset: auto auto var(--service-padding) var(--service-padding);
+    width: var(--compact-width);
+  }
+
+  .service-copy,
+  .service-compact-title {
+    transition: opacity 180ms ease, visibility 180ms;
+  }
+
+  .service-card[data-expanded='false'] .service-copy,
+  .service-card[data-expanded='true'] .service-compact-title {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  .service-card[data-expanded='true'] .service-copy {
+    transition-delay: 115ms;
+  }
+
+  .specialty-story {
+    --chapter-gap: clamp(2.75rem, 6vw, 6rem);
+
+    display: grid;
+  }
+
+  .specialty-stage,
+  .specialty-chapters {
+    grid-area: 1 / 1;
+    min-width: 0;
+  }
+
+  .specialty-chapters { gap: clamp(2.75rem, 7svh, 5rem); }
+
+  .specialty-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-areas: 'photo copy';
+    align-items: center;
+    gap: var(--chapter-gap);
+  }
+
+  .specialty-row-reverse { grid-template-areas: 'copy photo'; }
+  .specialty-photo { grid-area: photo; }
+  .specialty-photo > div { max-height: 66svh; }
+  .specialty-copy {
+    position: relative;
+    z-index: 2;
+    grid-area: copy;
+  }
+}
+
+@media (min-width: 64rem) and (prefers-reduced-motion: no-preference) {
+  .service-panels {
+    transition: grid-template-columns 440ms cubic-bezier(0.22, 0.7, 0.24, 1);
+  }
+
+  /*
+   * The gap between two chapters is taller than the photo, so the photo can cross from one side to
+   * the other while neither text is beside it.
+   */
+  .specialty-chapters { gap: calc(min(26rem, 66svh) + 12rem); }
+  .specialty-row { align-items: start; }
+
+  .specialty-stage {
+    display: grid;
+    position: sticky;
+    /* Centred in the viewport: the frame is at most 26rem (or 66svh) tall. */
+    top: max(5.5rem, calc(50svh - min(13rem, 33svh)));
+    align-self: start;
+    z-index: 1;
+    opacity: 0;
+    transition: opacity 200ms ease;
+    pointer-events: none;
+  }
+
+  .specialty-stage[data-ready] { opacity: 1; }
+  .specialty-photo { transition: opacity 200ms ease; }
+
+  .specialty-stage[data-ready] + .specialty-chapters .specialty-photo {
+    opacity: 0;
+  }
+
+  .specialty-frame {
+    position: relative;
+    width: calc((100% - var(--chapter-gap)) / 2);
+    height: min(26rem, 66svh);
+    overflow: clip;
+    border-radius: var(--radius-3xl, 1.5rem);
+    background: var(--surface);
+    box-shadow: 0 30px 60px -30px rgb(0 0 0 / 0.45);
+    transform:
+      translateX(calc(var(--photo-side, 0) * (100% + var(--chapter-gap))))
+      scale(calc(1 - 0.06 * var(--photo-travel, 0)));
+  }
+
+  .specialty-frame img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* A Volt badge, placed on the photo; Volt draws the pill. */
+  .specialty-frame-caption {
+    position: absolute;
+    bottom: 1rem;
+    left: 1rem;
+    gap: 0.625rem;
+    backdrop-filter: blur(8px);
+  }
+
+  .specialty-frame-caption > span { opacity: 0.7; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .service-card,
+  .service-copy,
+  .service-compact-title,
+  .service-illustration {
+    transition: none;
+  }
+}

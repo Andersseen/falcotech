@@ -1,0 +1,14 @@
+// Cloudflare Workers deployment, used only when building with BUILD_PRESET=cloudflare_module.
+// Nitro merges this file into .output/server/wrangler.json and fills in `main` and `assets`;
+// deploy that generated file, not this one. Secrets (RESEND_API_KEY, TURNSTILE_SECRET) are set
+// with `wrangler secret put`, never here.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "falcotech",
+  "compatibility_date": "2025-09-01",
+  "compatibility_flags": ["nodejs_compat"],
+  // Every pull request gets its own preview URL on workers.dev.
+  "workers_dev": true,
+  "preview_urls": true,
+  "observability": { "enabled": true },
+}

@@ -3,13 +3,18 @@
     "home": "Home",
     "about": "About Us",
     "features": "Features",
+    "gallery": "Gallery",
     "contact": "Contact"
   },
   "home": {
-    "title": "FALCOTECH",
-    "description": "We implement innovative solutions to address contemporary challenges affecting both society and wildlife. Our mission is to use cutting-edge technology to find effective and sustainable responses to conflicts arising in these areas, combining expertise, commitment, and a deep respect for the natural environment."
+    "title": "Technology and falconry for living alongside wildlife.",
+    "description": "We implement innovative solutions to address contemporary challenges affecting both society and wildlife. Our mission is to use cutting-edge technology to find effective and sustainable responses to conflicts arising in these areas, combining expertise, commitment, and a deep respect for the natural environment.",
+    "primaryCta": "Contact us",
+    "secondaryCta": "See our specialties"
   },
   "features": {
+    "heading": "Three specialties, one team",
+    "explore": "Explore this specialty",
     "title1": "Our team is organized into three specialized workgroups",
     "card1": {
       "title": "Wildlife Control",
@@ -28,6 +33,7 @@
   },
   "about": {
     "section1": {
+      "photoAlt": "Jet engine and wing at an airport",
       "title": "Wildlife Control",
       "description": {
         "p1": "At FALCOTECH, we have a highly professional team of technicians and experts in wildlife control and management, including specialists in falconry. Our team combines deep knowledge of traditional and modern techniques, allowing us to address diverse situations with a comprehensive and tailored perspective.",
@@ -36,6 +42,7 @@
       }
     },
     "section2": {
+      "photoAlt": "Wind turbines in a rural landscape",
       "title": "Environmental Consultancy",
       "description": {
         "p1": "Our team consists of technicians and biologists with extensive experience in wildlife monitoring and studies, biodiversity studies, environmental impact assessments, and statistical and geospatial analysis, enabling them to address various situations with expertise and a specialized approach.",
@@ -43,6 +50,7 @@
       }
     },
     "section3": {
+      "photoAlt": "Drone flying over a mountain landscape",
       "title": "Drones",
       "description": "Our company integrates UAV (Unmanned Aerial Vehicle) technology to optimize our services, providing advanced and precise solutions. We offer a range of drone services, including high-quality recordings and detailed inspections of infrastructures and lands. Additionally, we develop specialized drones tailored to specific tasks based on project needs."
     },
@@ -73,6 +81,11 @@
   },
   "contact": {
     "title": "Contact FalcoTech",
+    "description": "Dealing with wildlife at your site, or planning an environmental project? Tell us what you need and we will get back to you as soon as we can.",
+    "location": "Working across Spain",
+    "here": "Spain",
+    "area": "We work across the country",
+    "mapLabel": "Map of Europe with Spain highlighted",
     "form": {
       "username": {
         "label": "Full Name",
@@ -82,22 +95,72 @@
       "email": {
         "label": "Email",
         "placeholder": "Enter your email",
-        "error": "Please enter your email"
+        "error": "Please enter your email",
+        "invalid": "Enter a valid email address."
       },
       "message": {
         "label": "Message",
         "placeholder": "Write your message here",
         "error": "Please enter your message"
       },
-      "submit": "Send →",
-      "success": "Message sent successfully!"
+      "tooLong": "The text is longer than allowed.",
+      "submit": "Send",
+      "sending": "Sending…",
+      "success": "Message sent successfully!",
+      "failure": "The message could not be sent. Please try again.",
+      "limited": "You have sent too many messages in a row. Please try again in a few minutes.",
+      "verification": "Complete the verification before sending your message.",
+      "honeypot": "Leave this field empty"
     }
   },
   "portfolio": {
-    "title": "Not available at this time",
-    "description": "We are in the process of development"
+    "photos": {
+      "p1": "Hooded falcon at an airport as a plane takes off",
+      "p2": "Bird of prey flying against a clear sky",
+      "p3": "Engine and wing of an airliner",
+      "p4": "Wind turbines over farmland",
+      "p5": "Falconer watching a falcon in flight",
+      "p6": "Harrier in flight with a radar antenna behind it",
+      "p7": "Mallard in flight",
+      "p8": "Falconer with a falcon perched on his glove",
+      "p10": "Glossy ibises taking off",
+      "p11": "Swift in flight",
+      "p12": "Airliner on approach with a flock of birds nearby"
+    },
+    "heading": "Our work, out in the field",
+    "description": "Falconry, wildlife control at airports and infrastructure, and species monitoring: this is what we do every day.",
+    "tabs": {
+      "falconry": "Falconry",
+      "airports": "Airports and infrastructure",
+      "wildlife": "Wildlife"
+    }
   },
   "footer": {
+    "explore": "Explore",
+    "area": "Working across Spain",
     "copyright": "All rights reserved."
+  },
+  "ui": {
+    "navigation": "Main navigation",
+    "language": "Language",
+    "theme": "Dark mode",
+    "pause": "Pause slideshow",
+    "play": "Resume slideshow",
+    "gallery": "Photo gallery",
+    "openPhoto": "Open photo",
+    "close": "Close",
+    "top": "Back to top",
+    "notFound": "Page not found",
+    "skipToContent": "Skip to content",
+    "carousel": "FalcoTech photographs",
+    "slideStatus": "Image {$current} of {$total}",
+    "newTab": "opens in a new tab"
+  },
+  "meta": {
+    "title": "FalcoTech · Wildlife control, environmental consulting and drones",
+    "description": "Wildlife control with falconry and drones, environmental consulting and UAV services. Sustainable solutions for airports, cities, farms and landfills.",
+    "ogImageAlt": "Hooded falcon at an airport as a plane takes off",
+    "notFoundTitle": "Page not found · FalcoTech",
+    "notFoundDescription": "The page you are looking for does not exist or has moved."
   }
 }

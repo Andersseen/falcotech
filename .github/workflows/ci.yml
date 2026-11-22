@@ -1,0 +1,156 @@
+name: CI
+
+# Verifies every change, then deploys to Cloudflare Workers:
+# - pull request: a preview at https://pr-<number>-falcotech.<subdomain>.workers.dev, linked in the PR;
+# - push to main (or a manual run): production.
+# Deploys need the CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID repository secrets.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  BUILD_PRESET: cloudflare_module
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm check
+      - run: pnpm test
+      - run: pnpm build
+      - run: pnpm agents:check
+      - uses: actions/upload-artifact@v4
+        with:
+          name: worker
+          path: dist/analog
+          retention-days: 7
+
+  preview:
+    needs: verify
+    # Pull requests from forks get no secrets, so they are verified but not deployed.
+    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    environment:
+      name: preview
+      url: ${{ steps.upload.outputs.url }}
+    concurrency:
+      group: preview-${{ github.event.pull_request.number }}
+      cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - uses: actions/download-artifact@v4
+        with:
+          name: worker
+          path: dist/analog
+      - name: Upload preview version
+        id: upload
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          ALIAS: pr-${{ github.event.pull_request.number }}
+          MESSAGE: PR ${{ github.event.pull_request.number }} at ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -o pipefail
+          if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            echo "::error::Add the CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID repository secrets, then re-run this job."
+            exit 1
+          fi
+          config=dist/analog/server/wrangler.json
+          # Preview versions attach to an existing Worker. The very first run creates it with one deploy
+          # (on workers.dev, which is never indexed); every later run only uploads versions.
+          if ! pnpm exec wrangler deployments list --config "$config" > /dev/null 2>&1; then
+            echo "::notice::No Worker yet: deploying it once so preview versions have something to attach to."
+            pnpm exec wrangler deploy --config "$config" --message "First deploy, from $MESSAGE"
+          fi
+          # A version upload never touches production traffic; the alias keeps one stable URL per PR.
+          pnpm exec wrangler versions upload --config "$config" \
+            --preview-alias "$ALIAS" --message "$MESSAGE" | tee upload.log
+          url=$(grep -oE "https://$ALIAS-[a-z0-9.-]+\.workers\.dev" upload.log | head -1)
+          if [ -z "$url" ]; then
+            echo "::error::Wrangler did not report a preview alias URL. Is preview_urls enabled in wrangler.jsonc?"
+            exit 1
+          fi
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+      - name: Link the preview in the pull request
+        uses: actions/github-script@v7
+        env:
+          PREVIEW_URL: ${{ steps.upload.outputs.url }}
+        with:
+          script: |
+            const marker = '<!-- cloudflare-preview -->';
+            const { owner, repo } = context.repo;
+            const issue_number = context.issue.number;
+            const sha = context.payload.pull_request.head.sha.slice(0, 7);
+            const body = [
+              marker,
+              `**Preview:** ${process.env.PREVIEW_URL}`,
+              '',
+              `Commit \`${sha}\` on Cloudflare Workers. Not indexed by search engines.`,
+            ].join('\n');
+            const comments = await github.paginate(github.rest.issues.listComments, { owner, repo, issue_number });
+            const existing = comments.find(comment => comment.body?.includes(marker));
+            if (existing) {
+              await github.rest.issues.updateComment({ owner, repo, comment_id: existing.id, body });
+            } else {
+              await github.rest.issues.createComment({ owner, repo, issue_number, body });
+            }
+
+  production:
+    needs: verify
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: ${{ steps.deploy.outputs.url }}
+    concurrency:
+      group: production
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - uses: actions/download-artifact@v4
+        with:
+          name: worker
+          path: dist/analog
+      - name: Deploy
+        id: deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          MESSAGE: ${{ github.ref_name }} at ${{ github.sha }}
+        run: |
+          set -o pipefail
+          if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            echo "::error::Add the CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID repository secrets, then re-run this job."
+            exit 1
+          fi
+          pnpm exec wrangler deploy --config dist/analog/server/wrangler.json --message "$MESSAGE" | tee deploy.log
+          url=$(grep -oE "https://[a-z0-9.-]+\.workers\.dev" deploy.log | head -1)
+          echo "url=$url" >> "$GITHUB_OUTPUT"
