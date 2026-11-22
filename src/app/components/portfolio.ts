@@ -56,7 +56,7 @@ type CategoryKey = Category['key'];
 type Photo = Category['photos'][number];
 
 /**
- * The gallery: one tab per kind of work, a featured photo and greyscale thumbnails that stay quiet
+ * The gallery: one tab per kind of work, a featured photo and half-colour thumbnails that stay quiet
  * until chosen, so the featured photo keeps the attention. The featured photo opens full size.
  *
  * Autoplay walks through every photo and then on to the next tab. It waits while the pointer or
@@ -215,22 +215,22 @@ type Photo = Category['photos'][number];
       to { transform: scaleX(1); }
     }
 
-    /* Quiet until chosen: greyscale and dimmed, so the featured photo keeps the attention. */
+    /*
+     * Half colour until chosen (half the original, half greyscale), most of the colour on hover and
+     * all of it once picked, so the featured photo keeps the attention without dead grey thumbnails.
+     */
     .gallery-thumb {
-      filter: grayscale(1);
-      opacity: 0.6;
-      transition: filter 300ms ease, opacity 300ms ease, box-shadow 300ms ease;
+      filter: grayscale(0.5);
+      transition: filter 300ms ease, box-shadow 300ms ease;
     }
 
     .gallery-thumb:hover,
     .gallery-thumb:focus-visible {
-      filter: grayscale(0.4);
-      opacity: 0.9;
+      filter: grayscale(0.2);
     }
 
     .gallery-thumb[aria-current='true'] {
       filter: none;
-      opacity: 1;
       box-shadow: 0 0 0 2px var(--color-background), 0 0 0 4px var(--color-foreground);
     }
   `,

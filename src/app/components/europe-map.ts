@@ -11,15 +11,15 @@ import { EUROPE_MAP } from './europe-map.data';
   selector: 'app-europe-map',
   imports: [MoveLoopDirective],
   template: `
-    <div class="spain-map" role="img" [attr.aria-label]="label()">
-      <div class="spain-plane">
+    <div class="europe-map" role="img" [attr.aria-label]="label()">
+      <div class="europe-plane">
         <svg [attr.viewBox]="'0 0 ' + map.width + ' ' + map.height" aria-hidden="true">
           <!-- Each dot is a zero-length segment with a round cap. -->
           <path class="europe" [attr.d]="map.europe" />
           <path class="spain" [attr.d]="map.spain" />
-          <circle [attr.cx]="map.pin.x" [attr.cy]="map.pin.y" r="1.4" class="pin-pulse"
+          <circle [attr.cx]="map.pin.x" [attr.cy]="map.pin.y" r="1.5" class="pin-pulse"
             [moveLoop]="{ scale: [1, 6], opacity: [0.7, 0] }" moveDuration="2200ms" />
-          <circle [attr.cx]="map.pin.x" [attr.cy]="map.pin.y" r="1.4" class="pin-dot" />
+          <circle [attr.cx]="map.pin.x" [attr.cy]="map.pin.y" r="1.5" class="pin-dot" />
         </svg>
         <!-- Anchored to Spain inside the tilted plane, then turned back upright so it stands on the pin. -->
         <span class="pin-anchor" [style.left.%]="(map.pin.x / map.width) * 100" [style.top.%]="(map.pin.y / map.height) * 100"
@@ -33,16 +33,32 @@ import { EUROPE_MAP } from './europe-map.data';
     </div>
   `,
   styles: `
-    :host { display: block; }
+    /* Decorative: it may slide under the form above it, so it must never take its clicks. */
+    :host { display: block; pointer-events: none; }
 
-    .spain-map {
-      perspective: 1000px;
-      padding-top: 2.5rem;
+    .europe-map {
+      perspective: 1400px;
+      /* Tilting back shortens the map, but its box keeps the full height: pull it up by the
+         difference (a percentage margin follows the width, as the height does). */
+      margin-top: -24%;
+      padding-top: 3.5rem;
     }
 
-    .spain-plane {
+    /* On narrow screens the whole of Europe would be a smudge: keep it at a readable size, centred
+       on Spain (about 30% from the left edge), and let the sides run off the screen. */
+    @media (max-width: 40rem) {
+      :host { overflow: clip; }
+
+      .europe-map {
+        width: 44rem;
+        margin-top: calc(-0.24 * 44rem);
+        margin-left: calc(50% - 0.3 * 44rem);
+      }
+    }
+
+    .europe-plane {
       position: relative;
-      transform: rotateX(34deg);
+      transform: rotateX(42deg);
       transform-origin: 50% 100%;
       transform-style: preserve-3d;
     }
@@ -52,22 +68,28 @@ import { EUROPE_MAP } from './europe-map.data';
       width: 100%;
       height: auto;
       overflow: visible;
-      /* On the svg only: a mask on the plane would flatten the 3D label. */
-      mask-image: linear-gradient(to bottom, transparent, black 25%);
+      /* On the svg only: a mask on the plane would flatten the 3D label. Fades out at the top and
+         the sides; the bottom edge stays solid so the dots run on into the footer's. */
+      mask-image:
+        linear-gradient(to bottom, transparent, black 30%),
+        linear-gradient(to right, transparent, black 12%, black 88%, transparent);
+      mask-composite: intersect;
     }
 
     path {
       fill: none;
       stroke-linecap: round;
-      stroke-width: 2.1;
+      stroke-width: 0.9;
     }
 
+    /* The same quiet grey as the footer's dots, so the map reads as the start of the footer. */
     .europe {
-      stroke: color-mix(in oklab, var(--color-foreground) 16%, transparent);
+      stroke: color-mix(in oklab, var(--color-foreground) 20%, transparent);
     }
 
     .spain {
-      stroke: var(--color-foreground);
+      stroke: color-mix(in oklab, var(--color-foreground) 85%, transparent);
+      stroke-width: 1.15;
     }
 
     .pin-dot,
@@ -104,7 +126,7 @@ import { EUROPE_MAP } from './europe-map.data';
       line-height: 1.2;
       white-space: nowrap;
       box-shadow: 0 8px 24px -12px rgb(0 0 0 / 0.4);
-      transform: translateX(-50%) rotateX(-34deg);
+      transform: translateX(-50%) rotateX(-42deg);
       transform-origin: 50% calc(100% + 2.75rem);
     }
 

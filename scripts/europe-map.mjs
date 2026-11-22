@@ -13,11 +13,11 @@ const require = createRequire(import.meta.url);
 const world = JSON.parse(await readFile(require.resolve('world-atlas/countries-50m.json'), 'utf8'));
 const countries = feature(world, world.objects.countries).features;
 
-const BOUNDS = { west: -10.5, east: 28, north: 58.5, south: 35 };
+const BOUNDS = { west: -24, east: 44, north: 57, south: 34 };
 /** Longitude degrees shrink with latitude; at 47°N one is about 0.68 of a latitude degree. */
 const LON_SCALE = Math.cos((47 * Math.PI) / 180);
 /** Distance between dots, in latitude degrees. */
-const STEP = 0.42;
+const STEP = 0.56;
 const UNIT = 10;
 const SPAIN = '724';
 /** Overseas territories far outside the frame (French Guiana, the Canaries and so on) are skipped by the bounds. */

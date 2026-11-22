@@ -135,11 +135,12 @@
     right: calc(var(--service-padding) + (var(--compact-width) - var(--illustration-size)) / 2);
     width: var(--illustration-size);
     margin: 0;
-    opacity: 0.72;
-    transition: opacity 220ms ease, scale 320ms cubic-bezier(0.22, 0.7, 0.24, 1);
+    /* Same rule as the gallery: half colour at rest, most of it on hover, all of it when open. */
+    filter: grayscale(0.5);
+    transition: filter 260ms ease, scale 320ms cubic-bezier(0.22, 0.7, 0.24, 1);
   }
 
-  .service-card:hover .service-illustration { opacity: 0.9; }
+  .service-card:hover .service-illustration { filter: grayscale(0.2); }
 
   .service-card[data-expanded='true'],
   .service-card:focus-within {
@@ -147,7 +148,7 @@
   }
 
   .service-card[data-expanded='true'] .service-illustration {
-    opacity: 1;
+    filter: none;
     scale: 1.04;
   }
 

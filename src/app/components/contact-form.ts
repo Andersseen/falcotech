@@ -30,8 +30,8 @@ type Status = 'idle' | 'submitting' | 'success' | 'error' | 'limited' | 'verific
     VoltCardContent, VoltError, VoltFormField, VoltInput, VoltLabel, VoltNativeButton, VoltSpinner, VoltTextarea,
   ],
   template: `
-    <section id="contact" class="container py-20 sm:py-28" aria-labelledby="contact-title">
-      <div class="grid items-start gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:gap-16">
+    <section id="contact" class="pt-20 sm:pt-28" aria-labelledby="contact-title">
+      <div class="container grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
         <div class="flex flex-col gap-6" moveInView="fade-up" moveDuration="360">
           <lmn-envelope class="self-start" size="24" background="soft" tone="foreground" [padding]="12" radius="0.875rem" />
           <h2 id="contact-title" class="text-3xl font-bold tracking-tight text-balance sm:text-5xl">{{ t('contact.title') }}</h2>
@@ -43,8 +43,6 @@ type Status = 'idle' | 'submitting' | 'success' | 'error' | 'limited' | 'verific
               <lmn-phone size="16" />{{ phone }}</a></li>
             <li class="flex items-center gap-2 text-muted-foreground"><lmn-map-pin size="16" />{{ t('contact.location') }}</li>
           </ul>
-          <app-europe-map class="w-full max-w-lg" [label]="t('contact.mapLabel')"
-            [here]="t('contact.here')" [place]="t('contact.area')" />
         </div>
 
         <volt-card moveInView="fade-up" moveDuration="420" class="contact-card relative overflow-hidden rounded-3xl p-6 shadow-lg sm:p-8">
@@ -120,6 +118,9 @@ type Status = 'idle' | 'submitting' | 'success' | 'error' | 'limited' | 'verific
           </volt-card-content>
         </volt-card>
       </div>
+      <!-- Full width at the end of the page: the map's dots lead straight into the footer's. -->
+      <app-europe-map class="mx-auto mt-12 block w-full max-w-7xl px-4 sm:mt-16" [label]="t('contact.mapLabel')"
+        [here]="t('contact.here')" [place]="t('contact.area')" />
     </section>
   `,
   styles: `

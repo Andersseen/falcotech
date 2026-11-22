@@ -3,7 +3,7 @@ import { afterNextRender, ChangeDetectionStrategy, Component, DestroyRef, Elemen
 const GAP = 16;
 const RADIUS = 1;
 /** Share of dots that glow; the rest stay a quiet grid. */
-const GLOW_SHARE = 0.16;
+const GLOW_SHARE = 0.1;
 /** How often the theme colour is read again, so a theme switch shows up without a reload. */
 const COLOR_REFRESH_MS = 1000;
 
@@ -32,7 +32,11 @@ interface Dot {
       overflow: hidden;
       color: var(--color-foreground);
       pointer-events: none;
-      mask-image: radial-gradient(ellipse 75% 70% at 50% 45%, black 25%, transparent 100%);
+      /* Solid along the top edge, where it meets the map's dots, fading towards the sides and bottom. */
+      mask-image:
+        linear-gradient(to bottom, black 35%, transparent),
+        linear-gradient(to right, transparent, black 12%, black 88%, transparent);
+      mask-composite: intersect;
     }
 
     canvas {
@@ -100,13 +104,13 @@ export class DottedGlow {
           // A glowing dot swells and brightens, with a soft halo at its peak.
           const pulse = still.matches ? 0.5 : (Math.sin(seconds * dot.speed + dot.phase) + 1) / 2;
           const strength = pulse * pulse;
-          context.globalAlpha = 0.06 * strength;
+          context.globalAlpha = 0.025 * strength;
           context.beginPath();
           context.arc(dot.x, dot.y, RADIUS * 5, 0, Math.PI * 2);
           context.fill();
-          context.globalAlpha = dot.base + 0.7 * strength;
+          context.globalAlpha = dot.base + 0.32 * strength;
           context.beginPath();
-          context.arc(dot.x, dot.y, RADIUS * (1 + 0.6 * strength), 0, Math.PI * 2);
+          context.arc(dot.x, dot.y, RADIUS * (1 + 0.3 * strength), 0, Math.PI * 2);
           context.fill();
         }
         context.globalAlpha = 1;
