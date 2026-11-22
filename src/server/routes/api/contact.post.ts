@@ -1,5 +1,5 @@
 import {
-  createError, defineEventHandler, getRequestHeader, getRequestIP, getRequestURL, type H3Event, readBody,
+  createError, defineEventHandler, getRequestHeader, getRequestURL, type H3Event, readBody,
   sendRedirect, setResponseHeader,
 } from 'h3';
 import { Resend } from 'resend';
@@ -7,6 +7,7 @@ import { CONTACT_RESULT_PARAM, type ContactResult, TURNSTILE_RESPONSE_FIELD } fr
 import { type ContactMessage, parseContact } from '../../contact/message';
 import { createRateLimiter } from '../../contact/rate-limit';
 import { turnstileConfig, verifyTurnstile } from '../../contact/turnstile';
+import { clientIp } from '../../site';
 
 const MAX_BODY_BYTES = 16 * 1024;
 const limiter = createRateLimiter({ limit: 5, windowMs: 15 * 60 * 1000 });
@@ -24,7 +25,7 @@ export default defineEventHandler(async (event) => {
   const length = Number(getRequestHeader(event, 'content-length') ?? 0);
   if (length > MAX_BODY_BYTES) return fail(413, 'Request too large');
 
-  const ip = getRequestIP(event, { xForwardedFor: true });
+  const ip = clientIp(event);
   const retryAfter = limiter.hit(ip ?? 'unknown');
   if (retryAfter > 0) {
     setResponseHeader(event, 'Retry-After', retryAfter);

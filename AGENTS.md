@@ -1,7 +1,8 @@
 # FalcoTech
 
 Corporate site for FalcoTech (wildlife control, environmental consulting, drones). AnalogJS 2.9 + Angular 21,
-zoneless, SSR on Nitro, deployed to Vercel. One page in three locales: `/` (es, source), `/en`, `/ca`.
+zoneless, SSR on Nitro. Deployed to Cloudflare Workers by GitHub Actions (previews per PR, production
+from `main`); the live www.falcotech.es is still on Vercel until the switch. One page in three locales: `/` (es, source), `/en`, `/ca`.
 
 ## Commands
 
@@ -9,6 +10,7 @@ zoneless, SSR on Nitro, deployed to Vercel. One page in three locales: `/` (es, 
 - `pnpm check`: strict Angular type check (templates included)
 - `pnpm test`: vitest unit tests (`src/**/*.test.ts`, plain TypeScript only)
 - `pnpm build && pnpm preview`: production SSR build served locally
+- `pnpm build:cloudflare && pnpm preview:cloudflare`: the Workers build, served by workerd on :8787
 - `pnpm agents:check`: verify the Agentyx-managed skills
 
 Run `pnpm check`, `pnpm test` and `pnpm build` before committing.

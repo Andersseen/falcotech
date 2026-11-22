@@ -19,12 +19,12 @@ pnpm build
 pnpm preview
 ```
 
-Copia `.env.example` a `.env` y configura `RESEND_API_KEY` para habilitar el envío local. En Vercel, configura esa variable en el entorno del proyecto. El formulario envía un `POST /api/contact`. El servidor valida los campos y usa Resend para enviar el mensaje a `info@falcotech.es` (`CONTACT_TO`). El remitente se cambia con `CONTACT_FROM`; su dominio tiene que estar verificado en Resend.
+Copia `.env.example` a `.env` y configura `RESEND_API_KEY` para habilitar el envío local. En Cloudflare se guarda como secret del Worker (ver *Despliegue*). El formulario envía un `POST /api/contact`. El servidor valida los campos y usa Resend para enviar el mensaje a `info@falcotech.es` (`CONTACT_TO`). El remitente se cambia con `CONTACT_FROM`; su dominio tiene que estar verificado en Resend.
 
 ### Protección del formulario
 
 - Las reglas de validación están en `src/shared/contact.ts` y las usan el cliente y el servidor.
-- El servidor rechaza peticiones de otro origen (403) y cuerpos de más de 16 KB (413). También limita a 5 envíos cada 15 minutos por IP (429). El límite vive en memoria y por eso es orientativo en serverless.
+- El servidor rechaza peticiones de otro origen (403) y cuerpos de más de 16 KB (413). También limita a 5 envíos cada 15 minutos por IP (429). El límite vive en memoria de cada instancia y por eso es orientativo en serverless y en Workers.
 - Un campo trampa (`website`) descarta bots simples: el servidor responde éxito sin enviar nada.
 - [Cloudflare Turnstile](https://developers.cloudflare.com/turnstile/) es opcional. Crea un widget con la acción `contact`, define `VITE_TURNSTILE_SITE_KEY` en la build y `TURNSTILE_SECRET` y `TURNSTILE_HOSTNAMES` en el servidor. Sin esas variables, el formulario funciona sin el reto.
 - Sin JavaScript, el formulario se envía igualmente. El servidor redirige de vuelta con `?contact=sent|error|limited` y la página muestra el resultado.
@@ -36,12 +36,27 @@ pnpm test
 
 Para generar el artefacto de Vercel en local, ejecuta `BUILD_PRESET=vercel pnpm build`. Nitro lo deja en `.vercel/output`.
 
+## Despliegue
+
+La web de producción actual (www.falcotech.es) sigue en Vercel, desplegada desde GitLab. Este repositorio se despliega en paralelo en Cloudflare Workers hasta cambiar de proveedor.
+
+- El workflow `.github/workflows/ci.yml` verifica cada cambio (`check`, `test`, build con `BUILD_PRESET=cloudflare_module`, `agents:check`) y después despliega:
+  - **Pull request:** una versión de preview en `https://pr-<número>-falcotech.<subdominio>.workers.dev`, enlazada en un comentario del PR. No toca el tráfico de producción.
+  - **Push a `main`** o ejecución manual (*Run workflow*): producción en `https://falcotech.<subdominio>.workers.dev`.
+- Secrets del repositorio en GitHub: `CLOUDFLARE_API_TOKEN` (permiso *Workers Scripts: Edit*) y `CLOUDFLARE_ACCOUNT_ID`.
+- Los secrets del servidor se guardan en el Worker y los comparten producción y previews: `pnpm exec wrangler secret put RESEND_API_KEY` (y `TURNSTILE_SECRET` si se usa Turnstile).
+- La configuración está en `wrangler.jsonc`. Nitro la combina en `dist/analog/server/wrangler.json`, que es el fichero que se despliega.
+- Para probarlo en local dentro de workerd: `pnpm build:cloudflare && pnpm preview:cloudflare` (http://localhost:8787).
+- Las previews de versión necesitan que el Worker exista: el primer despliegue de producción se hace a mano con *Run workflow* sobre esta rama.
+- Solo `www.falcotech.es` se indexa (`PRODUCTION_HOSTS` en `src/server/site.ts`). Cualquier otro host, incluidos `workers.dev` y las previews, responde con `X-Robots-Tag: noindex` y un `robots.txt` que bloquea todo.
+- Para el cambio de proveedor: añadir `falcotech.es` como zona en Cloudflare (o un custom domain del Worker), apuntar el DNS de Raiola y quitar el dominio del proyecto de Vercel.
+
 ## SEO y metadatos
 
 - Etyma gestiona `<html lang>`, la URL canónica y los `hreflang` de cada idioma.
 - `src/app/seo/page-seo.ts` escribe en el servidor el título, la descripción, Open Graph, la Twitter card, `robots` y los datos estructurados `Organization` (JSON-LD). Cada página lo declara con `injectPageMeta()`. La 404 lleva `noindex`.
 - Los textos están en `meta.*` de cada catálogo, y los datos de la empresa en `src/app/seo/site.ts`.
-- `/robots.txt` y `/sitemap.xml` se generan en el servidor con el origen de la petición. Las páginas publicadas se listan en `src/server/site.ts`. En los previews de Vercel, `robots.txt` bloquea la indexación.
+- `/robots.txt` y `/sitemap.xml` se generan en el servidor con el origen de la petición. Las páginas publicadas se listan en `src/server/site.ts`. Fuera de `www.falcotech.es`, `robots.txt` bloquea la indexación.
 - La imagen para redes sociales es `public/og-image.jpg` (1200×630).
 
 ## Librerías de Andersseen

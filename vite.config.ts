@@ -26,6 +26,9 @@ export default defineConfig(({ command, mode }) => {
         // Etyma uses the request origin for canonical URLs and language alternates.
         prerender: { routes: [] },
         nitro: {
+          // Read only by the Cloudflare preset (BUILD_PRESET=cloudflare_module): write a deployable
+          // wrangler.json next to the server bundle, merged from wrangler.jsonc.
+          cloudflare: { deployConfig: true, nodeCompat: true },
           routeRules: {
             '/**': { headers: securityHeaders },
             '/es': { redirect: { to: '/', statusCode: 308 } },
