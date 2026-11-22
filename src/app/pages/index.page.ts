@@ -3,7 +3,7 @@ import { afterNextRender, ChangeDetectionStrategy, Component, computed, DestroyR
 import { injectI18n } from '@etyma/angular';
 import {
   MoveEnterDirective, MoveInViewDirective, MoveLeaveDirective, MovePresenceDirective, moveSpringValue, MoveStaggerDirective,
-  MoveTapDirective,
+  MoveTapDirective, MoveVariantsDirective,
 } from 'angular-movement';
 import {
   VoltAccordion, VoltAccordionContent, VoltAccordionItem, VoltAccordionTrigger,
@@ -32,7 +32,8 @@ import { imageSrcset, imageUrl, siteImage } from '../media/images';
     VoltAccordion, VoltAccordionContent, VoltAccordionItem, VoltAccordionTrigger,
     VoltButton, VoltCard, VoltCardContent, VoltCardTitle, VoltNativeButton, VoltSeparator, VoltTooltip, VoltTooltipContent,
     ContactForm, Hero, LmnArrowDownRightIcon, LmnArrowUpIcon, MoveEnterDirective, MoveInViewDirective, MoveLeaveDirective,
-    MovePresenceDirective, MoveStaggerDirective, MoveTapDirective, NgComponentOutlet, NgOptimizedImage, Portfolio, SiteHeader,
+    MovePresenceDirective, MoveStaggerDirective, MoveTapDirective, MoveVariantsDirective, NgComponentOutlet, NgOptimizedImage,
+    Portfolio, SiteHeader,
   ],
   templateUrl: './index.page.html',
   styleUrl: './index.page.css',
@@ -93,20 +94,23 @@ export default class HomePage {
 
   private readonly photoStage = viewChild<ElementRef<HTMLElement>>('photoStage');
   private readonly chapters = viewChildren<ElementRef<HTMLElement>>('chapterCopy');
-  private readonly initialPhotoStep = signal(0);
-  private readonly targetPhotoStep = signal(0);
-  private readonly animatedPhotoOffset = moveSpringValue(
-    computed(() => this.targetPhotoStep() - this.initialPhotoStep()),
-    { stiffness: 360, damping: 38, precision: 0.0005 },
-  );
+  /** The specialty whose photo is on show; it changes in the gap between two chapters' texts. */
+  protected readonly activeChapter = signal(0);
   protected readonly photoMotionReady = signal(false);
-  protected readonly photoStep = computed(() =>
-    Math.min(this.services.length - 1, Math.max(0, this.initialPhotoStep() + this.animatedPhotoOffset())),
+  /**
+   * 0 with the photo on the left, 1 on the right. The chapter switches discretely and a spring
+   * carries the photo across, instead of the photo tracking every pixel of scroll.
+   */
+  protected readonly photoSide = moveSpringValue(
+    computed(() => this.activeChapter() % 2),
+    { stiffness: 230, damping: 30, precision: 0.001 },
   );
-  protected readonly photoSide = computed(() => 1 - Math.abs(this.photoStep() % 2 - 1));
-  protected readonly photoCrossing = computed(() =>
-    Math.min(1, 1.5 * Math.sin(Math.PI * (this.photoStep() % 1))),
-  );
+  /** 0 at rest and 1 halfway across: the photo shrinks a little while it travels, like a card being moved. */
+  protected readonly photoTravel = computed(() => Math.sin(Math.PI * Math.min(1, Math.max(0, this.photoSide()))));
+  protected readonly photoVariants = {
+    shown: { opacity: 1, scale: 1 },
+    hidden: { opacity: 0, scale: 1.06 },
+  } as const;
 
   constructor() {
     injectPageMeta(() => ({
@@ -119,58 +123,61 @@ export default class HomePage {
 
     afterNextRender(() => {
       const window = this.document.defaultView;
-      const stage = this.photoStage()?.nativeElement;
-      if (!window || !stage) return;
-
-      const motion = window.matchMedia('(min-width: 64rem) and (prefers-reduced-motion: no-preference)');
-      let frame: number | undefined;
-      let photosReady = false;
-      const render = () => {
-        frame = undefined;
-        if (!motion.matches || !photosReady) return;
-
-        // Time the swap from the incoming text so it does not start while both chapters are far apart.
-        const viewport = window.innerHeight;
-        let step = 0;
-        for (const chapter of this.chapters().slice(1)) {
-          const top = chapter.nativeElement.getBoundingClientRect().top;
-          const progress = Math.min(1, Math.max(0, (viewport * 0.92 - top) / (viewport * 0.54)));
-          step += progress * progress * (3 - 2 * progress);
-        }
-
-        if (!this.photoMotionReady()) this.initialPhotoStep.set(step);
-        this.targetPhotoStep.set(step);
-        this.photoMotionReady.set(true);
-      };
-      const schedule = () => {
-        if (motion.matches && photosReady && frame === undefined) frame = window.requestAnimationFrame(render);
-      };
-      const layout = new ResizeObserver(schedule);
-      for (const chapter of this.chapters()) layout.observe(chapter.nativeElement);
+      if (!window) return;
 
       // Passive and outside the template: a template listener would schedule change detection on every scroll event.
-      const scrolled = () => {
-        this.showBackToTop.set(window.scrollY > 400);
-        schedule();
-      };
+      const scrolled = () => this.showBackToTop.set(window.scrollY > 400);
       scrolled();
       window.addEventListener('scroll', scrolled, { passive: true });
+      destroyRef.onDestroy(() => window.removeEventListener('scroll', scrolled));
+
+      const stage = this.photoStage()?.nativeElement;
+      if (!stage) return;
+
+      // The photo crosses over while the gap between two chapters' texts passes behind it. The gap is at
+      // least as tall as the photo (see index.page.css), so it never covers either text while it moves.
+      const frame = stage.querySelector<HTMLElement>('.specialty-frame')!;
+      let pending: number | undefined;
+      const measure = () => {
+        pending = undefined;
+        const box = frame.getBoundingClientRect();
+        const centre = box.top + box.height / 2;
+        const copies = this.chapters().map(chapter => chapter.nativeElement.getBoundingClientRect());
+        let active = 0;
+        for (let index = 1; index < copies.length; index++) {
+          if ((copies[index - 1]!.bottom + copies[index]!.top) / 2 < centre) active = index;
+        }
+        this.activeChapter.set(active);
+      };
+      const schedule = () => {
+        if (pending === undefined) pending = window.requestAnimationFrame(measure);
+      };
+      measure();
+      window.addEventListener('scroll', schedule, { passive: true });
       window.addEventListener('resize', schedule);
-      motion.addEventListener('change', schedule);
+
+      // The sticky photo replaces the inline ones only on wide screens with motion allowed, once its photos are decoded.
+      const motion = window.matchMedia('(min-width: 64rem) and (prefers-reduced-motion: no-preference)');
+      let photosReady = false;
+      const update = () => this.photoMotionReady.set(photosReady && motion.matches);
+      motion.addEventListener('change', update);
       void Promise.allSettled(Array.from(stage.querySelectorAll('img'), image => image.decode())).then(results => {
         if (destroyRef.destroyed || results.some(result => result.status === 'rejected')) return;
         photosReady = true;
-        schedule();
+        update();
       });
 
       destroyRef.onDestroy(() => {
-        if (frame !== undefined) window.cancelAnimationFrame(frame);
-        layout.disconnect();
-        motion.removeEventListener('change', schedule);
-        window.removeEventListener('scroll', scrolled);
+        if (pending !== undefined) window.cancelAnimationFrame(pending);
+        window.removeEventListener('scroll', schedule);
         window.removeEventListener('resize', schedule);
+        motion.removeEventListener('change', update);
       });
     });
+  }
+
+  protected pad(value: number): string {
+    return String(value).padStart(2, '0');
   }
 
   protected selectService(index: number): void {

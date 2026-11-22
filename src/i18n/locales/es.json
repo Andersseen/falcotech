@@ -80,6 +80,10 @@
   },
   "contact": {
     "title": "Contacte con FalcoTech",
+    "description": "¿Tiene un problema con la fauna en sus instalaciones o un proyecto ambiental en marcha? Cuéntenos qué necesita y le responderemos lo antes posible.",
+    "location": "Barcelona, España",
+    "here": "Estamos aquí",
+    "mapLabel": "Mapa de España con FalcoTech señalado en Barcelona",
     "form": {
       "username": {
         "label": "Nombre y apellido",
@@ -120,6 +124,13 @@
       "p10": "Grupo de moritos levantando el vuelo",
       "p11": "Vencejo en vuelo",
       "p12": "Avión en aproximación con una bandada de aves cerca"
+    },
+    "heading": "Nuestro trabajo, sobre el terreno",
+    "description": "Cetrería, control de fauna en aeropuertos e infraestructuras y seguimiento de especies: así es nuestro día a día.",
+    "tabs": {
+      "falconry": "Cetrería",
+      "airports": "Aeropuertos e infraestructuras",
+      "wildlife": "Fauna"
     }
   },
   "footer": {
@@ -129,8 +140,6 @@
     "navigation": "Navegación principal",
     "language": "Idioma",
     "theme": "Modo oscuro",
-    "previous": "Anterior",
-    "next": "Siguiente",
     "pause": "Pausar carrusel",
     "play": "Reanudar carrusel",
     "gallery": "Galería de fotos",
@@ -141,7 +150,6 @@
     "skipToContent": "Saltar al contenido",
     "carousel": "Fotografías de FalcoTech",
     "slideStatus": "Imagen {$current} de {$total}",
-    "galleryPage": "Fotos {$from} a {$to} de {$total}",
     "newTab": "se abre en una pestaña nueva"
   },
   "meta": {

@@ -80,6 +80,10 @@
   },
   "contact": {
     "title": "Contacta amb FalcoTech",
+    "description": "Teniu un problema amb la fauna a les vostres instal·lacions o un projecte ambiental en marxa? Expliqueu-nos què necessiteu i us respondrem tan aviat com puguem.",
+    "location": "Barcelona, Espanya",
+    "here": "Som aquí",
+    "mapLabel": "Mapa d’Espanya amb FalcoTech assenyalat a Barcelona",
     "form": {
       "username": {
         "label": "Nom i cognoms",
@@ -120,6 +124,13 @@
       "p10": "Grup de capons reials alçant el vol",
       "p11": "Falciot en vol",
       "p12": "Avió en aproximació amb un estol d’ocells a prop"
+    },
+    "heading": "La nostra feina, sobre el terreny",
+    "description": "Falconeria, control de fauna en aeroports i infraestructures i seguiment d’espècies: així és el nostre dia a dia.",
+    "tabs": {
+      "falconry": "Falconeria",
+      "airports": "Aeroports i infraestructures",
+      "wildlife": "Fauna"
     }
   },
   "footer": {
@@ -129,8 +140,6 @@
     "navigation": "Navegació principal",
     "language": "Idioma",
     "theme": "Mode fosc",
-    "previous": "Anterior",
-    "next": "Següent",
     "pause": "Posa en pausa el carrusel",
     "play": "Reprèn el carrusel",
     "gallery": "Galeria de fotos",
@@ -141,7 +150,6 @@
     "skipToContent": "Salta al contingut",
     "carousel": "Fotografies de FalcoTech",
     "slideStatus": "Imatge {$current} de {$total}",
-    "galleryPage": "Fotos {$from} a {$to} de {$total}",
     "newTab": "s’obre en una pestanya nova"
   },
   "meta": {

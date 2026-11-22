@@ -2,83 +2,142 @@ import { NgOptimizedImage } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
 import { injectT } from '@etyma/angular';
 import {
-  VoltButton, VoltDialogContent, VoltDialogOverlay, VoltDialogRoot, VoltDialogTitle, VoltNativeButton, VoltTooltip,
-  VoltTooltipContent,
+  VoltButton, VoltDialogContent, VoltDialogOverlay, VoltDialogRoot, VoltDialogTitle, VoltNativeButton, VoltTabs,
+  VoltTabsContent, VoltTabsList, VoltTabsTrigger,
 } from '@voltui/components';
-import { MoveEnterDirective, MoveHoverDirective, MoveStaggerDirective, MoveTapDirective } from 'angular-movement';
-import { LmnChevronLeftIcon } from 'lumen-icons/chevron-left';
-import { LmnChevronRightIcon } from 'lumen-icons/chevron-right';
+import {
+  MoveEnterDirective, MoveHoverDirective, MoveInViewDirective, MoveLeaveDirective, MovePresenceForDirective,
+  MoveTapDirective,
+} from 'angular-movement';
+import { LmnArrowsPointingOutIcon } from 'lumen-icons/arrows-pointing-out';
 import { LmnXIcon } from 'lumen-icons/x';
 import { i18n } from '../../i18n/i18n';
 import { siteImage } from '../media/images';
 
-// Listed explicitly so every photo has a typed, translated description.
-const photos = [
-  { image: siteImage('p-1'), alt: 'portfolio.photos.p1' },
-  { image: siteImage('p-2'), alt: 'portfolio.photos.p2' },
-  { image: siteImage('p-3'), alt: 'portfolio.photos.p3' },
-  { image: siteImage('p-4'), alt: 'portfolio.photos.p4' },
-  { image: siteImage('p-5'), alt: 'portfolio.photos.p5' },
-  { image: siteImage('p-6'), alt: 'portfolio.photos.p6' },
-  { image: siteImage('p-7'), alt: 'portfolio.photos.p7' },
-  { image: siteImage('p-8'), alt: 'portfolio.photos.p8' },
-  { image: siteImage('p-10'), alt: 'portfolio.photos.p10' },
-  { image: siteImage('p-11'), alt: 'portfolio.photos.p11' },
-  { image: siteImage('p-12'), alt: 'portfolio.photos.p12' },
+/** `focus` is the CSS object-position that keeps the subject in view when the photo is cropped. */
+const categories = [
+  {
+    key: 'falconry',
+    label: 'portfolio.tabs.falconry',
+    photos: [
+      { image: siteImage('p-8'), alt: 'portfolio.photos.p8', focus: '60% 40%' },
+      { image: siteImage('p-5'), alt: 'portfolio.photos.p5', focus: '50% 35%' },
+      { image: siteImage('p-1'), alt: 'portfolio.photos.p1', focus: '65% 50%' },
+      { image: siteImage('p-2'), alt: 'portfolio.photos.p2', focus: '30% 30%' },
+    ],
+  },
+  {
+    key: 'airports',
+    label: 'portfolio.tabs.airports',
+    photos: [
+      { image: siteImage('p-12'), alt: 'portfolio.photos.p12', focus: '60% 50%' },
+      { image: siteImage('p-3'), alt: 'portfolio.photos.p3', focus: '70% 60%' },
+      { image: siteImage('p-6'), alt: 'portfolio.photos.p6', focus: '40% 50%' },
+      { image: siteImage('p-4'), alt: 'portfolio.photos.p4', focus: '50% 50%' },
+    ],
+  },
+  {
+    key: 'wildlife',
+    label: 'portfolio.tabs.wildlife',
+    photos: [
+      { image: siteImage('p-10'), alt: 'portfolio.photos.p10', focus: '45% 50%' },
+      { image: siteImage('p-11'), alt: 'portfolio.photos.p11', focus: '20% 50%' },
+      { image: siteImage('p-7'), alt: 'portfolio.photos.p7', focus: '78% 40%' },
+    ],
+  },
 ] as const;
 
-type Photo = (typeof photos)[number];
+type Category = (typeof categories)[number];
+type CategoryKey = Category['key'];
+type Photo = Category['photos'][number];
 
-const rowSize = 3;
-const pageSize = rowSize * 2;
-
+/**
+ * The gallery: one tab per kind of work, a featured photo and greyscale thumbnails that stay quiet
+ * until chosen, so the featured photo keeps the attention. The featured photo opens full size.
+ */
 @Component({
   selector: 'app-portfolio',
   imports: [
-    LmnChevronLeftIcon, LmnChevronRightIcon, LmnXIcon, NgOptimizedImage, MoveEnterDirective, MoveHoverDirective, MoveStaggerDirective,
-    MoveTapDirective, VoltButton, VoltDialogContent, VoltDialogOverlay, VoltDialogRoot, VoltDialogTitle, VoltNativeButton,
-    VoltTooltip, VoltTooltipContent,
+    LmnArrowsPointingOutIcon, LmnXIcon, MoveEnterDirective, MoveHoverDirective, MoveInViewDirective, MoveLeaveDirective,
+    MovePresenceForDirective, MoveTapDirective, NgOptimizedImage, VoltButton, VoltDialogContent, VoltDialogOverlay,
+    VoltDialogRoot, VoltDialogTitle, VoltNativeButton, VoltTabs, VoltTabsContent, VoltTabsList, VoltTabsTrigger,
   ],
   template: `
-    <section class="grid h-svh grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 py-20 shadow-sm md:px-8"
-      [attr.aria-label]="t('ui.gallery')">
-      <button voltButton type="button" size="icon" [class]="pageControlClass" moveWhileTap="press"
-        [voltTooltip]="tooltip" [context]="t('ui.previous')"
-        [disabled]="start() === 0" [attr.aria-label]="t('ui.previous')" (click)="step(-1)">
-        <lmn-chevron-left size="20" />
-      </button>
-      <!-- Each page change re-creates the items, so they enter in a short stagger. -->
-      <ul class="grid h-full min-h-0 grid-cols-2 grid-rows-3 gap-3 md:grid-cols-3 md:grid-rows-2 md:gap-4 md:p-5 lg:p-10"
-        moveStagger="45ms">
-        @for (photo of visiblePhotos(); track photo.image.name) {
-          <li class="min-h-0" moveEnter="fade-up" moveDuration="280ms">
-            <button voltButton type="button" variant="ghost" class="relative size-full min-h-0 overflow-hidden rounded-xl p-0"
-              [attr.aria-label]="t(photo.alt)" aria-haspopup="dialog" (click)="selectedPhoto.set(photo)">
-              <img [ngSrc]="photo.image.name" [ngSrcset]="photo.image.srcset" fill alt="" class="object-cover object-top"
-                sizes="(min-width: 64rem) 28vw, (min-width: 48rem) 30vw, 45vw"
-                [moveWhileHover]="{ scale: [1, 1.05] }">
-            </button>
-          </li>
+    <section id="gallery" class="container py-20 sm:py-28" aria-labelledby="gallery-title">
+      <header moveInView="fade-up" moveDuration="360" class="max-w-3xl">
+        <h2 id="gallery-title" class="text-3xl font-bold tracking-tight text-balance sm:text-5xl">{{ t('portfolio.heading') }}</h2>
+        <p class="mt-4 text-base leading-relaxed text-muted-foreground sm:text-lg">{{ t('portfolio.description') }}</p>
+      </header>
+
+      <volt-tabs class="mt-8 block" [value]="category()" (valueChange)="selectCategory($event)">
+        <volt-tabs-list class="h-auto max-w-full flex-wrap justify-start rounded-3xl p-1">
+          @for (item of categories; track item.key) {
+            <volt-tabs-trigger [value]="item.key" class="rounded-full px-4 py-2">{{ t(item.label) }}</volt-tabs-trigger>
+          }
+        </volt-tabs-list>
+
+        @for (item of categories; track item.key) {
+          <volt-tabs-content [value]="item.key" class="mt-8">
+            @if (item.key === category()) {
+              @let photo = featured();
+              <div class="grid gap-6 lg:grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)] lg:gap-8">
+                <button voltButton type="button" variant="ghost" aria-haspopup="dialog"
+                  class="group relative aspect-[4/3] h-auto w-full overflow-hidden rounded-3xl bg-muted p-0 lg:aspect-[3/2]"
+                  [attr.aria-label]="t('ui.openPhoto') + ': ' + t(photo.alt)" (click)="open.set(photo)">
+                  <!-- The outgoing photo stays until its fade-out ends, so they cross-fade. -->
+                  <div *movePresenceFor="let current of featuredList(); trackBy: trackPhoto; mode: 'sync'"
+                    class="absolute inset-0" [moveLeave]="{ opacity: [1, 0] }" moveDuration="600ms">
+                    <img [ngSrc]="current.image.name" [ngSrcset]="current.image.srcset" fill alt="" class="object-cover"
+                      sizes="(min-width: 64rem) 60vw, 100vw" [style.object-position]="current.focus"
+                      [moveEnter]="{ opacity: [0, 1], scale: [1.04, 1] }" moveDuration="700ms" [moveDisabled]="!changed()">
+                  </div>
+                  <span class="absolute right-4 bottom-4 grid size-10 place-items-center rounded-full bg-black/55 text-white opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100"
+                    aria-hidden="true"><lmn-arrows-pointing-out size="20" /></span>
+                </button>
+
+                <div class="flex flex-col gap-6">
+                  <div class="min-h-24" aria-live="polite">
+                    <p class="text-sm font-semibold tabular-nums">
+                      {{ pad(selected() + 1) }}<span class="text-muted-foreground"> / {{ pad(item.photos.length) }}</span>
+                      <span class="ms-2 font-normal text-muted-foreground">{{ t(item.label) }}</span>
+                    </p>
+                    <div class="relative mt-3">
+                      <h3 *movePresenceFor="let current of featuredList(); trackBy: trackPhoto; mode: 'wait'"
+                        class="text-xl leading-snug font-semibold text-balance sm:text-2xl"
+                        [moveEnter]="{ opacity: [0, 1], y: [8, 0] }" [moveLeave]="{ opacity: [1, 0], y: [0, -8] }"
+                        moveDuration="220ms" [moveDisabled]="!changed()">{{ t(current.alt) }}</h3>
+                    </div>
+                  </div>
+                  <ul class="mt-auto grid grid-cols-4 gap-3 lg:grid-cols-2 lg:gap-4" [attr.aria-label]="t(item.label)">
+                    @for (thumb of item.photos; track thumb.image.name; let index = $index) {
+                      <li>
+                        <button voltButton type="button" variant="ghost" moveWhileTap="press"
+                          class="gallery-thumb relative aspect-[4/3] h-auto w-full overflow-hidden rounded-xl p-0 lg:rounded-2xl"
+                          [attr.aria-label]="t(thumb.alt)" [attr.aria-current]="index === selected() ? 'true' : null"
+                          (click)="select(index)">
+                          <img [ngSrc]="thumb.image.name" [ngSrcset]="thumb.image.srcset" fill alt="" class="object-cover"
+                            sizes="(min-width: 64rem) 14rem, 22vw" [style.object-position]="thumb.focus"
+                            [moveWhileHover]="{ scale: [1, 1.06] }">
+                        </button>
+                      </li>
+                    }
+                  </ul>
+                </div>
+              </div>
+            }
+          </volt-tabs-content>
         }
-      </ul>
-      <button voltButton type="button" size="icon" [class]="pageControlClass" moveWhileTap="press"
-        [voltTooltip]="tooltip" [context]="t('ui.next')"
-        [disabled]="start() === lastStart" [attr.aria-label]="t('ui.next')" (click)="step(1)">
-        <lmn-chevron-right size="20" />
-      </button>
-      <p class="sr-only" aria-live="polite">
-        {{ t('ui.galleryPage', { from: start() + 1, to: start() + visiblePhotos().length, total: photos.length }) }}
-      </p>
+      </volt-tabs>
     </section>
 
-    <ng-template voltDialogRoot [open]="selectedPhoto() !== null" (closed)="selectedPhoto.set(null)" let-close="close">
+    <ng-template voltDialogRoot [open]="open() !== null" (closed)="open.set(null)" let-close="close">
       <div voltDialogOverlay></div>
-      <div voltDialogContent class="isolate flex min-h-[min(50svh,28rem)] w-[min(56rem,calc(100vw_-_2rem))] max-w-none flex-col justify-end overflow-hidden rounded-xl border-0 bg-black p-0 text-white">
-        @if (selectedPhoto(); as photo) {
+      <div voltDialogContent class="isolate flex min-h-[min(60svh,34rem)] w-[min(64rem,calc(100vw_-_2rem))] max-w-none flex-col justify-end overflow-hidden rounded-2xl border-0 bg-black p-0 text-white">
+        @if (open(); as photo) {
           <!-- The dialog title already describes the photo; an alt would make screen readers say it twice. -->
           <img [ngSrc]="photo.image.name" [ngSrcset]="photo.image.srcset" fill alt="" class="-z-10 object-cover"
-            sizes="min(56rem, 100vw)">
-          <div class="bg-linear-to-t from-black/90 to-black/45 px-8 pt-6 pb-4">
+            sizes="min(64rem, 100vw)" [style.object-position]="photo.focus">
+          <div class="bg-linear-to-t from-black/90 to-black/0 px-8 pt-16 pb-5">
             <h2 voltDialogTitle class="text-lg font-bold text-white md:text-2xl">{{ t(photo.alt) }}</h2>
           </div>
         }
@@ -89,23 +148,57 @@ const pageSize = rowSize * 2;
         </volt-button>
       </div>
     </ng-template>
+  `,
+  styles: `
+    /* Quiet until chosen: greyscale and dimmed, so the featured photo keeps the attention. */
+    .gallery-thumb {
+      filter: grayscale(1);
+      opacity: 0.6;
+      transition: filter 300ms ease, opacity 300ms ease, box-shadow 300ms ease;
+    }
 
-    <ng-template #tooltip let-label>
-      <volt-tooltip-content>{{ label() }}</volt-tooltip-content>
-    </ng-template>
+    .gallery-thumb:hover,
+    .gallery-thumb:focus-visible {
+      filter: grayscale(0.4);
+      opacity: 0.9;
+    }
+
+    .gallery-thumb[aria-current='true'] {
+      filter: none;
+      opacity: 1;
+      box-shadow: 0 0 0 2px var(--color-background), 0 0 0 4px var(--color-foreground);
+    }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Portfolio {
   protected readonly t = injectT(i18n);
-  protected readonly photos = photos;
-  protected readonly pageControlClass = 'size-10 shrink-0 rounded-full shadow-lg md:size-12';
-  protected readonly selectedPhoto = signal<Photo | null>(null);
-  protected readonly start = signal(0);
-  protected readonly lastStart = Math.max(0, photos.length - pageSize);
-  protected readonly visiblePhotos = computed(() => photos.slice(this.start(), this.start() + pageSize));
+  protected readonly categories = categories;
+  protected readonly category = signal<CategoryKey>(categories[0].key);
+  protected readonly selected = signal(0);
+  /** False until the visitor picks a photo, so the server-rendered one does not fade in again. */
+  protected readonly changed = signal(false);
+  protected readonly open = signal<Photo | null>(null);
+  private readonly current = computed(() => categories.find(item => item.key === this.category()) ?? categories[0]);
+  protected readonly featured = computed<Photo>(() => this.current().photos[this.selected()] ?? this.current().photos[0]);
+  protected readonly featuredList = computed(() => [this.featured()]);
+  protected readonly trackPhoto = (_: number, photo: Photo) => photo.image.name;
 
-  protected step(offset: number): void {
-    this.start.update(start => Math.max(0, Math.min(start + offset * rowSize, this.lastStart)));
+  protected pad(value: number): string {
+    return String(value).padStart(2, '0');
+  }
+
+  protected selectCategory(value: unknown): void {
+    const next = categories.find(item => item.key === value);
+    if (!next || next.key === this.category()) return;
+    this.changed.set(true);
+    this.category.set(next.key);
+    this.selected.set(0);
+  }
+
+  protected select(index: number): void {
+    if (index === this.selected()) return;
+    this.changed.set(true);
+    this.selected.set(index);
   }
 }

@@ -3,16 +3,21 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { ActivatedRoute } from '@angular/router';
 import { injectT } from '@etyma/angular';
 import {
-  VoltAlert, VoltAlertDescription, VoltButton, VoltCard, VoltCardContent, VoltCardHeader, VoltCardTitle, VoltError,
-  VoltFormField, VoltInput, VoltLabel, VoltSpinner, VoltTextarea,
+  VoltAlert, VoltAlertDescription, VoltButton, VoltCard, VoltCardContent, VoltError, VoltFormField, VoltInput, VoltLabel,
+  VoltNativeButton, VoltSpinner, VoltTextarea,
 } from '@voltui/components';
 import { MoveEnterDirective, MoveInViewDirective, MoveTapDirective } from 'angular-movement';
 import { LmnArrowRightIcon } from 'lumen-icons/arrow-right';
+import { LmnEnvelopeIcon } from 'lumen-icons/envelope';
+import { LmnMapPinIcon } from 'lumen-icons/map-pin';
+import { LmnPhoneIcon } from 'lumen-icons/phone';
 import {
   CONTACT_EMAIL_PATTERN, CONTACT_HONEYPOT_FIELD, CONTACT_LIMITS, CONTACT_RESULT_PARAM, isContactResult,
   TURNSTILE_RESPONSE_FIELD,
 } from '../../shared/contact';
 import { i18n } from '../../i18n/i18n';
+import { SITE } from '../seo/site';
+import { SpainMap } from './spain-map';
 import { Turnstile } from './turnstile';
 
 type Status = 'idle' | 'submitting' | 'success' | 'error' | 'limited' | 'verification';
@@ -20,93 +25,123 @@ type Status = 'idle' | 'submitting' | 'success' | 'error' | 'limited' | 'verific
 @Component({
   selector: 'app-contact-form',
   imports: [
-    LmnArrowRightIcon, MoveEnterDirective, MoveInViewDirective, MoveTapDirective, ReactiveFormsModule, Turnstile,
-    VoltAlert, VoltAlertDescription, VoltButton, VoltCard, VoltCardContent, VoltCardHeader, VoltCardTitle, VoltError,
-    VoltFormField, VoltInput, VoltLabel, VoltSpinner, VoltTextarea,
+    LmnArrowRightIcon, LmnEnvelopeIcon, LmnMapPinIcon, LmnPhoneIcon, MoveEnterDirective, MoveInViewDirective,
+    MoveTapDirective, ReactiveFormsModule, SpainMap, Turnstile, VoltAlert, VoltAlertDescription, VoltButton, VoltCard,
+    VoltCardContent, VoltError, VoltFormField, VoltInput, VoltLabel, VoltNativeButton, VoltSpinner, VoltTextarea,
   ],
   template: `
-    <section id="contact" class="w-full md:p-8" aria-labelledby="contact-title">
-      <volt-card moveInView="fade-up" class="rounded-none border-x-0 px-4 py-12 shadow-lg md:rounded-2xl md:border-x md:px-8 md:py-24 lg:py-32">
-      <volt-card-header class="p-0">
-        <volt-card-title><h2 id="contact-title" class="text-xl font-bold">{{ t('contact.title') }}</h2></volt-card-title>
-      </volt-card-header>
-      <volt-card-content class="p-0">
-      <form #formElement method="post" action="/api/contact" class="my-8 grid gap-4" [formGroup]="form"
-        [attr.aria-busy]="status() === 'submitting'" (ngSubmit)="submit()">
-        <volt-form-field>
-          <volt-label>{{ t('contact.form.username.label') }}</volt-label>
-          <volt-input formControlName="username" name="username" autocomplete="name" required
-            [readonly]="status() === 'submitting'" [placeholder]="t('contact.form.username.placeholder')" class="h-10 px-3 py-2" />
-          @if (form.controls.username.touched && form.controls.username.invalid) {
-            <volt-error>{{ t(form.controls.username.hasError('maxlength') ? 'contact.form.tooLong' : 'contact.form.username.error') }}</volt-error>
-          }
-        </volt-form-field>
-        <volt-form-field>
-          <volt-label>{{ t('contact.form.email.label') }}</volt-label>
-          <volt-input formControlName="email" type="email" name="email" autocomplete="email" required
-            [readonly]="status() === 'submitting'" [placeholder]="t('contact.form.email.placeholder')" class="h-10 px-3 py-2" />
-          @if (form.controls.email.touched && form.controls.email.invalid) {
-            <volt-error>{{ t(form.controls.email.hasError('required') ? 'contact.form.email.error' : 'contact.form.email.invalid') }}</volt-error>
-          }
-        </volt-form-field>
-        <volt-form-field>
-          <volt-label>{{ t('contact.form.message.label') }}</volt-label>
-          <volt-textarea formControlName="message" name="message" [rows]="3" required
-            [readonly]="status() === 'submitting'" [placeholder]="t('contact.form.message.placeholder')" class="px-3 py-2" />
-          @if (form.controls.message.touched && form.controls.message.invalid) {
-            <volt-error>{{ t(form.controls.message.hasError('maxlength') ? 'contact.form.tooLong' : 'contact.form.message.error') }}</volt-error>
-          }
-        </volt-form-field>
-        <!-- Honeypot: hidden from people and assistive technology, filled in by naive bots. Not UI, so not a Volt atom. -->
-        <div class="sr-only" aria-hidden="true">
-          <label>{{ t('contact.form.honeypot') }}
-            <input type="text" [name]="honeypotField" [formControlName]="honeypotField" tabindex="-1" autocomplete="off">
-          </label>
+    <section id="contact" class="container py-20 sm:py-28" aria-labelledby="contact-title">
+      <div class="grid items-start gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:gap-16">
+        <div class="flex flex-col gap-6" moveInView="fade-up" moveDuration="360">
+          <lmn-envelope class="self-start" size="24" background="soft" tone="foreground" [padding]="12" radius="0.875rem" />
+          <h2 id="contact-title" class="text-3xl font-bold tracking-tight text-balance sm:text-5xl">{{ t('contact.title') }}</h2>
+          <p class="max-w-lg text-base leading-relaxed text-muted-foreground sm:text-lg">{{ t('contact.description') }}</p>
+          <ul class="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm">
+            <li><a voltButton variant="link" class="h-auto gap-2 p-0 text-foreground" [href]="'mailto:' + site.email">
+              <lmn-envelope size="16" />{{ site.email }}</a></li>
+            <li><a voltButton variant="link" class="h-auto gap-2 p-0 text-foreground" [href]="'tel:' + site.telephone">
+              <lmn-phone size="16" />{{ phone }}</a></li>
+            <li class="flex items-center gap-2 text-muted-foreground"><lmn-map-pin size="16" />{{ t('contact.location') }}</li>
+          </ul>
+          <app-spain-map class="-mt-4 w-full max-w-lg" [label]="t('contact.mapLabel')" [here]="t('contact.here')"
+            place="Barcelona" />
         </div>
-        @if (turnstileSiteKey) {
-          <app-turnstile [siteKey]="turnstileSiteKey" (tokenChange)="turnstileToken.set($event)" />
-        }
-        <volt-button type="submit" moveWhileTap="press" class="h-10 w-full bg-linear-to-br from-primary to-primary/65"
-          [disabled]="status() === 'submitting'">
-          @if (status() === 'submitting') {
-            <volt-spinner size="sm" slot="leading" />
-          }
-          {{ t(status() === 'submitting' ? 'contact.form.sending' : 'contact.form.submit') }}
-          @if (status() !== 'submitting') {
-            <lmn-arrow-right size="16" slot="trailing" />
-          }
-        </volt-button>
-        @switch (status()) {
-          @case ('success') {
-            <volt-alert variant="success" role="status" moveEnter="fade-up">
-              <volt-alert-description>{{ t('contact.form.success') }}</volt-alert-description>
-            </volt-alert>
-          }
-          @case ('error') {
-            <volt-alert variant="destructive" role="alert" moveEnter="fade-up">
-              <volt-alert-description>{{ t('contact.form.failure') }}</volt-alert-description>
-            </volt-alert>
-          }
-          @case ('limited') {
-            <volt-alert variant="warning" role="alert" moveEnter="fade-up">
-              <volt-alert-description>{{ t('contact.form.limited') }}</volt-alert-description>
-            </volt-alert>
-          }
-          @case ('verification') {
-            <volt-alert variant="warning" role="alert" moveEnter="fade-up">
-              <volt-alert-description>{{ t('contact.form.verification') }}</volt-alert-description>
-            </volt-alert>
-          }
-        }
-      </form>
-      </volt-card-content>
-      </volt-card>
+
+        <volt-card moveInView="fade-up" moveDuration="420" class="contact-card relative overflow-hidden rounded-3xl p-6 shadow-lg sm:p-8">
+          <volt-card-content class="relative p-0">
+            <form #formElement method="post" action="/api/contact" class="grid gap-4" [formGroup]="form"
+              [attr.aria-busy]="status() === 'submitting'" (ngSubmit)="submit()">
+              <volt-form-field>
+                <volt-label>{{ t('contact.form.username.label') }}</volt-label>
+                <volt-input formControlName="username" name="username" autocomplete="name" required
+                  [readonly]="status() === 'submitting'" [placeholder]="t('contact.form.username.placeholder')" class="h-10 px-3 py-2" />
+                @if (form.controls.username.touched && form.controls.username.invalid) {
+                  <volt-error>{{ t(form.controls.username.hasError('maxlength') ? 'contact.form.tooLong' : 'contact.form.username.error') }}</volt-error>
+                }
+              </volt-form-field>
+              <volt-form-field>
+                <volt-label>{{ t('contact.form.email.label') }}</volt-label>
+                <volt-input formControlName="email" type="email" name="email" autocomplete="email" required
+                  [readonly]="status() === 'submitting'" [placeholder]="t('contact.form.email.placeholder')" class="h-10 px-3 py-2" />
+                @if (form.controls.email.touched && form.controls.email.invalid) {
+                  <volt-error>{{ t(form.controls.email.hasError('required') ? 'contact.form.email.error' : 'contact.form.email.invalid') }}</volt-error>
+                }
+              </volt-form-field>
+              <volt-form-field>
+                <volt-label>{{ t('contact.form.message.label') }}</volt-label>
+                <volt-textarea formControlName="message" name="message" [rows]="5" required
+                  [readonly]="status() === 'submitting'" [placeholder]="t('contact.form.message.placeholder')" class="px-3 py-2" />
+                @if (form.controls.message.touched && form.controls.message.invalid) {
+                  <volt-error>{{ t(form.controls.message.hasError('maxlength') ? 'contact.form.tooLong' : 'contact.form.message.error') }}</volt-error>
+                }
+              </volt-form-field>
+              <!-- Honeypot: hidden from people and assistive technology, filled in by naive bots. Not UI, so not a Volt atom. -->
+              <div class="sr-only" aria-hidden="true">
+                <label>{{ t('contact.form.honeypot') }}
+                  <input type="text" [name]="honeypotField" [formControlName]="honeypotField" tabindex="-1" autocomplete="off">
+                </label>
+              </div>
+              @if (turnstileSiteKey) {
+                <app-turnstile [siteKey]="turnstileSiteKey" (tokenChange)="turnstileToken.set($event)" />
+              }
+              <volt-button type="submit" moveWhileTap="press" class="h-10 w-full bg-linear-to-br from-primary to-primary/65"
+                [disabled]="status() === 'submitting'">
+                @if (status() === 'submitting') {
+                  <volt-spinner size="sm" slot="leading" />
+                }
+                {{ t(status() === 'submitting' ? 'contact.form.sending' : 'contact.form.submit') }}
+                @if (status() !== 'submitting') {
+                  <lmn-arrow-right size="16" slot="trailing" />
+                }
+              </volt-button>
+              @switch (status()) {
+                @case ('success') {
+                  <volt-alert variant="success" role="status" moveEnter="fade-up">
+                    <volt-alert-description>{{ t('contact.form.success') }}</volt-alert-description>
+                  </volt-alert>
+                }
+                @case ('error') {
+                  <volt-alert variant="destructive" role="alert" moveEnter="fade-up">
+                    <volt-alert-description>{{ t('contact.form.failure') }}</volt-alert-description>
+                  </volt-alert>
+                }
+                @case ('limited') {
+                  <volt-alert variant="warning" role="alert" moveEnter="fade-up">
+                    <volt-alert-description>{{ t('contact.form.limited') }}</volt-alert-description>
+                  </volt-alert>
+                }
+                @case ('verification') {
+                  <volt-alert variant="warning" role="alert" moveEnter="fade-up">
+                    <volt-alert-description>{{ t('contact.form.verification') }}</volt-alert-description>
+                  </volt-alert>
+                }
+              }
+            </form>
+          </volt-card-content>
+        </volt-card>
+      </div>
     </section>
+  `,
+  styles: `
+    /* A faint square grid behind the form, fading out towards the bottom. */
+    .contact-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(to right, color-mix(in oklab, var(--color-foreground) 6%, transparent) 1px, transparent 1px),
+        linear-gradient(to bottom, color-mix(in oklab, var(--color-foreground) 6%, transparent) 1px, transparent 1px);
+      background-size: 2.5rem 2.5rem;
+      mask-image: linear-gradient(to bottom, black, transparent 70%);
+      pointer-events: none;
+    }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ContactForm {
   protected readonly t = injectT(i18n);
+  protected readonly site = SITE;
+  protected readonly phone = SITE.telephone.replace(/^(\+34)(\d{3})(\d{2})(\d{2})(\d{2})$/, '$1 $2 $3 $4 $5');
   protected readonly honeypotField = CONTACT_HONEYPOT_FIELD;
   protected readonly turnstileSiteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY?.trim() ?? '';
   protected readonly turnstileToken = signal<string | null>(null);

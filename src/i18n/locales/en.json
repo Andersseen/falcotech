@@ -80,6 +80,10 @@
   },
   "contact": {
     "title": "Contact FalcoTech",
+    "description": "Dealing with wildlife at your site, or planning an environmental project? Tell us what you need and we will get back to you as soon as we can.",
+    "location": "Barcelona, Spain",
+    "here": "We are here",
+    "mapLabel": "Map of Spain with FalcoTech marked in Barcelona",
     "form": {
       "username": {
         "label": "Full Name",
@@ -120,6 +124,13 @@
       "p10": "Glossy ibises taking off",
       "p11": "Swift in flight",
       "p12": "Airliner on approach with a flock of birds nearby"
+    },
+    "heading": "Our work, out in the field",
+    "description": "Falconry, wildlife control at airports and infrastructure, and species monitoring: this is what we do every day.",
+    "tabs": {
+      "falconry": "Falconry",
+      "airports": "Airports and infrastructure",
+      "wildlife": "Wildlife"
     }
   },
   "footer": {
@@ -129,8 +140,6 @@
     "navigation": "Main navigation",
     "language": "Language",
     "theme": "Dark mode",
-    "previous": "Previous",
-    "next": "Next",
     "pause": "Pause slideshow",
     "play": "Resume slideshow",
     "gallery": "Photo gallery",
@@ -141,7 +150,6 @@
     "skipToContent": "Skip to content",
     "carousel": "FalcoTech photographs",
     "slideStatus": "Image {$current} of {$total}",
-    "galleryPage": "Photos {$from} to {$to} of {$total}",
     "newTab": "opens in a new tab"
   },
   "meta": {

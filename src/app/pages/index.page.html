@@ -53,17 +53,20 @@
       <header moveInView="fade-up" moveDuration="360" class="mx-auto max-w-6xl">
         <h2 id="specialties-title" class="text-3xl font-bold tracking-tight sm:text-5xl">{{ t('nav.features') }}</h2>
       </header>
-      <div class="specialty-story mx-auto mt-10 max-w-6xl lg:mt-14" [style.--photo-crossing]="photoCrossing()">
-        <div #photoStage class="specialty-stage" aria-hidden="true"
-          [attr.data-ready]="photoMotionReady() ? '' : null"
-          [style.--photo-step]="photoStep()" [style.--photo-side]="photoSide()">
-          <div class="specialty-frame">
+      <div class="specialty-story mx-auto mt-10 max-w-6xl lg:mt-14">
+        <div #photoStage class="specialty-stage" aria-hidden="true" [attr.data-ready]="photoMotionReady() ? '' : null">
+          <div class="specialty-frame" [style.--photo-side]="photoSide()" [style.--photo-travel]="photoTravel()">
             @for (service of services; track service.key) {
-              <!-- A decorative copy that is hidden until the scroll effect starts, so it stays a plain lazy image. -->
+              <!-- Decorative copies of the inline photos: plain images, decoded before the effect starts. -->
               <img [src]="imageUrl(service.photo.name)" [srcset]="imageSrcset(service.photo.name)" sizes="36rem" alt=""
-                loading="lazy" decoding="async" [width]="service.photo.width" [height]="service.photo.height"
-                [style.--photo-index]="$index">
+                decoding="async" [width]="service.photo.width" [height]="service.photo.height"
+                [moveVariants]="photoVariants" [moveVariant]="$index === activeChapter() ? 'shown' : 'hidden'"
+                moveDuration="520ms">
             }
+            @let active = services[activeChapter()]!;
+            <span class="specialty-frame-caption">
+              <span class="tabular-nums">{{ pad(activeChapter() + 1) }}</span>{{ t(active.title) }}
+            </span>
           </div>
         </div>
         <div class="specialty-chapters">
