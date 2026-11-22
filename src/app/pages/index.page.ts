@@ -1,4 +1,4 @@
-import { DOCUMENT, NgComponentOutlet } from '@angular/common';
+import { DOCUMENT, NgComponentOutlet, NgOptimizedImage } from '@angular/common';
 import { afterNextRender, ChangeDetectionStrategy, Component, computed, DestroyRef, ElementRef, inject, signal, viewChild, viewChildren } from '@angular/core';
 import { injectI18n } from '@etyma/angular';
 import {
@@ -25,19 +25,14 @@ import { SiteHeader } from '../components/site-header';
 import { i18n } from '../../i18n/i18n';
 import { injectPageMeta } from '../seo/page-seo';
 import { SITE } from '../seo/site';
-import wildlifeIcon from '../../assets/3.webp';
-import consultingIcon from '../../assets/2.webp';
-import dronesIcon from '../../assets/1.webp';
-import wildlifePhoto from '../../assets/p-3.webp';
-import consultingPhoto from '../../assets/p-4.webp';
-import dronesPhoto from '../../assets/4.webp';
+import { imageSrcset, imageUrl, siteImage } from '../media/images';
 
 @Component({
   imports: [
     VoltAccordion, VoltAccordionContent, VoltAccordionItem, VoltAccordionTrigger,
     VoltButton, VoltCard, VoltCardContent, VoltCardTitle, VoltNativeButton, VoltSeparator, VoltTooltip, VoltTooltipContent,
     ContactForm, Hero, LmnArrowDownRightIcon, LmnArrowUpIcon, MoveEnterDirective, MoveInViewDirective, MoveLeaveDirective,
-    MovePresenceDirective, MoveStaggerDirective, MoveTapDirective, NgComponentOutlet, Portfolio, SiteHeader,
+    MovePresenceDirective, MoveStaggerDirective, MoveTapDirective, NgComponentOutlet, NgOptimizedImage, Portfolio, SiteHeader,
   ],
   templateUrl: './index.page.html',
   styleUrl: './index.page.css',
@@ -60,17 +55,17 @@ export default class HomePage {
   protected readonly services = ([
     {
       key: 'card1', section: 'section1', fragment: 'fauna', icon: LmnEyeIcon,
-      illustration: wildlifeIcon, photo: wildlifePhoto, photoWidth: 1920, photoHeight: 1282,
+      illustration: siteImage('service-wildlife'), photo: siteImage('p-3'),
       paragraphs: ['about.section1.description.p1', 'about.section1.description.p2', 'about.section1.description.p3'],
     },
     {
       key: 'card2', section: 'section2', fragment: 'medio-ambiente', icon: LmnGlobeAltIcon,
-      illustration: consultingIcon, photo: consultingPhoto, photoWidth: 800, photoHeight: 600,
+      illustration: siteImage('service-consulting'), photo: siteImage('p-4'),
       paragraphs: ['about.section2.description.p1', 'about.section2.description.p2'],
     },
     {
       key: 'card3', section: 'section3', fragment: 'drones', icon: LmnPaperAirplaneIcon,
-      illustration: dronesIcon, photo: dronesPhoto, photoWidth: 1920, photoHeight: 1282,
+      illustration: siteImage('service-drones'), photo: siteImage('drones'),
       paragraphs: ['about.section3.description'],
     },
   ] as const).map(service => ({
@@ -80,6 +75,8 @@ export default class HomePage {
     detailTitle: `about.${service.section}.title` as const,
     photoAlt: `about.${service.section}.photoAlt` as const,
   }));
+  protected readonly imageUrl = imageUrl;
+  protected readonly imageSrcset = imageSrcset;
   /** Lumen draws the round badge behind each service icon itself. */
   protected readonly serviceIconStyle = { size: 20, background: 'soft', tone: 'foreground', padding: 12, radius: '50%' } as const;
   protected readonly activeService = signal(0);

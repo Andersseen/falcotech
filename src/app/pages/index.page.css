@@ -43,15 +43,39 @@
   color: var(--muted-foreground);
 }
 
+.service-card-top,
+.service-copy,
+.service-compact-title {
+  position: relative;
+  z-index: 1;
+}
+
+/*
+ * The illustrations are drawn for a light page: a soft halo behind them keeps them legible on a
+ * dark card, and a radial mask fades whatever reaches the square's corners.
+ */
 .service-illustration {
-  position: absolute;
-  z-index: -1;
-  inset: 0.25rem 0.5rem auto auto;
-  width: min(42%, 8.5rem);
-  height: auto;
-  opacity: 0.32;
-  mask-image: linear-gradient(black 35%, transparent 95%);
+  position: relative;
+  align-self: flex-end;
+  width: min(42%, 9.5rem);
+  aspect-ratio: 1;
+  margin-block: -0.25rem -4.5rem;
   pointer-events: none;
+}
+
+.service-illustration::before {
+  content: '';
+  position: absolute;
+  inset: 6%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, color-mix(in oklab, var(--foreground) 9%, transparent), transparent);
+}
+
+.service-illustration img {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  mask-image: radial-gradient(farthest-side, black 82%, transparent);
 }
 
 .service-link {
@@ -84,7 +108,10 @@
   }
 
   .service-card {
-    min-height: 24rem;
+    --compact-width: calc((100cqw - 2rem) / 4.65 - 2 * var(--service-padding) - 2px);
+    --expanded-width: calc((100cqw - 2rem) * 2.65 / 4.65 - 2 * var(--service-padding) - 2px);
+
+    min-height: 26rem;
     gap: 4rem;
     transition: border-color 220ms ease;
   }
@@ -95,29 +122,45 @@
     inset: 0;
   }
   .service-indicator { display: grid; }
+  /*
+   * Same size in both states, anchored to the card's right edge: centred in a collapsed card, beside
+   * the copy in the expanded one, so it only slides while the columns resize.
+   */
   .service-illustration {
-    width: min(48%, 11rem);
-    opacity: 0.22;
-    transition: opacity 220ms ease;
+    --illustration-size: min(var(--compact-width), 14rem);
+
+    position: absolute;
+    z-index: 0;
+    top: calc(var(--service-padding) + 3.25rem);
+    right: calc(var(--service-padding) + (var(--compact-width) - var(--illustration-size)) / 2);
+    width: var(--illustration-size);
+    margin: 0;
+    opacity: 0.72;
+    transition: opacity 220ms ease, scale 320ms cubic-bezier(0.22, 0.7, 0.24, 1);
   }
+
+  .service-card:hover .service-illustration { opacity: 0.9; }
 
   .service-card[data-expanded='true'],
   .service-card:focus-within {
     border-color: color-mix(in oklab, var(--foreground) 42%, var(--border));
   }
 
-  .service-card[data-expanded='true'] .service-illustration { opacity: 0.52; }
+  .service-card[data-expanded='true'] .service-illustration {
+    opacity: 1;
+    scale: 1.04;
+  }
 
   /* The three cards lay out their copy at the final expanded width throughout the transition. */
   .service-copy {
-    width: calc((100cqw - 2rem) * 2.65 / 4.65 - 2 * var(--service-padding) - 2px);
+    width: calc(var(--expanded-width) - min(var(--compact-width), 14rem) - 1.5rem);
   }
 
   .service-compact-title {
     display: block;
     position: absolute;
     inset: auto auto var(--service-padding) var(--service-padding);
-    width: calc((100cqw - 2rem) / 4.65 - 2 * var(--service-padding) - 2px);
+    width: var(--compact-width);
   }
 
   .service-copy,
@@ -159,7 +202,7 @@
 
   .specialty-row-reverse { grid-template-areas: 'copy photo'; }
   .specialty-photo { grid-area: photo; }
-  .specialty-photo img { max-height: 66svh; }
+  .specialty-photo > div { max-height: 66svh; }
   .specialty-copy {
     position: relative;
     z-index: 2;

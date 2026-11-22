@@ -11,6 +11,7 @@ from `main`); the live www.falcotech.es is still on Vercel until the switch. One
 - `pnpm test`: vitest unit tests (`src/**/*.test.ts`, plain TypeScript only)
 - `pnpm build && pnpm preview`: production SSR build served locally
 - `pnpm build:cloudflare && pnpm preview:cloudflare`: the Workers build, served by workerd on :8787
+- `pnpm images`: regenerate the responsive WebP variants in `src/assets/img/` from `images/`
 - `pnpm agents:check`: verify the Agentyx-managed skills
 
 Run `pnpm check`, `pnpm test` and `pnpm build` before committing.
@@ -30,6 +31,10 @@ Run `pnpm check`, `pnpm test` and `pnpm build` before committing.
 - UI atoms come from Volt UI (`@voltui/components`, package mode: `Volt*` classes, `volt-*` selectors).
   Check the `volt-ui` MCP server before writing any button, card, input, alert, overlay or tooltip by hand.
   Links and icon buttons use the native `voltButton` directive; icon-only buttons get a `VoltTooltip`.
+- Raster images: drop the best original into `images/`, run `pnpm images`, and render it with
+  `NgOptimizedImage` (`[ngSrc]="image.name" [ngSrcset]="image.srcset"` from `siteImage()` in
+  `src/app/media/images.ts`, plus `sizes`; `fill` when cropped, `priority` only for the LCP image).
+  Never import a photo from `src/assets` directly.
 - Icons come only from Lumen, imported one per file: `import { LmnXIcon } from 'lumen-icons/x'`.
 - Motion comes from Angular Movement: `moveInView`/`moveStagger` for reveals, `*movePresence(For)` for
   exits, `moveWhileTap`/`moveWhileHover` for gestures, `MoveAnimator` for imperative sequences. Use CSS

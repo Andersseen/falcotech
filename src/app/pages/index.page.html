@@ -16,7 +16,10 @@
               [aria-label]="t(service.title)" [aria-expanded]="expanded"
               [aria-controls]="'service-summary-' + service.fragment" (click)="selectService($index)" />
           </div>
-          <img [src]="service.illustration" alt="" width="200" height="200" loading="lazy" class="service-illustration">
+          <div class="service-illustration" aria-hidden="true">
+            <img [ngSrc]="service.illustration.name" [ngSrcset]="service.illustration.srcset" alt=""
+              [width]="service.illustration.width" [height]="service.illustration.height" sizes="(min-width: 64rem) 14rem, 10rem">
+          </div>
           <div class="service-card-top" aria-hidden="true">
             <ng-container *ngComponentOutlet="service.icon; inputs: serviceIconStyle" />
             <span class="service-indicator">
@@ -56,8 +59,10 @@
           [style.--photo-step]="photoStep()" [style.--photo-side]="photoSide()">
           <div class="specialty-frame">
             @for (service of services; track service.key) {
-              <img [src]="service.photo" alt="" [style.--photo-index]="$index" decoding="async"
-                [width]="service.photoWidth" [height]="service.photoHeight">
+              <!-- A decorative copy that is hidden until the scroll effect starts, so it stays a plain lazy image. -->
+              <img [src]="imageUrl(service.photo.name)" [srcset]="imageSrcset(service.photo.name)" sizes="36rem" alt=""
+                loading="lazy" decoding="async" [width]="service.photo.width" [height]="service.photo.height"
+                [style.--photo-index]="$index">
             }
           </div>
         </div>
@@ -66,9 +71,9 @@
             <article class="specialty-row" [class.specialty-row-reverse]="$odd" [id]="service.fragment" tabindex="-1"
               [attr.aria-labelledby]="'specialty-title-' + service.fragment">
               <div class="specialty-photo">
-                <div class="overflow-hidden rounded-3xl bg-muted">
-                  <img [src]="service.photo" [alt]="t(service.photoAlt)" [width]="service.photoWidth" [height]="service.photoHeight"
-                    loading="lazy" decoding="async" class="aspect-[4/3] w-full object-cover">
+                <div class="relative aspect-[4/3] overflow-hidden rounded-3xl bg-muted">
+                  <img [ngSrc]="service.photo.name" [ngSrcset]="service.photo.srcset" fill [alt]="t(service.photoAlt)"
+                    sizes="(min-width: 64rem) 36rem, 100vw" class="object-cover">
                 </div>
               </div>
               <div #chapterCopy class="specialty-copy">

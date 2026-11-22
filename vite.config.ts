@@ -19,7 +19,11 @@ export default defineConfig(({ command, mode }) => {
   }
 
   return {
-    build: { target: 'es2022' },
+    build: {
+      target: 'es2022',
+      // Responsive variants stay files: inlining the small ones would put them in the JS bundle.
+      assetsInlineLimit: (file: string) => (file.includes('/src/assets/img/') ? false : undefined),
+    },
     plugins: [
       analog({
         ssr: true,

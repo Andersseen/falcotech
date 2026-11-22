@@ -59,6 +59,12 @@ La web de producción actual (www.falcotech.es) sigue en Vercel, desplegada desd
 - `/robots.txt` y `/sitemap.xml` se generan en el servidor con el origen de la petición. Las páginas publicadas se listan en `src/server/site.ts`. Fuera de `www.falcotech.es`, `robots.txt` bloquea la indexación.
 - La imagen para redes sociales es `public/og-image.jpg` (1200×630).
 
+## Imágenes
+
+- Los originales están en `images/`. `pnpm images` genera variantes WebP de 160 a 2560 px en `src/assets/img/` (nunca más anchas que el original) y un `manifest.json` con sus tamaños.
+- Las páginas las pintan con `NgOptimizedImage` y un loader propio (`src/app/media/images.ts`). Así cada imagen lleva `srcset` y `sizes`, carga en diferido y, la del hero, se precarga con `fetchpriority="high"` desde el HTML del servidor.
+- Para cambiar o añadir una foto, copia el mejor original que tengas en `images/` y ejecuta `pnpm images`. La nitidez depende del original: algunas fotos actuales (p-8, p-10, p-11) son pequeñas y están muy comprimidas.
+
 ## Librerías de Andersseen
 
 | Librería | Uso en la web |

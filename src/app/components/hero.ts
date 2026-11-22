@@ -1,3 +1,4 @@
+import { NgOptimizedImage } from '@angular/common';
 import { afterNextRender, ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
 import { injectI18n } from '@etyma/angular';
 import { VoltBadge, VoltNativeButton, VoltTooltip, VoltTooltipContent } from '@voltui/components';
@@ -7,20 +8,17 @@ import {
 import { LmnArrowRightIcon } from 'lumen-icons/arrow-right';
 import { LmnPauseIcon } from 'lumen-icons/pause';
 import { LmnPlayIcon } from 'lumen-icons/play';
-import image1 from '../../assets/p-1.webp';
-import image2 from '../../assets/p-10.webp';
-import image3 from '../../assets/p-6.webp';
-import image4 from '../../assets/p-8.webp';
-import image5 from '../../assets/p-11.webp';
 import { i18n } from '../../i18n/i18n';
+import { siteImage } from '../media/images';
 import { SITE } from '../seo/site';
 
+/** `focus` is the CSS object-position that keeps the subject in view when the photo is cropped. */
 const slides = [
-  { src: image1, alt: 'portfolio.photos.p1' },
-  { src: image2, alt: 'portfolio.photos.p10' },
-  { src: image3, alt: 'portfolio.photos.p6' },
-  { src: image4, alt: 'portfolio.photos.p8' },
-  { src: image5, alt: 'portfolio.photos.p11' },
+  { image: siteImage('p-1'), alt: 'portfolio.photos.p1', focus: '50% 50%' },
+  { image: siteImage('p-10'), alt: 'portfolio.photos.p10', focus: '45% 50%' },
+  { image: siteImage('p-6'), alt: 'portfolio.photos.p6', focus: '40% 50%' },
+  { image: siteImage('p-8'), alt: 'portfolio.photos.p8', focus: '55% 50%' },
+  { image: siteImage('p-11'), alt: 'portfolio.photos.p11', focus: '20% 50%' },
 ] as const;
 
 type Slide = (typeof slides)[number];
@@ -32,7 +30,7 @@ type Slide = (typeof slides)[number];
 @Component({
   selector: 'app-hero',
   imports: [
-    LmnArrowRightIcon, LmnPauseIcon, LmnPlayIcon, MoveEnterDirective, MoveHoverDirective, MoveLeaveDirective,
+    LmnArrowRightIcon, LmnPauseIcon, NgOptimizedImage, LmnPlayIcon, MoveEnterDirective, MoveHoverDirective, MoveLeaveDirective,
     MovePresenceForDirective, MoveTapDirective, VoltBadge, VoltNativeButton, VoltTooltip, VoltTooltipContent,
   ],
   template: `
@@ -72,18 +70,20 @@ type Slide = (typeof slides)[number];
           <div *movePresenceFor="let current of currentSlide(); trackBy: trackSlide; mode: 'sync'" class="absolute inset-0"
             [moveLeave]="{ opacity: [1, 0] }" moveDuration="900ms">
             <!-- The server-rendered first slide must not fade in again after hydration. -->
-            <img [src]="current.src" [alt]="t(current.alt)" class="size-full object-cover"
-              [attr.fetchpriority]="current === slides[0] ? 'high' : null"
-              [attr.decoding]="current === slides[0] ? null : 'async'"
+            <!-- The first slide is the LCP element: priority preloads it from the server-rendered head. -->
+            <img [ngSrc]="current.image.name" [ngSrcset]="current.image.srcset" fill [priority]="current === slides[0]"
+              sizes="(min-width: 64rem) 55vw, 100vw" [alt]="t(current.alt)" class="object-cover"
+              [style.object-position]="current.focus"
               [moveEnter]="{ opacity: [0, 1], scale: [1.06, 1] }" moveDuration="1100ms" [moveDisabled]="!changedSlide()">
           </div>
           <div class="hero-rail" role="group" [attr.aria-label]="t('ui.gallery')">
-            @for (item of slides; track item.src; let index = $index) {
+            @for (item of slides; track item.image.name; let index = $index) {
               <button voltButton type="button" variant="ghost"
                 class="hero-thumb relative size-12 shrink-0 overflow-hidden rounded-xl p-0 sm:size-14 lg:size-16"
                 [attr.aria-label]="t(item.alt)" [attr.aria-current]="index === slide() ? 'true' : null"
                 moveWhileTap="press" (click)="show(index)">
-                <img [src]="item.src" alt="" loading="lazy" decoding="async" class="size-full object-cover"
+                <img [ngSrc]="item.image.name" [ngSrcset]="item.image.srcset" fill sizes="64px" alt=""
+                  class="object-cover" [style.object-position]="item.focus"
                   [moveWhileHover]="{ scale: [1, 1.08] }">
                 @if (index === slide() && playing()) {
                   <!-- The bar is the autoplay clock: it restarts with each slide, pauses with the carousel and
@@ -251,7 +251,7 @@ export class Hero {
   protected readonly slides = slides;
   protected readonly services = ['features.card1.title', 'features.card2.title', 'features.card3.title'] as const;
   protected readonly slide = signal(0);
-  protected readonly trackSlide = (_: number, item: Slide) => item.src;
+  protected readonly trackSlide = (_: number, item: Slide) => item.image.name;
   protected readonly currentSlide = computed(() => [slides[this.slide()]!]);
   protected readonly changedSlide = signal(false);
   protected readonly playing = signal(false);
