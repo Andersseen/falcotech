@@ -1,0 +1,21 @@
+# Weekly, grouped updates so dependency pull requests stay few and reviewable.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      angular:
+        patterns: ['@angular/*', '@analogjs/*', 'typescript', 'zone.js']
+      tooling:
+        dependency-type: development
+        exclude-patterns: ['@angular/*', '@analogjs/*', 'typescript']
+      runtime:
+        dependency-type: production
+        exclude-patterns: ['@angular/*', '@analogjs/*']
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly

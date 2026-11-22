@@ -1,103 +1,140 @@
 # FalcoTech
 
-Web de FalcoTech en AnalogJS 2.9 y Angular 21. El servidor Nitro renderiza la web y procesa el formulario de contacto.
+Website of [FalcoTech](https://www.falcotech.es): wildlife control, environmental consultancy and drone
+technology. One page in three languages (Spanish at `/`, English at `/en`, Catalan at `/ca`), rendered on
+the server and deployed to Cloudflare Workers.
 
-## Desarrollo
+[![CI](https://github.com/Andersseen/falcotech/actions/workflows/ci.yml/badge.svg)](https://github.com/Andersseen/falcotech/actions/workflows/ci.yml)
 
-Con Node.js 22.13+ (o 24) y pnpm 10:
+## Stack
+
+| Area | Choice |
+| --- | --- |
+| Framework | [AnalogJS](https://analogjs.org) 2.9 and Angular 21: zoneless, signals, standalone components, server-side rendering on [Nitro](https://nitro.build) |
+| UI | [Volt UI](https://voltui.dev) atoms, [Lumen Icons](https://github.com/Andersseen), [Angular Movement](https://github.com/Andersseen) for motion, Tailwind CSS 4 |
+| Translations | [Etyma](https://github.com/Andersseen): typed catalogs, localized routes, `lang`, canonical and `hreflang` |
+| Hosting | Cloudflare Workers, deployed from GitHub Actions |
+| Mail | [Resend](https://resend.com), behind a validated and rate-limited endpoint |
+
+## Getting started
+
+Requirements: Node.js 22.18+ or 24, and pnpm 10 (`corepack enable` picks the pinned version).
 
 ```sh
 pnpm install --frozen-lockfile
-pnpm dev
+cp .env.example .env   # optional: needed only to send contact mail locally
+pnpm dev               # http://localhost:5173
 ```
 
-La web se abre en http://localhost:5173. Para probar la compilación de producción localmente:
+## Scripts
 
-```sh
-pnpm check
-pnpm build
-pnpm preview
-```
-
-Copia `.env.example` a `.env` y configura `RESEND_API_KEY` para habilitar el envío local. En Cloudflare se guarda como secret del Worker (ver *Despliegue*). El formulario envía un `POST /api/contact`. El servidor valida los campos y usa Resend para enviar el mensaje a `info@falcotech.es` (`CONTACT_TO`). El remitente se cambia con `CONTACT_FROM`; su dominio tiene que estar verificado en Resend.
-
-### Protección del formulario
-
-- Las reglas de validación están en `src/shared/contact.ts` y las usan el cliente y el servidor.
-- El servidor rechaza peticiones de otro origen (403) y cuerpos de más de 16 KB (413). También limita a 5 envíos cada 15 minutos por IP (429). El límite vive en memoria de cada instancia y por eso es orientativo en serverless y en Workers.
-- Un campo trampa (`website`) descarta bots simples: el servidor responde éxito sin enviar nada.
-- [Cloudflare Turnstile](https://developers.cloudflare.com/turnstile/) es opcional. Crea un widget con la acción `contact`, define `VITE_TURNSTILE_SITE_KEY` en la build y `TURNSTILE_SECRET` y `TURNSTILE_HOSTNAMES` en el servidor. Sin esas variables, el formulario funciona sin el reto.
-- Sin JavaScript, el formulario se envía igualmente. El servidor redirige de vuelta con `?contact=sent|error|limited` y la página muestra el resultado.
-- Todas las respuestas llevan cabeceras de seguridad (`nosniff`, `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy`, `COOP`).
-
-```sh
-pnpm test
-```
-
-Para generar el artefacto de Vercel en local, ejecuta `BUILD_PRESET=vercel pnpm build`. Nitro lo deja en `.vercel/output`.
-
-## Despliegue
-
-La web de producción actual (www.falcotech.es) sigue en Vercel, desplegada desde GitLab. Este repositorio se despliega en paralelo en Cloudflare Workers hasta cambiar de proveedor.
-
-- El workflow `.github/workflows/ci.yml` verifica cada cambio (`check`, `test`, build con `BUILD_PRESET=cloudflare_module`, `agents:check`) y después despliega:
-  - **Pull request:** una versión de preview en `https://pr-<número>-falcotech.<subdominio>.workers.dev`, enlazada en un comentario del PR. No toca el tráfico de producción.
-  - **Push a `main`** o ejecución manual (*Run workflow*): producción en `https://falcotech.<subdominio>.workers.dev`.
-- Secrets del repositorio en GitHub: `CLOUDFLARE_API_TOKEN` (permiso *Workers Scripts: Edit*) y `CLOUDFLARE_ACCOUNT_ID`.
-- Los secrets del servidor se guardan en el Worker y los comparten producción y previews: `pnpm exec wrangler secret put RESEND_API_KEY` (y `TURNSTILE_SECRET` si se usa Turnstile).
-- La configuración está en `wrangler.jsonc`. Nitro la combina en `dist/analog/server/wrangler.json`, que es el fichero que se despliega.
-- Para probarlo en local dentro de workerd: `pnpm build:cloudflare && pnpm preview:cloudflare` (http://localhost:8787).
-- Despliegue desde tu máquina (necesita `pnpm exec wrangler login` una vez, o `CLOUDFLARE_API_TOKEN` y `CLOUDFLARE_ACCOUNT_ID` en el entorno):
-  - `pnpm deploy:preview`: sube una versión de preview en `https://local-falcotech.<subdominio>.workers.dev` sin tocar producción.
-  - `pnpm deploy:prod`: despliega producción.
-  - No se llama `pnpm deploy` porque ese nombre es un comando interno de pnpm.
-- Las previews de versión necesitan que el Worker exista: el primer despliegue de producción se hace a mano con *Run workflow* sobre esta rama.
-- Solo `www.falcotech.es` se indexa (`PRODUCTION_HOSTS` en `src/server/site.ts`). Cualquier otro host, incluidos `workers.dev` y las previews, responde con `X-Robots-Tag: noindex` y un `robots.txt` que bloquea todo.
-- Para el cambio de proveedor: añadir `falcotech.es` como zona en Cloudflare (o un custom domain del Worker), apuntar el DNS de Raiola y quitar el dominio del proyecto de Vercel.
-
-## SEO y metadatos
-
-- Etyma gestiona `<html lang>`, la URL canónica y los `hreflang` de cada idioma.
-- `src/app/seo/page-seo.ts` escribe en el servidor el título, la descripción, Open Graph, la Twitter card, `robots` y los datos estructurados `Organization` (JSON-LD). Cada página lo declara con `injectPageMeta()`. La 404 lleva `noindex`.
-- Los textos están en `meta.*` de cada catálogo, y los datos de la empresa en `src/app/seo/site.ts`.
-- `/robots.txt` y `/sitemap.xml` se generan en el servidor con el origen de la petición. Las páginas publicadas se listan en `src/server/site.ts`. Fuera de `www.falcotech.es`, `robots.txt` bloquea la indexación.
-- La imagen para redes sociales es `public/og-image.jpg` (1200×630).
-
-## Imágenes
-
-- Los originales están en `images/`. `pnpm images` genera variantes WebP de 160 a 2560 px en `src/assets/img/` (nunca más anchas que el original) y un `manifest.json` con sus tamaños.
-- Las páginas las pintan con `NgOptimizedImage` y un loader propio (`src/app/media/images.ts`). Así cada imagen lleva `srcset` y `sizes`, carga en diferido y, la del hero, se precarga con `fetchpriority="high"` desde el HTML del servidor.
-- Para cambiar o añadir una foto, copia el mejor original que tengas en `images/` y ejecuta `pnpm images`. La nitidez depende del original: algunas fotos actuales (p-8, p-10, p-11) son pequeñas y están muy comprimidas.
-
-## Librerías de Andersseen
-
-| Librería | Uso en la web |
+| Command | What it does |
 | --- | --- |
-| Etyma Core, Angular y Analog | Catálogos tipados, traducción en SSR, `lang`, canonical y `hreflang` por idioma. Español en `/`, inglés en `/en` y catalán en `/ca`. |
-| Volt UI | Todos los átomos de interfaz: `voltButton` en botones y enlaces nativos, `VoltToggle` (tema), `VoltSelect` (idioma), `VoltCard` (servicios y contacto), `VoltAccordion`, formulario (`VoltFormField`, `VoltInput`, `VoltTextarea`, `VoltError`, `VoltAlert`, `VoltSpinner`), `VoltDialogRoot` (galería), cajón móvil, `VoltTooltip` en los botones de solo icono, `VoltEmptyState` (404) y `VoltSeparator`. El tema claro/oscuro se aplica con `applyVoltTheme`. |
-| Lumen Icons | Todos los iconos, importados uno a uno desde `lumen-icons/<icono>`. Los fondos redondos de los iconos de servicio y de la 404 los dibuja Lumen (`background`, `tone`, `padding`, `radius`). |
-| Angular Movement | Entradas al hacer scroll (`moveInView` + `moveStagger`), fundido cruzado del carrusel (`*movePresenceFor`), aparición y salida del botón "volver arriba" (`*movePresence`), galería (`moveEnter` escalonado y `moveWhileHover`), respuesta táctil (`moveWhileTap="press"`), revelado circular del tema (`MoveAnimator` sobre una View Transition) y la foto de las especialidades (`moveSpringValue`). Los valores por defecto están en `provideMovement()`. |
+| `pnpm dev` | Development server with hot reload |
+| `pnpm check` | Strict type check of the app (templates included) and of the build scripts |
+| `pnpm test` | Unit tests (Vitest) |
+| `pnpm build` / `pnpm preview` | Production build for Node, served locally |
+| `pnpm build:cloudflare` / `pnpm preview:cloudflare` | Production build for Workers, served by workerd on :8787 |
+| `pnpm deploy:preview` | Upload a preview version to `local-falcotech.<subdomain>.workers.dev`; production is untouched |
+| `pnpm deploy:prod` | Deploy production to Cloudflare |
+| `pnpm images` | Regenerate the responsive image variants from `images/` |
+| `pnpm map` | Regenerate the dotted map of Europe from Natural Earth data |
+| `pnpm agents:check` | Verify the coding-agent configuration (see [AGENTS.md](AGENTS.md)) |
 
-Criterio de animación: Movement se encarga de entradas, salidas, presencia, gestos y secuencias imperativas. CSS se queda con lo que ya se ve en el primer pintado (la entrada del texto del hero, como recomienda Movement), con los estados de hover/foco de los átomos y con la transición de columnas de las tarjetas de servicio, que interpola `grid-template-columns`.
+`pnpm deploy` is a built-in pnpm command, hence the `deploy:*` names. Deploying from your machine needs
+`pnpm exec wrangler login` once, or `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` in the environment.
 
-## Codex y Claude Code
+## Project layout
 
-Las convenciones del proyecto para agentes están en `AGENTS.md`; `CLAUDE.md` lo importa. La CI (`.github/workflows/ci.yml`) ejecuta `check`, `test`, `build` y `agents:check`.
-
-[Agentyx](https://github.com/Andersseen/agentyx) está fijado a la versión del proyecto. La configuración activa los packs `technical`, `typescript` y `angular` para ambos agentes, con sus skills locales y el MCP de documentación Context7.
-
-```sh
-pnpm agents:check
+```text
+src/
+  app/
+    pages/        file-based routes (index, 404)
+    components/   page sections: header, hero, gallery, contact, map, footer background
+    media/        responsive image loader for NgOptimizedImage
+    seo/          page head (title, Open Graph, JSON-LD) and business facts
+    theme/        light and dark preference
+  i18n/locales/   all copy, one catalog per language
+  server/         Nitro routes: /api/contact, robots.txt, sitemap.xml
+  shared/         rules shared by client and server (contact limits, field names)
+images/           original photos and illustrations (sources for pnpm images)
+scripts/          build scripts in TypeScript, run directly by Node
 ```
 
-Si cambias `.agentyx.json`, revisa el plan con `pnpm exec agentyx sync --dry-run`, aplica el cambio con `pnpm agents:sync` y guarda también el lock y los archivos generados en el repositorio.
+## Configuration
 
-[Volt UI] también está instalado para Codex y Claude Code, con siete skills por agente y el servidor MCP para consultar el catálogo de componentes.
+Copy [`.env.example`](.env.example) to `.env` for local development. In production the server variables are
+Worker secrets (`pnpm exec wrangler secret put <NAME>`), shared by production and previews.
 
-```sh
-pnpm exec volt-ui-agent doctor codex claude
-```
+| Variable | Where | Purpose |
+| --- | --- | --- |
+| `RESEND_API_KEY` | server | Sends contact messages. Without it the endpoint answers 503. |
+| `CONTACT_FROM`, `CONTACT_TO` | server, optional | Sender (its domain must be verified in Resend) and recipients |
+| `VITE_TURNSTILE_SITE_KEY` | build, optional | Public key of the Cloudflare Turnstile widget |
+| `TURNSTILE_SECRET`, `TURNSTILE_HOSTNAMES` | server, optional | Turnstile verification; with all three unset the form works without the challenge |
 
-El instalador del proyecto es `pnpm exec volt-ui-agent codex claude --yes`. Tras actualizarlo, ejecuta `pnpm agents:sync` para normalizar la configuración compartida con Agentyx.
+## Contact form
 
-[Volt UI]: https://voltui.dev/docs/mcp
+The form posts to `POST /api/contact`, which validates the fields with the same rules as the client
+(`src/shared/contact.ts`) and sends the message through Resend.
+
+- Requests from another origin are rejected (403), bodies over 16 KB too (413), and each IP may send
+  5 messages every 15 minutes (429). The limit lives in each instance's memory, so on serverless it is
+  a best effort.
+- A honeypot field (`website`) catches naive bots: they get a success response and nothing is sent.
+- [Cloudflare Turnstile](https://developers.cloudflare.com/turnstile/) is optional (see Configuration).
+- Without JavaScript the form still works: the server redirects back with `?contact=sent|error|limited`.
+- Every response carries security headers (`nosniff`, `X-Frame-Options`, `Referrer-Policy`,
+  `Permissions-Policy`, `Cross-Origin-Opener-Policy`).
+- The server never logs message bodies or email addresses.
+
+## Deployment
+
+[`.github/workflows/ci.yml`](.github/workflows/ci.yml) verifies every change (type check, tests, Workers
+build, agent configuration) and then deploys:
+
+- **Pull requests** get a preview version at `https://pr-<number>-falcotech.<subdomain>.workers.dev`,
+  linked in a comment on the pull request. Production traffic is not touched. The first run creates the
+  Worker if it does not exist yet.
+- **Pushes to `main`** (or a manual *Run workflow*) deploy production.
+
+The workflow needs two repository secrets: `CLOUDFLARE_API_TOKEN` (permissions *Workers Scripts: Edit*
+and *Account Settings: Read*) and `CLOUDFLARE_ACCOUNT_ID`. Pull requests from forks are verified but not
+deployed, since they get no secrets.
+
+Worker settings are in [`wrangler.jsonc`](wrangler.jsonc); Nitro merges them into
+`dist/analog/server/wrangler.json`, which is the file that gets deployed.
+
+The live site at www.falcotech.es is still served by the previous deployment until the domain moves to
+Cloudflare (a custom domain on the Worker, then the DNS records and the old project's domain).
+
+## SEO
+
+- Etyma sets `<html lang>`, the canonical URL and the `hreflang` alternates of every page.
+- `src/app/seo/page-seo.ts` renders the title, description, Open Graph and Twitter cards, `robots` and the
+  `Organization` structured data on the server. The 404 page is `noindex`.
+- Canonical URLs, alternates, Open Graph URLs, structured data and the sitemap always name
+  `https://www.falcotech.es` (`SITE.origin`), whichever host renders the page.
+- Only `www.falcotech.es` is indexable. Every other host (previews, `workers.dev`, localhost) answers with
+  `X-Robots-Tag: noindex` and a `robots.txt` that disallows everything, so Lighthouse reports a lower SEO
+  score there by design.
+
+## Images
+
+Originals live in [`images/`](images). `pnpm images` turns each one into WebP variants from 160 to 2560 px
+(never wider than the original) in `src/assets/img/`, with a `manifest.json` of their sizes. Templates
+render them with `NgOptimizedImage` and a custom loader (`src/app/media/images.ts`): every image gets
+`srcset` and `sizes`, loads lazily, and the hero image is preloaded from the server-rendered head.
+
+To add or replace a photo, drop the best original you have into `images/` and run `pnpm images`.
+
+## Coding agents
+
+Conventions for Codex, Claude Code and other agents are in [AGENTS.md](AGENTS.md) (`CLAUDE.md` imports it).
+Skills and MCP servers are managed by [Agentyx](https://github.com/Andersseen/agentyx), pinned in
+`.agentyx.json`; Volt UI adds its own skills and its [MCP server](https://voltui.dev/docs/ai-mcp).
+
+## Contributing and security
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the workflow and [SECURITY.md](SECURITY.md) to report a
+vulnerability.

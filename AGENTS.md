@@ -7,7 +7,7 @@ from `main`); the live www.falcotech.es is still on Vercel until the switch. One
 ## Commands
 
 - `pnpm dev`: dev server on http://localhost:5173
-- `pnpm check`: strict Angular type check (templates included)
+- `pnpm check`: strict Angular type check (templates included) and type check of `scripts/`
 - `pnpm test`: vitest unit tests (`src/**/*.test.ts`, plain TypeScript only)
 - `pnpm build && pnpm preview`: production SSR build served locally
 - `pnpm build:cloudflare && pnpm preview:cloudflare`: the Workers build, served by workerd on :8787
@@ -27,8 +27,14 @@ Run `pnpm check`, `pnpm test` and `pnpm build` before committing.
 - `src/i18n/locales/*.json`: all copy. Never hard-code user-facing text; add the key to all three locales
 - `src/shared/`: rules shared by client and server (contact limits, field names)
 - `src/server/`: Nitro routes (`/api/contact`, `robots.txt`, `sitemap.xml`) and their logic
+- `SITE.origin` (`src/app/seo/site.ts`) is the only public address: canonical, hreflang, Open Graph and
+  the sitemap always use it, never the request host
 
 ## Conventions
+
+- Everything in the repository is in English except the site copy in `src/i18n/locales/`.
+- Build scripts are TypeScript in `scripts/`, run directly by Node (type stripping): only erasable syntax,
+  `import type` for types, explicit `.ts` extensions on relative imports.
 
 - UI atoms come from Volt UI (`@voltui/components`, package mode: `Volt*` classes, `volt-*` selectors).
   Check the `volt-ui` MCP server before writing any button, card, input, alert, overlay or tooltip by hand.
