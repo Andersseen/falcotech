@@ -19,7 +19,9 @@
     "build:cloudflare": "BUILD_PRESET=cloudflare_module pnpm build",
     "preview:cloudflare": "wrangler dev",
     "images": "node scripts/images.mjs",
-    "map": "node scripts/europe-map.mjs"
+    "map": "node scripts/europe-map.mjs",
+    "deploy:prod": "pnpm build:cloudflare && wrangler deploy --config dist/analog/server/wrangler.json",
+    "deploy:preview": "pnpm build:cloudflare && wrangler versions upload --config dist/analog/server/wrangler.json --preview-alias local"
   },
   "dependencies": {
     "@analogjs/router": "2.9.7",

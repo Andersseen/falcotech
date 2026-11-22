@@ -47,6 +47,10 @@ La web de producción actual (www.falcotech.es) sigue en Vercel, desplegada desd
 - Los secrets del servidor se guardan en el Worker y los comparten producción y previews: `pnpm exec wrangler secret put RESEND_API_KEY` (y `TURNSTILE_SECRET` si se usa Turnstile).
 - La configuración está en `wrangler.jsonc`. Nitro la combina en `dist/analog/server/wrangler.json`, que es el fichero que se despliega.
 - Para probarlo en local dentro de workerd: `pnpm build:cloudflare && pnpm preview:cloudflare` (http://localhost:8787).
+- Despliegue desde tu máquina (necesita `pnpm exec wrangler login` una vez, o `CLOUDFLARE_API_TOKEN` y `CLOUDFLARE_ACCOUNT_ID` en el entorno):
+  - `pnpm deploy:preview`: sube una versión de preview en `https://local-falcotech.<subdominio>.workers.dev` sin tocar producción.
+  - `pnpm deploy:prod`: despliega producción.
+  - No se llama `pnpm deploy` porque ese nombre es un comando interno de pnpm.
 - Las previews de versión necesitan que el Worker exista: el primer despliegue de producción se hace a mano con *Run workflow* sobre esta rama.
 - Solo `www.falcotech.es` se indexa (`PRODUCTION_HOSTS` en `src/server/site.ts`). Cualquier otro host, incluidos `workers.dev` y las previews, responde con `X-Robots-Tag: noindex` y un `robots.txt` que bloquea todo.
 - Para el cambio de proveedor: añadir `falcotech.es` como zona en Cloudflare (o un custom domain del Worker), apuntar el DNS de Raiola y quitar el dominio del proyecto de Vercel.
